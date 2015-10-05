@@ -4,7 +4,7 @@ require './lib/tsubaiso_sdk'
 class TsubaisoSDKTest < MiniTest::Unit::TestCase
   
   def setup
-    @api = TsubaisoSDK.new({ login: ENV["SDK_LOGIN"], password: ENV["SDK_PASSWORD"], ccode: ENV["SDK_CCODE"], role: ENV["SDK_ROLE"] })
+    @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], login: ENV["SDK_LOGIN"], password: ENV["SDK_PASSWORD"], ccode: ENV["SDK_CCODE"], role: ENV["SDK_ROLE"] })
   end
 
   def test_create_sale

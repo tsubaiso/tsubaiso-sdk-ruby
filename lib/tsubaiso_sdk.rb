@@ -3,7 +3,7 @@ class TsubaisoSDK
   require "json"
   
   def initialize(options = {})
-    @base_url = 'https://tsubaiso.net'
+    @base_url = options[:base_url] || 'https://tsubaiso.net'
     @login = options[:login]
     @password = options[:password]
     @ccode = options[:ccode]
@@ -16,7 +16,7 @@ class TsubaisoSDK
   def authenticate(login, password, ccode, role)
     uri = URI.parse(@base_url + '/auth/auth')
     http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
+    http.use_ssl = true if @base_url =~ /^https/
     request = Net::HTTP::Post.new(uri.path)
     request.set_form_data({ id: login, pw: password, cd: ccode, dm: role })
     response = http.request(request)
@@ -131,7 +131,7 @@ class TsubaisoSDK
   
   def api_request(uri, http_verb, params, cookies)
     http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
+    http.use_ssl = true if @base_url =~ /^https/
     if http_verb == "GET"
       request = Net::HTTP::Get.new(uri.path)
     else
