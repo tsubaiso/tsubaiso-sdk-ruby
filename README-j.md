@@ -315,7 +315,7 @@ Parameter | Necessity | Type | Description
 `dc` | *required* | String | 原因区分。 'd' は「減少」に、'c' は「増加」になります。
 `memo` | *required* | String | メモ。値は空文字でも構いませんが必須項目です。
 `tax_code` | *required* | Integer | 税区分コード
-`port_type` | *required* | Integer | エリア区分。 1 は「国内」、 2 は「輸入」、 3 は「国内・輸入」
+`port_type` | *required* | Integer | エリア区分。 1 は「国内」、 2 は「国外」
 `year` | *optional* | Integer | 明細の年。 年が指定された場合は月も必須項目になります。年が指定されない場合は現在の年が使われます。
 `month` | *optional* | Integer | 明細の月。月が指定された場合は年も必須項目になります。月が指定されない場合は現在の月が使われます。
 `dept_code` | *optional* | String | 部門コード
