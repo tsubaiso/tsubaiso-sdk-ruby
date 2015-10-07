@@ -1,7 +1,7 @@
 # Tsubaiso API (beta)
 
 このドキュメントでは Tsubaiso API のベータ版の説明をします。
-Tsubaiso API ベータ版では売上明細と仕入経費明細のデータをやりとりできます。
+Tsubaiso API ベータ版では売上明細と仕入・経費明細のデータをやりとりできます。
 将来のバージョンでは、ツバイソシステムの他のモジュールにアクセスするための新しいエンドポイントが加わる予定です。
 
 ## Root Endpoint
@@ -151,13 +151,13 @@ https://tsubaiso.jp/ar/create
 Parameters:
 Parameter | Necessity | Type | Description
 --- | --- | --- | ---
-`price` | *required* | Integer | 明細の価額
+`price` | *required* | Integer | 売上高(税込)
 `realization_timestamp` | *required* | String | 明細の実現日。 "YYYY-MM-DD" 形式
 `customer_master_code` | *required* | String | 取引先コード
 `reason_master_code` | *required* | String | 明細の原因コード。仕訳を作成するために使われます。
 `dc` | *required* | String | 原因区分。 'd' は debit の意で「増加」に、'c' は credit の意で「減少」になります。
 `memo` | *required* | String | メモ。値は空文字でも構いませんが必須項目です。
-`tax_code` | *required* | Integer | 税区分
+`tax_code` | *required* | Integer | 税区分コード
 `year` | *optional* | Integer | 年
 `month` | *optional* | Integer | 月
 `dept_code` | *optional* | String | 部門コード 
@@ -172,7 +172,7 @@ curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Ac
 
 **/ar/destroy/:id**
 
-説明: Destroys the accounts receivable transaction specified as the id. Returns a status of 204 No Content.
+説明: 指定された id の売上明細を削除します。成功した場合 204 No Content が返ります。
 
 HTTP メソッド: POST
 
@@ -181,11 +181,11 @@ URL 構成例:
 https://tsubaiso.jp/ar/destroy/8833 
 ```
 
-#### Accounts Payables
+#### 仕入・経費明細
 
 **/ap_payments/list/:year/:month**
 
-説明: Returns a list of accounts payables transactions for a particular month. If no year and month parameters are provided. It returns the transactions for the current month.
+説明: このエンドポイントは特定の年月の仕入・経費明細の一覧を返します。年月パラメータが指定されなかった場合、現在の月の明細が返されます。
 
 HTTP メソッド: GET
 
@@ -255,7 +255,7 @@ JSON レスポンスの例:
 
 **/ap_payments/show/:id**
 
-説明: This endpoint returns a single accounts payable transaction.
+説明: このエンドポイントは単一の仕入・経費明細を返します。
 
 HTTP メソッド: GET
 
@@ -297,7 +297,7 @@ JSON レスポンスの例:
 
 **/ap_payments/create**
 
-説明: Creates a new accounts payable transaction. The created transaction will be sent back as JSON if successful.
+説明: 仕入・経費明細を新規作成します。作成に成功した場合、新規作成された明細が JSON として返されます。
 
 HTTP メソッド: POST
 
@@ -308,24 +308,24 @@ https://tsubaiso.jp/ap_payments/create
 
 Parameter | Necessity | Type | Description
 --- | --- | --- | ---
-`price` | *required* | Integer | Amount of the transaction.
-`accrual_timestamp` | *required* | String | Actual date of the transaction. Format must be "YYYY-MM-DD"
-`customer_master_code` | *required* | String | Code of the transaction party.
-`reason_master_code` | *required* | String | Reason of the transaction. This is used to create the journal entry.
-`dc` | *required* | String | 'd' if the transaction was a debit to AP, 'c' if it was a credit.
-`memo` | *required* | String | Memo for the transaction. Can be blank but must be provided.
-`tax_code` | *required* | Integer | Tax code for the transaction.
-`port_type` | *required* | Integer | 1 for domestic transaction. 2 for import transaction. 3 for export transaction. 4 for foreign transaction.
-`year` | *optional* | Integer | Year of the transaction. If provided, month must be provided as well. Will use current year if not provided.
-`month` | *optional* | Integer | Month of the transaction. If provided, year must be provided as well. Will use current month if not provided.
-`dept_code` | *optional* | String | Code of the internal department involved.
-`buying_tax` | *optional* | Integer | Sales tax on the transaction. Is automatically calculated if not provided.
-`scheduled_pay_timestamp` | *optional* | String | Date of payment. Format must be "YYYY-MM-DD".
-`scheduled_memo` | *optional* | String | Optional memo regarding payment of funds.
-`need_tax_deduction` | *optional* | Integer | 1 if tax needs to be withheld. 0 if not necessary.
-`preset_withholding_tax_amount` | *optional* | Integer | Withholding tax amount
-`withholding_tax_base` | *optional* | Integer | 1 if withholding tax includes sales tax, 2 if it does not.
-`withholding_tax_segment` | *optional* | String | National Tax Agency tax code (ex: "nta2795" references https://www.nta.go.jp/taxanswer/gensen/2795.htm)
+`price` | *required* | Integer | 発生額(税込)
+`accrual_timestamp` | *required* | String | 発生日。  "YYYY-MM-DD" 形式
+`customer_master_code` | *required* | String | 取引先コード
+`reason_master_code` | *required* | String | 明細の原因コード。仕訳を作成するために使われます。
+`dc` | *required* | String | 原因区分。 'd' は「減少」に、'c' は「増加」になります。
+`memo` | *required* | String | メモ。値は空文字でも構いませんが必須項目です。
+`tax_code` | *required* | Integer | 税区分コード
+`port_type` | *required* | Integer | エリア区分。 1 は「国内」、 2 は「輸入」、 3 は「国内・輸入」
+`year` | *optional* | Integer | 明細の年。 年が指定された場合は月も必須項目になります。年が指定されない場合は現在の年が使われます。
+`month` | *optional* | Integer | 明細の月。月が指定された場合は年も必須項目になります。月が指定されない場合は現在の月が使われます。
+`dept_code` | *optional* | String | 部門コード
+`buying_tax` | *optional* | Integer | 消費税額。省略された場合は自動で計算されます。
+`scheduled_pay_timestamp` | *optional* | String | 支払予定日。  "YYYY-MM-DD" 形式
+`scheduled_memo` | *optional* | String | 支払いに関する追加のメモ
+`need_tax_deduction` | *optional* | Integer | 源泉徴収の対象とするか否か。 0:しない, 1:する
+`preset_withholding_tax_amount` | *optional* | Integer | 事前設定源泉徴収額
+`withholding_tax_base` | *optional* | Integer | 源泉徴収基準額。 1:消費税込額, 2:消費税抜額
+`withholding_tax_segment` | *optional* | String | 源泉徴収区分コード (例: "nta2795"。 次のページを参照してください https://www.nta.go.jp/taxanswer/gensen/2795.htm)
 
 リクエストの例:
 ``` sh
@@ -334,7 +334,7 @@ curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Ac
 
 **/ap/destroy/:id**
 
-説明: Destroys the accounts payable transaction specified as the id. Returns a status of 204 No Content.
+説明: 指定された id の仕入・経費明細を削除します。成功した場合 204 No Content が返ります。
 
 HTTP メソッド: POST
 
