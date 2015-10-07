@@ -42,7 +42,7 @@ Code | Description
 
 **/ar/list/:year/:month**
 
-説明: This endpoint returns a list of accounts receivables transactions for a particular month. If no year and month parameters are provided. It returns the transactions for the current month.
+説明: このエンドポイントは特定の年月の売上明細の一覧を返します。年月パラメータが指定されなかった場合、現在の月の明細が返されます。
 
 HTTP メソッド: GET
 
@@ -102,7 +102,7 @@ JSON レスポンスの例:
 
 **/ar/show/:id**
 
-説明: This endpoint returns a single accounts receivable transaction.
+説明: このエンドポイントは単一の売上明細を返します。
 
 HTTP メソッド: GET
 
@@ -139,7 +139,7 @@ JSON レスポンスの例:
 
 **/ar/create**
 
-説明: Creates a new accounts receivable transaction. The created transaction will be sent back as JSON if successful.
+説明: 売上明細を新規作成します。作成に成功した場合、新規作成された明細が JSON として返されます。
 
 HTTP メソッド: POST
 
@@ -151,21 +151,21 @@ https://tsubaiso.jp/ar/create
 Parameters:
 Parameter | Necessity | Type | Description
 --- | --- | --- | ---
-`price` | *required* | Integer | Amount of the transaction.
-`realization_timestamp` | *required* | String | Actual date of the transaction. Format must be "YYYY-MM-DD"
-`customer_master_code` | *required* | String | Code of the transaction party.
-`reason_master_code` | *required* | String | Reason of the transaction. This is used to create the journal entry.
-`dc` | *required* | String | 'd' if the transaction was a debit to AR, 'c' if it was a credit.
-`memo` | *required* | String | Memo for the transaction. Can be blank but must be provided.
-`tax_code` | *required* | Integer | Tax code for the transaction.
-`year` | *optional* | Integer | Year of the transaction.
-`month` | *optional* | Integer | Month of the transaction.
-`dept_code` | *optional* | String | Code of the internal department involved.
-`sales_tax` | *optional* | Integer | Sales tax on the transaction. Is automatically calculated if not provided.
-`scheduled_receipt_timestamp` | *optional* | String | Date of receipt. Format must be “YYYY-MM-DD”.
-`scheduled_memo` | *optional* | String | Optional memo regarding receipt of funds.
+`price` | *required* | Integer | 明細の価額
+`realization_timestamp` | *required* | String | 明細の実現日。 "YYYY-MM-DD" 形式
+`customer_master_code` | *required* | String | 取引先コード
+`reason_master_code` | *required* | String | 明細の原因コード。仕訳を作成するために使われます。
+`dc` | *required* | String | 原因区分。 'd' は debit の意で「増加」に、'c' は credit の意で「減少」になります。
+`memo` | *required* | String | メモ。値は空文字でも構いませんが必須項目です。
+`tax_code` | *required* | Integer | 税区分
+`year` | *optional* | Integer | 年
+`month` | *optional* | Integer | 月
+`dept_code` | *optional* | String | 部門コード 
+`sales_tax` | *optional* | Integer | 消費税額。指定されなかった場合、自動で計算されます。
+`scheduled_receipt_timestamp` | *optional* | String | 入金予定日。 “YYYY-MM-DD”形式
+`scheduled_memo` | *optional* | String | 入金予定に関するメモ
 
-Sample Request:
+リクエストの例:
 ```sh
 curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Access-Token: XXXXXXXXXXXXXX" -X POST -d '{"year": 2015, "month": 10, "price": 5000, "realization_timestamp": "2015-10-31", "customer_master_code": "101", "dept_code": "DEPT A", "reason_master_code": "SALES", "dc": "d", "memo": "500 widgets", "tax_code": 0}' https://tsubaiso.jp/ar/create
 ```
@@ -327,7 +327,7 @@ Parameter | Necessity | Type | Description
 `withholding_tax_base` | *optional* | Integer | 1 if withholding tax includes sales tax, 2 if it does not.
 `withholding_tax_segment` | *optional* | String | National Tax Agency tax code (ex: "nta2795" references https://www.nta.go.jp/taxanswer/gensen/2795.htm)
 
-Sample Request:
+リクエストの例:
 ``` sh
 curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Access-Token: XXXXXXXXXXXXXX" -X POST -d '{"year": 2015, "month": 8, "price": 5000, "accrual_timestamp": "2015-10-31", "customer_master_code": "8201", "dept_code": "DEPT C", "reason_master_code": "BUYING_IN", "dc": "c", "memo": "Office Supplies for Frank", "tax_code": 0, "port_type": 1 }' https://tsubaiso.jp/ap_payments/create
 ```
