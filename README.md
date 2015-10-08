@@ -316,7 +316,7 @@ Parameter | Necessity | Type | Description
 `dc` | *required* | String | 'd' if the transaction was a debit to AP, 'c' if it was a credit.
 `memo` | *required* | String | Memo for the transaction. Can be blank but must be provided.
 `tax_code` | *required* | Integer | Tax code for the transaction.
-`port_type` | *required* | Integer | 1 for domestic transaction. 2 for import transaction. 3 for export transaction. 4 for foreign transaction.
+`port_type` | *required* | Integer | 1 for domestic transaction. 2 for foreign transaction.
 `year` | *optional* | Integer | Year of the transaction. If provided, month must be provided as well. Will use current year if not provided.
 `month` | *optional* | Integer | Month of the transaction. If provided, year must be provided as well. Will use current month if not provided.
 `dept_code` | *optional* | String | Code of the internal department involved.
