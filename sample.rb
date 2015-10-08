@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-
+$LOAD_PATH << 'lib/'
 require 'tsubaiso_sdk'
 
 class Sample
   def initialize(sample)
     @sample = sample
-    api = TsubaisoSDK.new({ login: 'XXXXX', password: 'XXXXX', ccode: 'XXXXX', role: 'CL_ADMIN' })
+    api = TsubaisoSDK.new({ login: ENV["SDK_LOGIN"], password: ENV["SDK_PASSWORD"], ccode: ENV["SDK_CCODE"], role: ENV["SDK_ROLE"] } )
     @sample.each do | line |
       if line[:action] == "List"
         if line[:module] == "Sales"
