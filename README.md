@@ -147,6 +147,7 @@ https://tsubaiso.jp/ar/create
 ```
 
 Parameters:
+
 Parameter | Necessity | Type | Description
 --- | --- | --- | ---
 `price` | *required* | Integer | Amount of the transaction.
@@ -303,6 +304,8 @@ URL Structure:
 ```sh
 https://tsubaiso.jp/ap_payments/create
 ```
+
+Parameters:
 
 Parameter | Necessity | Type | Description
 --- | --- | --- | ---
