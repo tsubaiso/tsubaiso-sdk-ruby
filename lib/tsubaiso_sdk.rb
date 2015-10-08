@@ -20,7 +20,6 @@ class TsubaisoSDK
     request = Net::HTTP::Post.new(uri.path)
     request.set_form_data({ id: login, pw: password, cd: ccode, dm: role })
     response = http.request(request)
-    #@authenticity_token = response.get_fields('X-Authenticity-Token').first
     @authenticity_token = response.body.scan(/<authenticity_token>(.*)<\/authenticity_token>/).first.first
     response.get_fields('Set-Cookie').each do |str|
       k, v = str[0...str.index(';')].split('=')
