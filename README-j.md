@@ -149,6 +149,7 @@ https://tsubaiso.jp/ar/create
 ```
 
 Parameters:
+
 Parameter | Necessity | Type | Description
 --- | --- | --- | ---
 `price` | *required* | Integer | 売上高(税込)
@@ -305,6 +306,8 @@ URL 構成例:
 ```sh
 https://tsubaiso.jp/ap_payments/create
 ```
+
+Parameters:
 
 Parameter | Necessity | Type | Description
 --- | --- | --- | ---
