@@ -4,7 +4,15 @@ require './lib/tsubaiso_sdk'
 class TsubaisoSDKTest < MiniTest::Unit::TestCase
   
   def setup
-    @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], login: ENV["SDK_LOGIN"], password: ENV["SDK_PASSWORD"], ccode: ENV["SDK_CCODE"], role: ENV["SDK_ROLE"] })
+    @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
+  end
+
+  def test_failed_request
+    @api_fail = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: "fake token" })
+    sale = @api_fail.create_sale({ price: 10800, year: 2015, month: 8, realization_timestamp: "2015-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25" })
+
+    assert_equal 401, sale[:status].to_i
+    assert_equal "Bad credentials", sale[:json][:error]
   end
 
   def test_create_sale
