@@ -5,7 +5,7 @@ This is the documentation for the beta version of the Tsubaiso API. The beta ver
 ## Root Endpoint
 
 ```sh
-https://tsubaiso.jp
+https://tsubaiso.net
 ```
 
 
@@ -18,7 +18,7 @@ We ask that all requests to the API be made using JSON.
 The user must provide their access token in order to access the Tsubaiso API.
 
 ```
-$ curl -i -H "Access-Token: xxxxxxxxxxxxxxxxx" -H "Accept: application/json" -H "Content-Type: application/json" https://tsubaiso.jp/ar/list
+$ curl -i -H "Access-Token: xxxxxxxxxxxxxxxxx" -H "Accept: application/json" -H "Content-Type: application/json" https://tsubaiso.net/ar/list
 ```
 
 ## Response Codes and Error Handling
@@ -46,7 +46,7 @@ Method: GET
 
 URL Structure: 
 ```sh 
-https://tsubaiso.jp/ar/list/2015/10 
+https://tsubaiso.net/ar/list/2015/10 
 ```
 
 Sample JSON response:
@@ -106,7 +106,7 @@ Method: GET
 
 URL Structure:
 ``` sh
-https://tsubaiso.jp/ar/show/8833 
+https://tsubaiso.net/ar/show/8833 
 ```
 
 Sample JSON response:
@@ -143,7 +143,7 @@ Method: POST
 
 URL Structure:
 ```sh
-https://tsubaiso.jp/ar/create
+https://tsubaiso.net/ar/create
 ```
 
 Parameters:
@@ -166,7 +166,7 @@ Parameter | Necessity | Type | Description
 
 Sample Request:
 ```sh
-curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Access-Token: XXXXXXXXXXXXXX" -X POST -d '{"year": 2015, "month": 10, "price": 5000, "realization_timestamp": "2015-10-31", "customer_master_code": "101", "dept_code": "DEPT A", "reason_master_code": "SALES", "dc": "d", "memo": "500 widgets", "tax_code": 0}' https://tsubaiso.jp/ar/create
+curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Access-Token: XXXXXXXXXXXXXX" -X POST -d '{"year": 2015, "month": 10, "price": 5000, "realization_timestamp": "2015-10-31", "customer_master_code": "101", "dept_code": "DEPT A", "reason_master_code": "SALES", "dc": "d", "memo": "500 widgets", "tax_code": 0}' https://tsubaiso.net/ar/create
 ```
 
 **/ar/destroy/:id**
@@ -177,7 +177,7 @@ Method: POST
 
 URL Structure:
 ```sh
-https://tsubaiso.jp/ar/destroy/8833 
+https://tsubaiso.net/ar/destroy/8833 
 ```
 
 #### Accounts Payables
@@ -190,7 +190,7 @@ Method: GET
 
 URL Structure: 
 ``` sh
-https://tsubaiso.jp/ap_payments/list/2015/10
+https://tsubaiso.net/ap_payments/list/2015/10
 ```
 
 Sample JSON response:
@@ -260,7 +260,7 @@ Method: GET
 
 URL Structure:
 ``` sh
-https://tsubaiso.jp/ap_payments/show/6621 
+https://tsubaiso.net/ap_payments/show/6621 
 ```
 
 Sample JSON response:
@@ -302,7 +302,7 @@ Method: POST
 
 URL Structure:
 ```sh
-https://tsubaiso.jp/ap_payments/create
+https://tsubaiso.net/ap_payments/create
 ```
 
 Parameters:
@@ -330,7 +330,7 @@ Parameter | Necessity | Type | Description
 
 Sample Request:
 ``` sh
-curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Access-Token: XXXXXXXXXXXXXX" -X POST -d '{"year": 2015, "month": 8, "price": 5000, "accrual_timestamp": "2015-10-31", "customer_master_code": "8201", "dept_code": "DEPT C", "reason_master_code": "BUYING_IN", "dc": "c", "memo": "Office Supplies for Frank", "tax_code": 0, "port_type": 1 }' https://tsubaiso.jp/ap_payments/create
+curl -i -H "Content-Type: application/json" -H "Accept: application/json" -H "Access-Token: XXXXXXXXXXXXXX" -X POST -d '{"year": 2015, "month": 8, "price": 5000, "accrual_timestamp": "2015-10-31", "customer_master_code": "8201", "dept_code": "DEPT C", "reason_master_code": "BUYING_IN", "dc": "c", "memo": "Office Supplies for Frank", "tax_code": 0, "port_type": 1 }' https://tsubaiso.net/ap_payments/create
 ```
 
 **/ap/destroy/:id**
@@ -341,5 +341,5 @@ Method: POST
 
 URL Structure:
 ```sh
-https://tsubaiso.jp/ap/destroy/6621 
+https://tsubaiso.net/ap/destroy/6621 
 ```
