@@ -10,6 +10,5 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/tsubaiso/tsubaiso-sdk-ruby"
   s.license = "MIT"
   s.add_dependency "json"
-  s.add_dependency "net/http"
-  s.add_dependency "minitest"
+  s.add_development_dependency "minitest"
 end
