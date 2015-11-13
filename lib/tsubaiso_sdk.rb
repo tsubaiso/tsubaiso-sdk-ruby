@@ -24,7 +24,13 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ap_payments/list/?year=#{year}&month=#{month}")
     api_request(uri, "GET", params)
   end
-  
+
+  def list_customers()
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/customer_masters/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -43,6 +49,31 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
   
+  def show_customer(customer_id)
+    customer_id = customer_id.to_i
+    params = { "id" => customer_id,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/customer_masters/show/#{customer_id}")
+    api_request(uri, "GET", params)
+  end
+  
+  def create_customer(options)
+    params = { "name" => options[:name],
+               "name_kana" => options[:name_kana],
+               "code" => options[:code],
+               "tax_type_for_remittance_charge" => options[:tax_type_for_remittance_charge],
+               "used_in_ar" => options[:used_in_ar],
+               "used_in_ap" => options[:used_in_ap],
+               "ar_account_code" => options[:ar_account_code],
+               "ap_account_code" => options[:ap_account_code],
+               "is_valid" => options[:is_valid],
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + '/customer_masters/create')
+    api_request(uri, "POST", params)
+  end
+
   def create_sale(options)
     params = { "price" => options[:price],
                "year" => options[:year],
@@ -98,6 +129,15 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ap/destroy/#{purchase_id}")
     api_request(uri, "POST", params)
   end
+
+  def destroy_customer(customer_id)
+    customer_id = customer_id.to_i
+    params = { "id" => customer_id,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/customer_masters/destroy/#{customer_id}")
+    api_request(uri, "POST", params)
+  end
   
   private
   
@@ -113,9 +153,9 @@ class TsubaisoSDK
     request.set_form_data(params)
     response = http.request(request)
     if response.body
-      return {:status => response.code, :json => symbolize_keys(JSON.load(response.body))}
+      {:status => response.code, :json => symbolize_keys(JSON.load(response.body))}
     else                    
-      return response.code
+      response.code
     end
   end
 
@@ -127,7 +167,7 @@ class TsubaisoSDK
         end
       end
     else
-      data = data.each_with_object({}) do |(k,v), memo|
+      data.each_with_object({}) do |(k,v), memo|
         memo[k.to_sym] = v
       end
     end
