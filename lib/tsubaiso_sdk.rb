@@ -25,7 +25,7 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
-  def list_customers()
+  def list_customers
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/customer_masters/list/")
     api_request(uri, "GET", params)
