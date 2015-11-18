@@ -29,7 +29,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal @customer_1000[:name], customer[:json][:name]
 
   ensure
-    @api.destroy_customer(customer[:json][:id])
+    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
   
   def test_create_sale
@@ -39,7 +39,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal @sale_201508[:dept_code], sale[:json][:dept_code]
 
   ensure
-    @api.destroy_sale("AR#{sale[:json][:id]}")
+    @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
   end
 
   def test_create_purchase
@@ -49,7 +49,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal @purchase_201508[:dept_code], purchase[:json][:dept_code]
 
   ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}")
+    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
   end
 
   def test_show_sale
@@ -60,7 +60,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal get_sale[:json][:sales_price], sale[:json][:sales_price]
 
   ensure
-    @api.destroy_sale("AR#{sale[:json][:id]}")
+    @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
   end
 
   def test_show_purchase
@@ -71,7 +71,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal get_purchase[:json][:id], purchase[:json][:id]
 
   ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}")
+    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
   end
 
   def test_show_customer
@@ -82,7 +82,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal get_customer[:json][:id], customer[:json][:id]
 
   ensure
-    @api.destroy_customer(customer[:json][:id])
+    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
 
   def test_list_sales
@@ -101,9 +101,9 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert !sales_list[:json].any?{ |x| x[:id] == september_sale_id }
 
   ensure
-    @api.destroy_sale("AR#{august_sale_a[:json][:id]}")
-    @api.destroy_sale("AR#{august_sale_b[:json][:id]}")
-    @api.destroy_sale("AR#{september_sale[:json][:id]}")
+    @api.destroy_sale("AR#{august_sale_a[:json][:id]}") if august_sale_a[:json][:id]
+    @api.destroy_sale("AR#{august_sale_b[:json][:id]}") if august_sale_b[:json][:id]
+    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
   end
 
   def test_list_purchases
@@ -122,9 +122,9 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert !purchase_list[:json].any?{ |x| x[:id] == september_purchase_id }
     
   ensure
-    @api.destroy_purchase("AP#{august_purchase_a[:json][:id]}")
-    @api.destroy_purchase("AP#{august_purchase_b[:json][:id]}")
-    @api.destroy_purchase("AP#{september_purchase[:json][:id]}")
+    @api.destroy_purchase("AP#{august_purchase_a[:json][:id]}") if august_purchase_a[:json][:id]
+    @api.destroy_purchase("AP#{august_purchase_b[:json][:id]}") if august_purchase_b[:json][:id]
+    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
   end
 
   def test_list_customers
@@ -137,6 +137,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert customer_list[:json].any?{ |x| x[:id] == customer_1000_id }
     
   ensure
-    @api.destroy_customer(customer_1000[:json][:id])
+    @api.destroy_customer(customer_1000[:json][:id]) if customer_1000[:json][:id]
   end
 end

@@ -131,7 +131,6 @@ class TsubaisoSDK
   end
 
   def destroy_customer(customer_id)
-    customer_id = customer_id.to_i
     params = { "id" => customer_id,
                "format" => "json"
              }
@@ -153,7 +152,11 @@ class TsubaisoSDK
     request.set_form_data(params)
     response = http.request(request)
     if response.body
-      {:status => response.code, :json => symbolize_keys(JSON.load(response.body))}
+      begin
+        {:status => response.code, :json => symbolize_keys(JSON.load(response.body))}
+      rescue
+        response.body
+      end
     else                    
       response.code
     end
