@@ -31,6 +31,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_staff
+    params = { "format" => "json"}
+    uri = URI.parse(@base_url + "/staffs/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -44,7 +50,7 @@ class TsubaisoSDK
     purchase_id = voucher.scan(/\d/).join("")
     params = { "id" => purchase_id,
                "format" => "json"
-    }
+             }
     uri = URI.parse(@base_url + "/ap_payments/show/#{purchase_id}")
     api_request(uri, "GET", params)
   end
@@ -55,6 +61,15 @@ class TsubaisoSDK
                "format" => "json"
              }
     uri = URI.parse(@base_url + "/customer_masters/show/#{customer_id}")
+    api_request(uri, "GET", params)
+  end
+
+  def show_staff_member(staff_id)
+    staff_id = staff_id.to_i
+    params = { "id" => staff_id,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/staffs/show/#{staff_id}")
     api_request(uri, "GET", params)
   end
   

@@ -57,7 +57,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     get_sale = @api.show_sale("AR#{sale[:json][:id]}")
     assert_equal 200, get_sale[:status].to_i
-    assert_equal get_sale[:json][:sales_price], sale[:json][:sales_price]
+    assert_equal sale[:json][:sales_price], get_sale[:json][:sales_price]
 
   ensure
     @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
@@ -68,7 +68,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     get_purchase = @api.show_purchase("AP#{purchase[:json][:id]}")
     assert_equal 200, get_purchase[:status].to_i
-    assert_equal get_purchase[:json][:id], purchase[:json][:id]
+    assert_equal purchase[:json][:id], get_purchase[:json][:id]
 
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
@@ -79,10 +79,16 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     get_customer = @api.show_customer("#{customer[:json][:id]}")
     assert_equal 200, get_customer[:status].to_i
-    assert_equal get_customer[:json][:id], customer[:json][:id]
+    assert_equal customer[:json][:id], get_customer[:json][:id]
 
   ensure
     @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
+  end
+
+  def test_show_staff_member
+    get_staff_member = @api.show_staff_member(1)
+    assert_equal 200, get_staff_member[:status].to_i
+    assert_equal 1, get_staff_member[:json][:id]
   end
 
   def test_list_sales
@@ -138,5 +144,11 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     
   ensure
     @api.destroy_customer(customer_1000[:json][:id]) if customer_1000[:json][:id]
+  end
+
+  def test_list_staff
+    staff_list = @api.list_staff
+    assert_equal 200, staff_list[:status].to_i
+    assert(staff_list.size > 0)
   end
 end
