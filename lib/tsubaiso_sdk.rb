@@ -71,7 +71,7 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
-  def show_staff_member(staff_id)
+  def show_staff(staff_id)
     staff_id = staff_id.to_i
     params = { "id" => staff_id,
                "format" => "json"
@@ -85,7 +85,7 @@ class TsubaisoSDK
       params = { "id" => options[:id],
                  "staff_id" => options[:staff_id],
                  "code" => options[:code],
-                 "start_timestamp" => options[:start_timestamp],
+                 "time" => options[:time],
                  "format" => "json"
                }
     else

@@ -123,7 +123,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
 
-  def test_show_staff_member
+  def test_show_staff
     get_staff_member = @api.show_staff_member(1)
     assert_equal 200, get_staff_member[:status].to_i
     assert_equal 1, get_staff_member[:json][:id]
@@ -139,7 +139,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     options = { staff_id: staff_data[:json][:staff_id],
                 code: staff_data[:json][:code],
-                start_timestamp: staff_data[:json][:start_timestamp]
+                time: staff_data[:json][:start_timestamp]
               }
     
     #get data using staff id and code
