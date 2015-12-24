@@ -35,7 +35,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   
   def test_create_sale
     sale = @api.create_sale(@sale_201508)
-
+    
     assert_equal 200, sale[:status].to_i
     assert_equal @sale_201508[:dept_code], sale[:json][:dept_code]
 
@@ -62,7 +62,23 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   ensure
     @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
   end
+  
+  def test_update_sale
+    sale = @api.create_sale(@sale_201508)
+    options = { id: sale[:json][:id],
+                price: 25000,
+                memo: "Updated memo" }
 
+    updated_sale = @api.update_sale(options)
+    assert_equal 200, updated_sale[:status].to_i
+    assert_equal sale[:json][:id], updated_sale[:json][:id]
+    assert_equal "Updated memo", updated_sale[:json][:memo]
+    assert_equal 25000, updated_sale[:json][:sales_price]
+
+  ensure
+    @api.destroy_sale("AP#{sale[:json][:id]}") if sale[:json][:id]
+  end
+  
   def test_update_purchase
     purchase = @api.create_purchase(@purchase_201508)
     options = { id: purchase[:json][:id],
@@ -78,7 +94,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
   end
-
+  
   def test_update_customer
     customer = @api.create_customer(@customer_1000)
     options = { id: customer[:json][:id],
@@ -110,7 +126,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_show_sale
     sale = @api.create_sale(@sale_201508)
-
+    
     get_sale = @api.show_sale("AR#{sale[:json][:id]}")
     assert_equal 200, get_sale[:status].to_i
     assert_equal sale[:json][:sales_price], get_sale[:json][:sales_price]
