@@ -209,7 +209,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + '/ap_payments/update')
     api_request(uri, "POST", params)
   end
-              
+
   def update_customer(options)
     params = { "id" => options[:id],
                "name" => options[:name],
