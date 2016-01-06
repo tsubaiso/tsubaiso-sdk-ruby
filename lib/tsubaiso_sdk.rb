@@ -170,6 +170,27 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
 
+  def update_sale(options)
+    params = { "id" => options[:id],
+               "price" => options[:price],
+               "year" => options[:year],
+               "month" => options[:month],
+               "realization_timestamp" => options[:realization_timestamp],
+               "customer_master_code" => options[:customer_master_code],
+               "dept_code" => options[:dept_code],
+               "reason_master_code" => options[:reason_master_code],
+               "dc" => options[:dc],
+               "memo" => options[:memo],
+               "tax_code" => options[:tax_code],
+               "sales_tax" => options[:sales_tax],
+               "scheduled_memo" => options[:scheduled_memo],
+               "scheduled_receive_timestamp" => options[:scheduled_receive_timestamp],
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + '/ar/update') 
+    api_request(uri, "POST", params)
+  end
+  
   def update_purchase(options)
     params = { "id" => options[:id],
                "price" => options[:price],
