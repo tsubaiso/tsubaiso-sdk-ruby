@@ -7,8 +7,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
 
     # data
-    @sale_201508 = { price: 10800, year: 2015, month: 8, realization_timestamp: "2015-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25" }
-    @sale_201509 = { price: 10800, year: 2015, month: 9, realization_timestamp: "2015-09-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25" }
+    @sale_201508 = { price: 10800, realization_timestamp: "2015-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25" }
+    @sale_201509 = { price: 10800, realization_timestamp: "2015-09-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25" }
     @purchase_201508 = { price: 5400, year: 2015, month: 8, accrual_timestamp: "2015-08-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1 }
     @purchase_201509 = { price: 5400, year: 2015, month: 9, accrual_timestamp: "2015-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1}
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
@@ -74,7 +74,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, updated_sale[:status].to_i
     assert_equal sale[:json][:id], updated_sale[:json][:id]
     assert_equal "Updated memo", updated_sale[:json][:memo]
-    assert_equal 25000, updated_sale[:json][:sales_price] + updated_sale[:json][:sales_tax]
+    assert_equal 25000, updated_sale[:json][:price] + updated_sale[:json][:sales_tax]
 
   ensure
     @api.destroy_sale("AP#{sale[:json][:id]}") if sale[:json][:id]
@@ -90,7 +90,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, updated_purchase[:status].to_i
     assert_equal purchase[:json][:id], updated_purchase[:json][:id]
     assert_equal "Updated memo", updated_purchase[:json][:memo]
-    assert_equal 50000, updated_purchase[:json][:buying_price] + updated_purchase[:json][:buying_tax]
+    assert_equal 50000, updated_purchase[:json][:price] + updated_purchase[:json][:buying_tax]
 
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
