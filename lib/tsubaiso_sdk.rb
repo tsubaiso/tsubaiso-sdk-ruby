@@ -115,8 +115,6 @@ class TsubaisoSDK
 
   def create_sale(options)
     params = { "price" => options[:price],
-               "year" => options[:year],
-               "month" => options[:month],
                "realization_timestamp" => options[:realization_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -135,8 +133,6 @@ class TsubaisoSDK
   
   def create_purchase(options)
     params = { "price" => options[:price],
-               "year" => options[:year],
-               "month" => options[:month],
                "accrual_timestamp" => options[:accrual_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -173,8 +169,6 @@ class TsubaisoSDK
   def update_sale(options)
     params = { "id" => options[:id],
                "price" => options[:price],
-               "year" => options[:year],
-               "month" => options[:month],
                "realization_timestamp" => options[:realization_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -194,8 +188,6 @@ class TsubaisoSDK
   def update_purchase(options)
     params = { "id" => options[:id],
                "price" => options[:price],
-               "year" => options[:year],
-               "month" => options[:month],
                "accrual_timestamp" => options[:accrual_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
