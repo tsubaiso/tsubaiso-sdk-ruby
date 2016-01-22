@@ -114,7 +114,7 @@ class TsubaisoSDK
   end
 
   def create_sale(options)
-    params = { "price" => options[:price],
+    params = { "price_including_tax" => options[:price_including_tax],               
                "realization_timestamp" => options[:realization_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -132,7 +132,7 @@ class TsubaisoSDK
   end
   
   def create_purchase(options)
-    params = { "price" => options[:price],
+    params = { "price_including_tax" => options[:price_including_tax],
                "accrual_timestamp" => options[:accrual_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -168,7 +168,7 @@ class TsubaisoSDK
 
   def update_sale(options)
     params = { "id" => options[:id],
-               "price" => options[:price],
+               "price_including_tax" => options[:price_including_tax],
                "realization_timestamp" => options[:realization_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -187,7 +187,7 @@ class TsubaisoSDK
   
   def update_purchase(options)
     params = { "id" => options[:id],
-               "price" => options[:price],
+               "price_including_tax" => options[:price_including_tax],
                "accrual_timestamp" => options[:accrual_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
