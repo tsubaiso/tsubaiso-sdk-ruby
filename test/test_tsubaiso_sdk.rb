@@ -12,8 +12,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @purchase_201508 = { price_including_tax: 5400, year: 2015, month: 8, accrual_timestamp: "2015-08-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1 }
     @purchase_201509 = { price_including_tax: 5400, year: 2015, month: 9, accrual_timestamp: "2015-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1}
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
-    @staff_id = 1
-    @staff_data_1 = { staff_id: @staff_id, code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
+    @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
   end
 
   def test_failed_request
@@ -55,6 +54,10 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_create_staff_data
+    staff_list = @api.list_staff
+    first_staff_id = staff_list[:json].first[:id]
+    @staff_data_1[:staff_id] = first_staff_id
+    
     staff_data = @api.create_staff_data(@staff_data_1)
     
     assert_equal 200, staff_data[:status].to_i
@@ -111,6 +114,10 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_update_staff_data
+    staff_list = @api.list_staff
+    first_staff_id = staff_list[:json].first[:id]
+    @staff_data_1[:staff_id] = first_staff_id
+    
     staff_data = @api.create_staff_data(@staff_data_1)
     options = { id: staff_data[:json][:id],
                 value: "Programmer"
@@ -159,14 +166,21 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_show_staff
-    get_staff_member = @api.show_staff(@staff_id)
+    staff_list = @api.list_staff
+    first_staff_id = staff_list[:json].first[:id]
+    
+    get_staff_member = @api.show_staff(first_staff_id)
     assert_equal 200, get_staff_member[:status].to_i
-    assert_equal @staff_id, get_staff_member[:json][:id]
+    assert_equal first_staff_id, get_staff_member[:json][:id]
   end
 
   def test_show_staff_data
+    staff_list = @api.list_staff
+    first_staff_id = staff_list[:json].first[:id]
+    @staff_data_1[:staff_id] = first_staff_id
+    
     staff_data = @api.create_staff_data(@staff_data_1)
-
+    
     #get data using id
     get_staff_data = @api.show_staff_data(staff_data[:json][:id])
     assert_equal 200, get_staff_data[:status].to_i
@@ -184,6 +198,27 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   ensure
     @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]    
+  end
+
+  def test_show_staff_datum_master
+    staff_datum_masters_list = @api.list_staff_datum_masters
+    first_staff_datum_master_id = staff_datum_masters_list[:json].first[:id]
+    
+    get_staff_datum_master = @api.show_staff_datum_master(first_staff_datum_master_id)
+    assert_equal 200, get_staff_datum_master[:status].to_i
+    assert_equal first_staff_datum_master_id, get_staff_datum_master[:json][:id]
+  end
+
+  def test_show_staff_datum_master_by_code
+    staff_datum_masters_list = @api.list_staff_datum_masters
+    first_staff_datum_master_code = staff_datum_masters_list[:json].first[:code]
+    
+    options = { code: first_staff_datum_master_code }
+
+    #get data using code
+    get_staff_data_2 = @api.show_staff_datum_master(options)
+    assert_equal 200, get_staff_data_2[:status].to_i
+    assert_equal first_staff_datum_master_code, get_staff_data_2[:json][:code]
   end
 
   def test_list_sales
@@ -248,8 +283,17 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_staff_data
-    staff_data_list = @api.list_staff_data(@staff_id)
+    staff_list = @api.list_staff
+    first_staff_id = staff_list[:json].first[:id]
+    
+    staff_data_list = @api.list_staff_data(first_staff_id)
     assert_equal 200, staff_data_list[:status].to_i
-    assert staff_data_list[:json].all?{ |x| x[:staff_id] == @staff_id }
+    assert staff_data_list[:json].all?{ |x| x[:staff_id] == first_staff_id }
+  end
+
+  def test_list_staff_datum_masters
+    staff_datum_masters_list = @api.list_staff_datum_masters
+    assert_equal 200, staff_datum_masters_list[:status].to_i
+    assert(staff_datum_masters_list.size > 0)
   end
 end

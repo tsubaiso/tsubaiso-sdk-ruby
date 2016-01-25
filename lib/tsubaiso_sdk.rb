@@ -44,6 +44,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_staff_datum_masters
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/staff_datum_masters/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -96,7 +102,22 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/staff_data/show")
     api_request(uri, "GET", params)
   end
-  
+
+  def show_staff_datum_master(options)
+    if options.is_a?(Hash)
+      params = { "id" => options[:id],
+                 "code" => options[:code],
+                 "format" => "json"
+      }
+    else
+      params = { "id" => options,
+                 "format" => "json"
+      }
+    end
+    uri = URI.parse(@base_url + "staff_datum_masters/show")
+    api_request(uri, "GET", params)
+  end
+
   def create_customer(options)
     params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
