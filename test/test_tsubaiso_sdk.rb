@@ -14,6 +14,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
     @staff_id = 1
     @staff_data_1 = { staff_id: @staff_id, code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
+    @staff_datum_id = 201083078
+    @staff_datum_code = "BIRTH_YMD"
   end
 
   def test_failed_request
@@ -186,6 +188,21 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]    
   end
 
+  def test_show_staff_datum_master
+    get_staff_datum_master = @api.show_staff_datum_master(@staff_datum_id)
+    assert_equal 200, get_staff_datum_master[:status].to_i
+    assert_equal @staff_datum_id, get_staff_datum_master[:json][:id]
+  end
+
+  def test_show_staff_datum_master_by_code
+    options = { code: @staff_datum_code }
+
+    #get data using code
+    get_staff_data_2 = @api.show_staff_datum_master(options)
+    assert_equal 200, get_staff_data_2[:status].to_i
+    assert_equal @staff_datum_code, get_staff_data_2[:json][:code]
+  end
+
   def test_list_sales
     august_sale_a = @api.create_sale(@sale_201508)
     august_sale_b = @api.create_sale(@sale_201508)
@@ -251,5 +268,11 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     staff_data_list = @api.list_staff_data(@staff_id)
     assert_equal 200, staff_data_list[:status].to_i
     assert staff_data_list[:json].all?{ |x| x[:staff_id] == @staff_id }
+  end
+
+  def test_list_staff_datum_masters
+    staff_datum_masters_list = @api.list_staff_datum_masters
+    assert_equal 200, staff_datum_masters_list[:status].to_i
+    assert(staff_datum_masters_list.size > 0)
   end
 end
