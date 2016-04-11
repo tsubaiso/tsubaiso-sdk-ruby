@@ -50,6 +50,24 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_manual_journals(year = nil, month = nil)
+    params = { "year" => year,
+               "month" => month,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/manual_journals/list/")
+    api_request(uri, "GET", params)
+  end
+
+  def list_journals(year, month)
+    params = { "year" => year,
+               "month" => month,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/journals/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -114,7 +132,23 @@ class TsubaisoSDK
                  "format" => "json"
       }
     end
-    uri = URI.parse(@base_url + "staff_datum_masters/show")
+    uri = URI.parse(@base_url + "/staff_datum_masters/show")
+    api_request(uri, "GET", params)
+  end
+
+  def show_manual_journal(manual_journal_id)
+    params = { "id" => manual_journal_id,
+               "format" => "json"
+      }
+    uri = URI.parse(@base_url + "/manual_journals/show")
+    api_request(uri, "GET", params)
+  end
+
+  def show_journal(manual_journal_id)
+    params = { "id" => manual_journal_id,
+               "format" => "json"
+      }
+    uri = URI.parse(@base_url + "/journals/show")
     api_request(uri, "GET", params)
   end
 
@@ -184,6 +218,15 @@ class TsubaisoSDK
     end
     
     uri = URI.parse(@base_url + '/staff_data/create')
+    api_request(uri, "POST", params)
+  end
+
+  def create_manual_journal(options)
+    params = { "journal_timestamp" => options[:journal_timestamp],
+               "journal_dcs" => make_journal_dcs(options[:journal_dcs]),
+               "format" => "json" }
+
+    uri = URI.parse(@base_url + '/manual_journals/create')
     api_request(uri, "POST", params)
   end
 
@@ -259,6 +302,16 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
   
+  def update_manual_journal(options)
+    params = { "id" => options[:id], 
+               "journal_timestamp" => options[:journal_timestamp],
+               "journal_dcs" => make_journal_dcs(options[:journal_dcs]),
+               "format" => "json" }
+    
+    uri = URI.parse(@base_url + '/manual_journals/update')
+    api_request(uri, "POST", params)
+  end
+
   def destroy_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -292,19 +345,28 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/staff_data/destroy/")
     api_request(uri, "POST", params)
   end
-  
+
+  def destroy_manual_journal(manual_journal_id)
+    params = { "id" => manual_journal_id,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/manual_journals/destroy/")
+    api_request(uri, "POST", params)
+  end
+
   private
   
   def api_request(uri, http_verb, params)
     http = Net::HTTP.new(uri.host, uri.port)
+    initheader = {'Content-Type' => 'application/json'}
     http.use_ssl = true if @base_url =~ /^https/
     if http_verb == "GET"
-      request = Net::HTTP::Get.new(uri.path)
+      request = Net::HTTP::Get.new(uri.path, initheader)
     else
-      request = Net::HTTP::Post.new(uri.path)
+      request = Net::HTTP::Post.new(uri.path, initheader)
     end
     request["Access-Token"] = @access_token
-    request.set_form_data(params)
+    request.body = params.to_json
     response = http.request(request)
     if response.body
       begin
@@ -321,13 +383,36 @@ class TsubaisoSDK
     if data.class == Array
       data.each_with_index do |hash, index|
         data[index] = hash.each_with_object({}) do |(k,v), memo|
+          v = symbolize_keys(v) if v.class == Hash || v.class == Array
           memo[k.to_sym] = v
         end
       end
     else
       data.each_with_object({}) do |(k,v), memo|
+        v = symbolize_keys(v) if v.class == Hash || v.class == Array
         memo[k.to_sym] = v
       end
     end
+  end
+
+  def make_journal_dcs(journal_dcs)
+    return nil if journal_dcs.nil?
+    journal_dcs.map {|journal_dc| make_journal_dc(journal_dc)}
+  end
+
+  def make_journal_dc(journal_dc)
+    { "debit"  => make_journal_dc_oneside(journal_dc[:debit]), 
+      "credit" => make_journal_dc_oneside(journal_dc[:credit]), 
+      "dept_code" => journal_dc[:dept_code],
+      "memo" => journal_dc[:memo] }
+  end
+
+  def make_journal_dc_oneside(side)
+    return nil if side.nil?
+    { "account_code" => side[:account_code].to_s,
+      "price_including_tax" => side[:price_including_tax],
+      "tax_type" => side[:tax_type],
+      "sales_tax" => side[:sales_tax]
+    }
   end
 end
