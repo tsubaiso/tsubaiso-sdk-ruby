@@ -49,6 +49,16 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/staff_datum_masters/list/")
     api_request(uri, "GET", params)
   end
+  
+  def list_reimbursements(year, month)
+    params = { "format" => "json",
+               "year" => year,
+               "month" => month
+             }
+    uri = URI.parse(@base_url + "/reimbursements/list/")
+    api_request(uri, "GET", params)
+  end
+  
 
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
@@ -115,6 +125,14 @@ class TsubaisoSDK
       }
     end
     uri = URI.parse(@base_url + "staff_datum_masters/show")
+    api_request(uri, "GET", params)
+  end
+  
+  def show_reimbursement(reimbursement_id)
+    params = { "format" => "json",
+               "id" => reimbursement_id.to_i
+             }
+    uri = URI.parse(@base_url + "/reimbursements/show/")
     api_request(uri, "GET", params)
   end
 
@@ -187,6 +205,18 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
 
+  def create_reimbursement(options)
+    params = { "format" => "json",
+               "applicant" => options[:applicant],
+               "application_term" => options[:application_term],
+               "staff_code" => options[:staff_code],
+               "dept_code" => options[:dept_code],
+               "memo" => options[:memo]
+             }
+    uri = URI.parse(@base_url + "/reimbursements/create/")
+    api_request(uri, "POST", params)
+  end
+  
   def update_sale(options)
     params = { "id" => options[:id],
                "price_including_tax" => options[:price_including_tax],
@@ -259,6 +289,19 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
   
+  def update_reimbursement(reimbursement_id, options)
+    params = { "format" => "json",
+               "id" => reimbursement_id,
+               "applicant" => options[:applicant],
+               "application_term" => options[:application_term],
+               "staff_code" => options[:staff_code],
+               "dept_code" => options[:dept_code],
+               "memo" => options[:memo]
+             }
+    uri = URI.parse(@base_url + "/reimbursements/update/")
+    api_request(uri, "POST", params)
+  end
+  
   def destroy_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -290,6 +333,14 @@ class TsubaisoSDK
                "format" => "json"
              }
     uri = URI.parse(@base_url + "/staff_data/destroy/")
+    api_request(uri, "POST", params)
+  end
+  
+  def destroy_reimbursement(reimbursement_id)
+    params = { "id" => reimbursement_id,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/reimbursements/destroy/")
     api_request(uri, "POST", params)
   end
   
