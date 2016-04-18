@@ -1,3 +1,4 @@
+# encoding: utf-8
 require 'minitest/autorun'
 require './lib/tsubaiso_sdk'
 
@@ -13,6 +14,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @purchase_201509 = { price_including_tax: 5400, year: 2015, month: 9, accrual_timestamp: "2015-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1}
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
+    @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
+    @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
   end
 
   def test_failed_request
@@ -65,6 +68,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     
   ensure
     @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
+  end
+  
+  def test_create_reimbursement
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    assert_equal 200, reimbursement[:status].to_i
+    assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
+    
+    ensure
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
   end
   
   def test_update_sale
@@ -130,6 +142,21 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     
   ensure
     @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
+  end
+  
+  def test_update_reimbursement
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    options = {
+      applicant: "test",
+      dept_code: "COMMON"      
+    }
+    updated_reimbursement = @api.update_reimbursement(reimbursement[:json][:id], options)
+    assert_equal 200, updated_reimbursement[:status].to_i
+    assert_equal options[:applicant], updated_reimbursement[:json][:applicant]
+    assert_equal options[:dept_code], updated_reimbursement[:json][:dept_code]
+    
+  ensure
+    @api.destroy_reimbursement(updated_reimbursement[:json][:id] || reimbursement[:json][:id]) if updated_reimbursement[:json][:id] || reimbursement[:json][:id]
   end
 
   def test_show_sale
@@ -220,6 +247,16 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, get_staff_data_2[:status].to_i
     assert_equal first_staff_datum_master_code, get_staff_data_2[:json][:code]
   end
+  
+  def test_show_reimbursement
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    reimbursement = @api.show_reimbursement(reimbursement[:json][:id])
+    
+    assert_equal 200, reimbursement[:status].to_i
+    assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
+  ensure
+    @api.destroy_reimbursement(reimbursement[:json][:id])
+  end
 
   def test_list_sales
     august_sale_a = @api.create_sale(@sale_201508)
@@ -295,5 +332,22 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     staff_datum_masters_list = @api.list_staff_datum_masters
     assert_equal 200, staff_datum_masters_list[:status].to_i
     assert(staff_datum_masters_list.size > 0)
+  end
+  
+  def test_list_reimbursements
+    reimbursement_a = @api.create_reimbursement(@reimbursement_1)
+    reimbursement_b = @api.create_reimbursement(@reimbursement_2)
+    
+    reimbursement_a_id = reimbursement_a[:json][:id]
+    reimbursement_b_id = reimbursement_b[:json][:id]
+
+    reimbursements_list = @api.list_reimbursements(2016, 3)
+    assert_equal 200, reimbursements_list[:status].to_i
+    assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_a_id }
+    assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_b_id }
+    
+  ensure
+    @api.destroy_reimbursement(reimbursement_a_id) if reimbursement_a_id
+    @api.destroy_reimbursement(reimbursement_b_id) if reimbursement_b_id
   end
 end
