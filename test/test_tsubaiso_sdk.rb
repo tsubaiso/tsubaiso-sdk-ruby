@@ -16,6 +16,9 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
     @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
     @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
+    @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
+                         debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
+                         credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ] }
   end
 
   def test_failed_request
@@ -287,6 +290,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_show_manual_journal
+    @api.create_manual_journal(@manual_journal_1)
     manual_journals_list = @api.list_manual_journals(2016, 4)
     first_manual_journal_id = manual_journals_list[:json].first[:id]
 
@@ -296,6 +300,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_show_journal
+    @api.create_manual_journal(@manual_journal_1)
     journals_list= @api.list_journals(2016, 4)
     first_journal_id= journals_list[:json].first[:id]
 
