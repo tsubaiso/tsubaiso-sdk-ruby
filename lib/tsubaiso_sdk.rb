@@ -197,6 +197,7 @@ class TsubaisoSDK
                "sales_tax" => options[:sales_tax],
                "scheduled_memo" => options[:scheduled_memo],
                "scheduled_receive_timestamp" => options[:scheduled_receive_timestamp],
+               "tag_list" => options[:tag_list],
                "format" => "json"
              }
     uri = URI.parse(@base_url + '/ar/create')
@@ -213,6 +214,7 @@ class TsubaisoSDK
                "memo" => options[:memo],
                "tax_code" => options[:tax_code],
                "port_type" => options[:port_type],
+               "tag_list" => options[:tag_list],
                "format" => "json"
              }
     uri = URI.parse(@base_url + '/ap_payments/create')
@@ -272,6 +274,7 @@ class TsubaisoSDK
                "sales_tax" => options[:sales_tax],
                "scheduled_memo" => options[:scheduled_memo],
                "scheduled_receive_timestamp" => options[:scheduled_receive_timestamp],
+               "tag_list" => options[:tag_list],
                "format" => "json"
              }
     uri = URI.parse(@base_url + '/ar/update')
@@ -289,6 +292,7 @@ class TsubaisoSDK
                "memo" => options[:memo],
                "tax_code" => options[:tax_code],
                "port_type" => options[:port_type],
+               "tag_list" => options[:tag_list],
                "format" => "json"}
 
     uri = URI.parse(@base_url + '/ap_payments/update')
