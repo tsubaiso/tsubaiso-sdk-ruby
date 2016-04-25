@@ -1,12 +1,12 @@
 class TsubaisoSDK
   require "net/http"
   require "json"
-  
+
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
     @access_token = options[:access_token]
   end
-  
+
   def list_sales(year, month)
     params = { "year" => year,
                "month" => month,
@@ -15,7 +15,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ar/list/")
     api_request(uri, "GET", params)
   end
-  
+
   def list_purchases(year, month)
     params = { "year" => year,
                "month" => month,
@@ -50,6 +50,15 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_reimbursements(year, month)
+    params = { "format" => "json",
+               "year" => year,
+               "month" => month
+             }
+    uri = URI.parse(@base_url + "/reimbursements/list/")
+    api_request(uri, "GET", params)
+  end
+
   def list_manual_journals(year = nil, month = nil)
     params = { "year" => year,
                "month" => month,
@@ -76,7 +85,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ar/show/")
     api_request(uri, "GET", params)
   end
-  
+
   def show_purchase(voucher)
     purchase_id = voucher.scan(/\d/).join("")
     params = { "id" => purchase_id,
@@ -85,7 +94,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ap_payments/show/")
     api_request(uri, "GET", params)
   end
-  
+
   def show_customer(customer_id)
     customer_id = customer_id.to_i
     params = { "id" => customer_id,
@@ -152,6 +161,14 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def show_reimbursement(reimbursement_id)
+    params = { "format" => "json",
+               "id" => reimbursement_id.to_i
+             }
+    uri = URI.parse(@base_url + "/reimbursements/show/")
+    api_request(uri, "GET", params)
+  end
+
   def create_customer(options)
     params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
@@ -169,7 +186,7 @@ class TsubaisoSDK
   end
 
   def create_sale(options)
-    params = { "price_including_tax" => options[:price_including_tax],               
+    params = { "price_including_tax" => options[:price_including_tax],
                "realization_timestamp" => options[:realization_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -182,10 +199,10 @@ class TsubaisoSDK
                "scheduled_receive_timestamp" => options[:scheduled_receive_timestamp],
                "format" => "json"
              }
-    uri = URI.parse(@base_url + '/ar/create') 
+    uri = URI.parse(@base_url + '/ar/create')
     api_request(uri, "POST", params)
   end
-  
+
   def create_purchase(options)
     params = { "price_including_tax" => options[:price_including_tax],
                "accrual_timestamp" => options[:accrual_timestamp],
@@ -210,13 +227,13 @@ class TsubaisoSDK
                "start_timestamp" => options[:start_timestamp],
                "format" => "json"
              }
-    
+
     if options[:finish_timestamp]
       params[:finish_timestamp] = options[:finish_timestamp]
     elsif options[:no_finish_timestamp]
       params[:no_finish_timestamp] = options[:no_finish_timestamp]
     end
-    
+
     uri = URI.parse(@base_url + '/staff_data/create')
     api_request(uri, "POST", params)
   end
@@ -227,6 +244,18 @@ class TsubaisoSDK
                "format" => "json" }
 
     uri = URI.parse(@base_url + '/manual_journals/create')
+    api_request(uri, "POST", params)
+  end
+
+  def create_reimbursement(options)
+    params = { "format" => "json",
+               "applicant" => options[:applicant],
+               "application_term" => options[:application_term],
+               "staff_code" => options[:staff_code],
+               "dept_code" => options[:dept_code],
+               "memo" => options[:memo]
+             }
+    uri = URI.parse(@base_url + "/reimbursements/create/")
     api_request(uri, "POST", params)
   end
 
@@ -245,10 +274,10 @@ class TsubaisoSDK
                "scheduled_receive_timestamp" => options[:scheduled_receive_timestamp],
                "format" => "json"
              }
-    uri = URI.parse(@base_url + '/ar/update') 
+    uri = URI.parse(@base_url + '/ar/update')
     api_request(uri, "POST", params)
   end
-  
+
   def update_purchase(options)
     params = { "id" => options[:id],
                "price_including_tax" => options[:price_including_tax],
@@ -297,18 +326,31 @@ class TsubaisoSDK
     elsif options[:no_finish_timestamp]
       params[:no_finish_timestamp] = options[:no_finish_timestamp]
     end
-    
+
     uri = URI.parse(@base_url + '/staff_data/update')
     api_request(uri, "POST", params)
   end
-  
+
   def update_manual_journal(options)
-    params = { "id" => options[:id], 
+    params = { "id" => options[:id],
                "journal_timestamp" => options[:journal_timestamp],
                "journal_dcs" => make_journal_dcs(options[:journal_dcs]),
                "format" => "json" }
-    
+
     uri = URI.parse(@base_url + '/manual_journals/update')
+    api_request(uri, "POST", params)
+  end
+
+  def update_reimbursement(reimbursement_id, options)
+    params = { "format" => "json",
+               "id" => reimbursement_id,
+               "applicant" => options[:applicant],
+               "application_term" => options[:application_term],
+               "staff_code" => options[:staff_code],
+               "dept_code" => options[:dept_code],
+               "memo" => options[:memo]
+             }
+    uri = URI.parse(@base_url + "/reimbursements/update/")
     api_request(uri, "POST", params)
   end
 
@@ -320,7 +362,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ar/destroy/")
     api_request(uri, "POST", params)
   end
-  
+
   def destroy_purchase(voucher)
     purchase_id = voucher.scan(/\d/).join("")
     params = { "id" => purchase_id,
@@ -354,8 +396,16 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
 
+  def destroy_reimbursement(reimbursement_id)
+    params = { "id" => reimbursement_id,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/reimbursements/destroy/")
+    api_request(uri, "POST", params)
+  end
+
   private
-  
+
   def api_request(uri, http_verb, params)
     http = Net::HTTP.new(uri.host, uri.port)
     initheader = {'Content-Type' => 'application/json'}
@@ -374,7 +424,7 @@ class TsubaisoSDK
       rescue
         response.body
       end
-    else                    
+    else
       response.code
     end
   end
@@ -401,8 +451,8 @@ class TsubaisoSDK
   end
 
   def make_journal_dc(journal_dc)
-    { "debit"  => make_journal_dc_oneside(journal_dc[:debit]), 
-      "credit" => make_journal_dc_oneside(journal_dc[:credit]), 
+    { "debit"  => make_journal_dc_oneside(journal_dc[:debit]),
+      "credit" => make_journal_dc_oneside(journal_dc[:credit]),
       "dept_code" => journal_dc[:dept_code],
       "memo" => journal_dc[:memo] }
   end
