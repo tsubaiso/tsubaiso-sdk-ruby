@@ -424,7 +424,7 @@ class TsubaisoSDK
     response = http.request(request)
     if response.body
       begin
-        {:status => response.code, :json => symbolize_keys(JSON.load(response.body))}
+        {:status => response.code, :json => recursive_symbolize_keys(JSON.load(response.body))}
       rescue
         response.body
       end
@@ -433,19 +433,18 @@ class TsubaisoSDK
     end
   end
 
-  def symbolize_keys(data)
-    if data.class == Array
-      data.each_with_index do |hash, index|
-        data[index] = hash.each_with_object({}) do |(k,v), memo|
-          v = symbolize_keys(v) if v.class == Hash || v.class == Array
-          memo[k.to_sym] = v
+  def recursive_symbolize_keys(h)
+    case h
+    when Hash
+      Hash[
+        h.map do |k, v|
+          [ k.respond_to?(:to_sym) ? k.to_sym : k, recursive_symbolize_keys(v) ]
         end
-      end
+      ]
+    when Enumerable
+      h.map { |v| recursive_symbolize_keys(v) }
     else
-      data.each_with_object({}) do |(k,v), memo|
-        v = symbolize_keys(v) if v.class == Hash || v.class == Array
-        memo[k.to_sym] = v
-      end
+      h
     end
   end
 
