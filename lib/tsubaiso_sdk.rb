@@ -437,13 +437,11 @@ class TsubaisoSDK
     if data.class == Array
       data.each_with_index do |hash, index|
         data[index] = hash.each_with_object({}) do |(k,v), memo|
-          v = symbolize_keys(v) if v.class == Hash || v.class == Array
           memo[k.to_sym] = v
         end
       end
     else
       data.each_with_object({}) do |(k,v), memo|
-        v = symbolize_keys(v) if v.class == Hash || v.class == Array
         memo[k.to_sym] = v
       end
     end
