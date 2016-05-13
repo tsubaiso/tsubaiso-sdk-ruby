@@ -287,7 +287,7 @@ class TsubaisoSDK
                "brief" => options[:brief],
                "memo" => options[:memo],
                "tag_list" => options[:tag_list],
-               "tax_code" => options[:tax_code]
+               "tax_type" => options[:tax_type]
              }
     uri = URI.parse(@base_url + '/reimbursement_transactions/create/')
     api_request(uri, "POST", params)
@@ -401,7 +401,7 @@ class TsubaisoSDK
                "brief" => options[:brief],
                "memo"  => options[:memo],
                "tag_list" => options[:tag_list],
-               "tax_code" => options[:tax_code]
+               "tax_type" => options[:tax_type]
              }
     uri = URI.parse(@base_url + "/reimbursement_transactions/update/")
     api_request(uri, "POST", params)

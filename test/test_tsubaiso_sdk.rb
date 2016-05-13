@@ -193,8 +193,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id].to_i })
     reimbursement_transaction = @api.create_reimbursement_transaction(options)
-    updates = { :id => reimbursement_transaction[:json][:is], :price_value => 9999, :reason_code => "SUPPLIES" }
-
+    updates = { :id => reimbursement_transaction[:json][:id], :price_value => 9999, :reason_code => "SUPPLIES" }
+    
     updated_reimbursement_transaction = @api.update_reimbursement_transaction(updates)
     assert_equal 200, updated_reimbursement_transaction[:status].to_i
     assert_equal updates[:id].to_i, updated_reimbursement_transaction[:json][:id].to_i
