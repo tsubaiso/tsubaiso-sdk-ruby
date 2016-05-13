@@ -16,6 +16,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
     @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
     @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
+    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"MEETING", brief:"everyting going well", memo:"easy", tag_list:"Canada,Banana" }
+    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"SUPPLIES", brief:"not well", memo:"hard", tag_list:"Canada" }
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
                          debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ] }
@@ -91,6 +93,19 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
 
     ensure
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+  end
+
+
+  def test_create_reimbursement_transaction
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id] })
+    reimbursement_transaction = @api.create_reimbursement_transaction(options)
+    assert_equal 200, reimbursement_transaction[:status].to_i
+    assert_equal @reimbursement_tx_1[:price_value], reimbursement_transaction[:json][:price_value]
+    
+    ensure
+    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
     @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
   end
 
@@ -172,6 +187,23 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   ensure
     @api.destroy_reimbursement(updated_reimbursement[:json][:id] || reimbursement[:json][:id]) if updated_reimbursement[:json][:id] || reimbursement[:json][:id]
+  end
+
+  def test_update_reimbursement_transaction
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id].to_i })
+    reimbursement_transaction = @api.create_reimbursement_transaction(options)
+    updates = { :id => reimbursement_transaction[:json][:id], :price_value => 9999, :reason_code => "SUPPLIES" }
+    
+    updated_reimbursement_transaction = @api.update_reimbursement_transaction(updates)
+    assert_equal 200, updated_reimbursement_transaction[:status].to_i
+    assert_equal updates[:id].to_i, updated_reimbursement_transaction[:json][:id].to_i
+    assert_equal updates[:price_value].to_i, updated_reimbursement_transaction[:json][:price_value].to_i
+    assert_equal updates[:reason_code], updated_reimbursement_transaction[:json][:reason_code]
+    
+  ensure
+    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
   end
 
   def test_update_manual_journal
@@ -287,6 +319,20 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
   ensure
     @api.destroy_reimbursement(reimbursement[:json][:id])
+  end
+
+  def test_show_reimbursement_transaction
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    options = { :reimbursement_id => reimbursement[:json][:id].to_i }
+    reimbursement_transaction = @api.create_reimbursement_transaction(@reimbursement_tx_1.merge(options))
+    reimbursement_transaction = @api.show_reimbursement_transaction(reimbursement_transaction[:json][:id])
+    
+    assert_equal 200, reimbursement_transaction[:status].to_i
+    assert_equal options[:reimbursement_id], reimbursement_transaction[:json][:reimbursement_id]
+    
+  ensure
+    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
   end
 
   def test_show_manual_journal
@@ -412,6 +458,23 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   ensure
     @api.destroy_reimbursement(reimbursement_a_id) if reimbursement_a_id
     @api.destroy_reimbursement(reimbursement_b_id) if reimbursement_b_id
+  end
+
+  def test_list_reimbursement_transactions
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    options = { :reimbursement_id => reimbursement[:json][:id].to_i }
+    reimbursement_transaction_1 = @api.create_reimbursement_transaction(@reimbursement_tx_1.merge(options))
+    reimbursement_transaction_2 = @api.create_reimbursement_transaction(@reimbursement_tx_2.merge(options))
+    
+    reimbursement_transactions = @api.list_reimbursement_transactions(reimbursement[:json][:id])
+    assert_equal 200, reimbursement_transactions[:status].to_i
+    assert reimbursement_transactions[:json].any?{ |x| x[:id] == reimbursement_transaction_1[:json][:id] }
+    assert reimbursement_transactions[:json].any?{ |x| x[:id] == reimbursement_transaction_2[:json][:id] }
+
+  ensure
+    @api.destroy_reimbursement_transaction(reimbursement_transaction_1[:json][:id]) if reimbursement_transaction_1[:json][:id]
+    @api.destroy_reimbursement_transaction(reimbursement_transaction_1[:json][:id]) if reimbursement_transaction_1[:json][:id]
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
   end
 
   private

@@ -58,6 +58,14 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/reimbursements/list/")
     api_request(uri, "GET", params)
   end
+  
+  def list_reimbursement_transactions(reimbursement_id)
+    params = { "format" => "json",
+               "id" => reimbursement_id.to_i
+             }
+    uri = URI.parse(@base_url + "/reimbursement_transactions/list/")
+    api_request(uri, "GET", params)
+  end
 
   def list_manual_journals(year = nil, month = nil)
     params = { "year" => year,
@@ -169,6 +177,13 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def show_reimbursement_transaction(reimbursement_transaction_id)
+    params = { "format" => "json",
+               "id"     => reimbursement_transaction_id.to_i }
+    uri = URI.parse(@base_url + "/reimbursement_transactions/show/")
+    api_request(uri, "GET", params)
+  end
+
   def create_customer(options)
     params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
@@ -258,6 +273,23 @@ class TsubaisoSDK
                "memo" => options[:memo]
              }
     uri = URI.parse(@base_url + "/reimbursements/create/")
+    api_request(uri, "POST", params)
+  end
+
+  def create_reimbursement_transaction(options)
+    params = { "format" => "json",
+               "reimbursement_id" => options[:reimbursement_id].to_i,
+               "transaction_timestamp" => options[:transaction_timestamp],
+               "price_value" => options[:price_value],
+               "reason_code" => options[:reason_code],
+               "port_type" => options[:port_type],
+               "dc" => options[:dc],
+               "brief" => options[:brief],
+               "memo" => options[:memo],
+               "tag_list" => options[:tag_list],
+               "tax_type" => options[:tax_type]
+             }
+    uri = URI.parse(@base_url + '/reimbursement_transactions/create/')
     api_request(uri, "POST", params)
   end
 
@@ -358,6 +390,23 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
 
+  def update_reimbursement_transaction(options)
+    params = { "format" => "json",
+               "id" => options[:id].to_i,
+               "port_type" => options[:port_type],
+               "transaction_timestamp" => options[:transaction_timestamp],
+               "price_value" => options[:price_value],
+               "dc" => options[:dc],
+               "reason_code" => options[:reason_code],
+               "brief" => options[:brief],
+               "memo"  => options[:memo],
+               "tag_list" => options[:tag_list],
+               "tax_type" => options[:tax_type]
+             }
+    uri = URI.parse(@base_url + "/reimbursement_transactions/update/")
+    api_request(uri, "POST", params)
+  end
+
   def destroy_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -405,6 +454,14 @@ class TsubaisoSDK
                "format" => "json"
              }
     uri = URI.parse(@base_url + "/reimbursements/destroy/")
+    api_request(uri, "POST", params)
+  end
+
+  def destroy_reimbursement_transaction(reimbursement_transaction_id)
+    params = { "format" => "json",
+               "id" => reimbursement_transaction_id.to_i
+             }
+    uri = URI.parse(@base_url + "/reimbursement_transactions/destroy/")
     api_request(uri, "POST", params)
   end
 
