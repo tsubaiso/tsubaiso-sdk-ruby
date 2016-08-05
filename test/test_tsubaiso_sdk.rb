@@ -8,10 +8,10 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
 
     # data
-    @sale_201508 = { price_including_tax: 10800, realization_timestamp: "2015-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25", tag_list: "Banana,Random" }
+    @sale_201508 = { price_including_tax: 10800, realization_timestamp: "2015-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25", tag_list: "Banana" }
     @sale_201509 = { price_including_tax: 10800, realization_timestamp: "2015-09-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25", tag_list: "Banana" }
     @purchase_201508 = { price_including_tax: 5400, year: 2015, month: 8, accrual_timestamp: "2015-08-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "Canada,Banana" }
-    @purchase_201509 = { price_including_tax: 5400, year: 2015, month: 9, accrual_timestamp: "2015-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "Banana,d"}
+    @purchase_201509 = { price_including_tax: 5400, year: 2015, month: 9, accrual_timestamp: "2015-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "Banana"}
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
     @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
@@ -95,8 +95,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     ensure
     @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
   end
-
-
+  
   def test_create_reimbursement_transaction
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id] })
@@ -343,16 +342,22 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     manual_journal = @api.show_manual_journal(first_manual_journal_id)
     assert_equal 200, manual_journal[:status].to_i
     assert_equal first_manual_journal_id, manual_journal[:json][:id]
+    
+  ensure
+    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
   end
 
   def test_show_journal
-    @api.create_manual_journal(@manual_journal_1)
-    journals_list= @api.list_journals(2016, 4)
-    first_journal_id= journals_list[:json].first[:id]
+    manual_journal = @api.create_manual_journal(@manual_journal_1)
+    journals_list = @api.list_journals({ start_date: "2016-04-01", finish_date: "2016-04-30" })
+    first_journal_id = journals_list[:json][:records].first[:id]
 
     journal = @api.show_journal(first_journal_id)
     assert_equal 200, journal[:status].to_i
-    assert_equal first_journal_id, journal[:json][:id]
+    assert_equal first_journal_id, journal[:json][:records][:id]
+
+  ensure
+    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
   end
 
   def test_list_sales
@@ -438,9 +443,42 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_journals
-    journals_list = @api.list_journals(2016, 4)
+    august_sale = @api.create_sale(@sale_201508) 
+    september_sale = @api.create_sale(@sale_201509)
+    august_purchase = @api.create_purchase(@purchase_201508)
+    september_purchase = @api.create_purchase(@purchase_201509)
+    
+    options = { start_date: "2015-08-01", finish_date: "2015-08-31" }
+    journals_list = @api.list_journals(options)
+    records = journals_list[:json][:records]
     assert_equal 200, journals_list[:status].to_i
-    assert(journals_list.size > 0)
+    record_timestamps = records.map { |x| x[:journal_timestamp].split(" ")[0] }
+    assert_includes record_timestamps, august_sale[:json][:realization_timestamp]
+    assert_includes record_timestamps, august_purchase[:json][:accrual_timestamp]
+
+    options = { price: 10800 }
+    journals_list = @api.list_journals(options)
+    records = journals_list[:json][:records]
+    assert_equal 200, journals_list[:status].to_i
+    record_prices = records.map { |x| x[:journal_dcs].map { |y| y[:debit][:price_including_tax] } }.flatten(1)
+    assert_includes record_prices, august_sale[:json][:price_including_tax]
+    assert_includes record_prices, september_sale[:json][:price_including_tax]
+
+    options = { dept: "SETSURITSU" }
+    journals_list = @api.list_journals(options)
+    records = journals_list[:json][:records]
+    assert_equal 200, journals_list[:status].to_i
+    record_depts = records.map { |x| x[:journal_dcs].map { |y| y[:dept_code] } }.flatten(1)
+    assert_includes record_depts, august_sale[:json][:dept_code]
+    assert_includes record_depts, september_sale[:json][:dept_code]
+    assert_includes record_depts, august_purchase[:json][:dept_code]
+    assert_includes record_depts, september_purchase[:json][:dept_code]
+
+  ensure
+    @api.destroy_sale("AR#{august_sale[:json][:id]}") if august_sale[:json][:id]
+    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
+    @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
+    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
   end
 
   def test_list_reimbursements

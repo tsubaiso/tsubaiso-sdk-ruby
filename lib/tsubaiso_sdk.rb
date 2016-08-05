@@ -76,9 +76,18 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
-  def list_journals(year, month)
-    params = { "year" => year,
-               "month" => month,
+  def list_journals(options)
+    params = { "start_date" => options[:start_date],
+               "finish_date" => options[:finish_date],
+               "start_created_at" => options[:start_created_at],
+               "finish_created_at" => options[:finish_created_at],
+               "timestamp_order" => options[:timestamp_order],
+               "account_code" => options[:account_code],
+               "price" => options[:price],
+               "brief" => options[:brief],
+               "dept" => options[:dept],
+               "tag_list" => options[:tag_list],
+               "id" => options[:id],
                "format" => "json"
              }
     uri = URI.parse(@base_url + "/journals/list/")
