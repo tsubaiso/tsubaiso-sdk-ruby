@@ -27,14 +27,14 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api_fail = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: "fake token" })
     sale = @api_fail.create_sale(@sale_201508)
 
-    assert_equal 401, sale[:status].to_i
+    assert_equal 401, sale[:status].to_i, sale.inspect
     assert_equal "Bad credentials", sale[:json][:error]
   end
 
   def test_create_customer
     customer = @api.create_customer(@customer_1000)
 
-    assert_equal 200, customer[:status].to_i
+    assert_equal 200, customer[:status].to_i, customer.inspect
     assert_equal @customer_1000[:name], customer[:json][:name]
 
   ensure
@@ -44,7 +44,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   def test_create_sale
     sale = @api.create_sale(@sale_201508)
 
-    assert_equal 200, sale[:status].to_i
+    assert_equal 200, sale[:status].to_i, sale.inspect
     assert_equal @sale_201508[:dept_code], sale[:json][:dept_code]
 
   ensure
@@ -54,7 +54,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   def test_create_purchase
     purchase = @api.create_purchase(@purchase_201508)
 
-    assert_equal 200, purchase[:status].to_i
+    assert_equal 200, purchase[:status].to_i, purchase.inspect
     assert_equal @purchase_201508[:dept_code], purchase[:json][:dept_code]
 
   ensure
@@ -68,7 +68,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     staff_data = @api.create_staff_data(@staff_data_1)
 
-    assert_equal 200, staff_data[:status].to_i
+    assert_equal 200, staff_data[:status].to_i, staff_data.inspect
     assert_equal @staff_data_1[:value], staff_data[:json][:value]
 
   ensure
@@ -79,7 +79,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     manual_journal = @api.create_manual_journal(@manual_journal_1)
 
     begin
-      assert_equal 200, manual_journal[:status].to_i, manual_journal[:json]
+      assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
       assert_equal @manual_journal_1[:journal_dcs][0][:price_including_tax], manual_journal[:json][:journal_dcs][0]["price_including_tax"]
 
     ensure
@@ -89,7 +89,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_create_reimbursement
     reimbursement = @api.create_reimbursement(@reimbursement_1)
-    assert_equal 200, reimbursement[:status].to_i
+    assert_equal 200, reimbursement[:status].to_i, reimbursement.inspect
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
 
     ensure
@@ -100,7 +100,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id] })
     reimbursement_transaction = @api.create_reimbursement_transaction(options)
-    assert_equal 200, reimbursement_transaction[:status].to_i
+    assert_equal 200, reimbursement_transaction[:status].to_i, reimbursement_transaction.inspect
     assert_equal @reimbursement_tx_1[:price_value], reimbursement_transaction[:json][:price_value]
 
     ensure
@@ -131,7 +131,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
                 memo: "Updated memo"}
 
     updated_purchase = @api.update_purchase(options)
-    assert_equal 200, updated_purchase[:status].to_i
+    assert_equal 200, updated_purchase[:status].to_i, updated_purchase.inspect
     assert_equal purchase[:json][:id], updated_purchase[:json][:id]
     assert_equal "Updated memo", updated_purchase[:json][:memo]
     assert_equal 50000, updated_purchase[:json][:price_including_tax]
@@ -165,7 +165,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
               }
 
     updated_staff_data = @api.update_staff_data(options)
-    assert_equal 200, updated_staff_data[:status].to_i
+    assert_equal 200, updated_staff_data[:status].to_i, updated_staff_data.inspect
     assert_equal staff_data[:json][:id], updated_staff_data[:json][:id]
     assert_equal "Programmer", updated_staff_data[:json][:value]
 
@@ -180,7 +180,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
       dept_code: "COMMON"
     }
     updated_reimbursement = @api.update_reimbursement(reimbursement[:json][:id], options)
-    assert_equal 200, updated_reimbursement[:status].to_i
+    assert_equal 200, updated_reimbursement[:status].to_i, updated_reimbursement.inspect
     assert_equal options[:applicant], updated_reimbursement[:json][:applicant]
     assert_equal options[:dept_code], updated_reimbursement[:json][:dept_code]
 
@@ -195,7 +195,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     updates = { :id => reimbursement_transaction[:json][:id], :price_value => 9999, :reason_code => "SUPPLIES" }
 
     updated_reimbursement_transaction = @api.update_reimbursement_transaction(updates)
-    assert_equal 200, updated_reimbursement_transaction[:status].to_i
+    assert_equal 200, updated_reimbursement_transaction[:status].to_i, updated_reimbursement_transaction.inspect
     assert_equal updates[:id].to_i, updated_reimbursement_transaction[:json][:id].to_i
     assert_equal updates[:price_value].to_i, updated_reimbursement_transaction[:json][:price_value].to_i
     assert_equal updates[:reason_code], updated_reimbursement_transaction[:json][:reason_code]
@@ -214,7 +214,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     options[:journal_dcs][0][:credit][:price_including_tax] = 2000
 
     updated_manual_journal = @api.update_manual_journal(options)
-    assert_equal 200, updated_manual_journal[:status].to_i, updated_manual_journal[:json]
+    assert_equal 200, updated_manual_journal[:status].to_i, updated_manual_journal.inspect
     assert_equal @manual_journal_1[:journal_dcs][0][:price_including_tax], updated_manual_journal[:json][:journal_dcs][0]["price_including_tax"]
 
   ensure
@@ -225,7 +225,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     sale = @api.create_sale(@sale_201508)
 
     get_sale = @api.show_sale("AR#{sale[:json][:id]}")
-    assert_equal 200, get_sale[:status].to_i
+    assert_equal 200, get_sale[:status].to_i, get_sale.inspect
     assert_equal sale[:json][:price_including_tax], get_sale[:json][:price_including_tax]
 
   ensure
@@ -236,7 +236,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     purchase = @api.create_purchase(@purchase_201508)
 
     get_purchase = @api.show_purchase("AP#{purchase[:json][:id]}")
-    assert_equal 200, get_purchase[:status].to_i
+    assert_equal 200, get_purchase[:status].to_i, get_purchase.inspect
     assert_equal purchase[:json][:id], get_purchase[:json][:id]
 
   ensure
@@ -247,7 +247,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     customer = @api.create_customer(@customer_1000)
 
     get_customer = @api.show_customer(customer[:json][:id])
-    assert_equal 200, get_customer[:status].to_i
+    assert_equal 200, get_customer[:status].to_i, get_customer.inspect
     assert_equal customer[:json][:id], get_customer[:json][:id]
 
   ensure
@@ -259,7 +259,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     first_staff_id = staff_list[:json].first[:id]
 
     get_staff_member = @api.show_staff(first_staff_id)
-    assert_equal 200, get_staff_member[:status].to_i
+    assert_equal 200, get_staff_member[:status].to_i, get_staff_member.inspect
     assert_equal first_staff_id, get_staff_member[:json][:id]
   end
 
@@ -272,7 +272,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     #get data using id
     get_staff_data = @api.show_staff_data(staff_data[:json][:id])
-    assert_equal 200, get_staff_data[:status].to_i
+    assert_equal 200, get_staff_data[:status].to_i, get_staff_data.inspect
     assert_equal staff_data[:json][:id], get_staff_data[:json][:id]
 
     options = { staff_id: staff_data[:json][:staff_id],
@@ -282,7 +282,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     #get data using staff id and code
     get_staff_data_2 = @api.show_staff_data(options)
-    assert_equal 200, get_staff_data_2[:status].to_i
+    assert_equal 200, get_staff_data_2[:status].to_i, get_staff_data.inspect
     assert_equal staff_data[:json][:id], get_staff_data_2[:json][:id]
 
   ensure
@@ -294,7 +294,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     first_staff_datum_master_id = staff_datum_masters_list[:json].first[:id]
 
     get_staff_datum_master = @api.show_staff_datum_master(first_staff_datum_master_id)
-    assert_equal 200, get_staff_datum_master[:status].to_i
+    assert_equal 200, get_staff_datum_master[:status].to_i, get_staff_datum_master.inspect
     assert_equal first_staff_datum_master_id, get_staff_datum_master[:json][:id]
   end
 
@@ -306,7 +306,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     #get data using code
     get_staff_data_2 = @api.show_staff_datum_master(options)
-    assert_equal 200, get_staff_data_2[:status].to_i
+    assert_equal 200, get_staff_data_2[:status].to_i, get_staff_data_2.inspect
     assert_equal first_staff_datum_master_code, get_staff_data_2[:json][:code]
   end
 
@@ -314,7 +314,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     reimbursement = @api.show_reimbursement(reimbursement[:json][:id])
 
-    assert_equal 200, reimbursement[:status].to_i
+    assert_equal 200, reimbursement[:status].to_i, reimbursement.inspect
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
   ensure
     @api.destroy_reimbursement(reimbursement[:json][:id])
@@ -326,7 +326,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement_transaction = @api.create_reimbursement_transaction(@reimbursement_tx_1.merge(options))
     reimbursement_transaction = @api.show_reimbursement_transaction(reimbursement_transaction[:json][:id])
 
-    assert_equal 200, reimbursement_transaction[:status].to_i
+    assert_equal 200, reimbursement_transaction[:status].to_i, reimbursement_transaction.inspect
     assert_equal options[:reimbursement_id], reimbursement_transaction[:json][:reimbursement_id]
 
   ensure
@@ -340,7 +340,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     first_manual_journal_id = manual_journals_list[:json].first[:id]
 
     manual_journal = @api.show_manual_journal(first_manual_journal_id)
-    assert_equal 200, manual_journal[:status].to_i
+    assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
     assert_equal first_manual_journal_id, manual_journal[:json][:id]
 
   ensure
@@ -353,7 +353,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     first_journal_id = journals_list[:json][:records].first[:id]
 
     journal = @api.show_journal(first_journal_id)
-    assert_equal 200, journal[:status].to_i
+    assert_equal 200, journal[:status].to_i, journal.inspect
     assert_equal first_journal_id, journal[:json][:records][:id]
 
   ensure
@@ -370,7 +370,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     september_sale_id = september_sale[:json][:id]
 
     sales_list = @api.list_sales(2015, 8)
-    assert_equal 200, sales_list[:status].to_i
+    assert_equal 200, sales_list[:status].to_i, sales_list.inspect
     assert sales_list[:json].any?{ |x| x[:id] == august_sale_a_id }
     assert sales_list[:json].any?{ |x| x[:id] == august_sale_b_id }
     assert !sales_list[:json].any?{ |x| x[:id] == september_sale_id }
@@ -391,7 +391,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     september_purchase_id = september_purchase[:json][:id]
 
     purchase_list = @api.list_purchases(2015, 8)
-    assert_equal 200, purchase_list[:status].to_i
+    assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
     assert purchase_list[:json].any?{ |x| x[:id] == august_purchase_a_id }
     assert purchase_list[:json].any?{ |x| x[:id] == august_purchase_b_id }
     assert !purchase_list[:json].any?{ |x| x[:id] == september_purchase_id }
@@ -408,7 +408,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     customer_1000_id = customer_1000[:json][:id]
 
     customer_list = @api.list_customers
-    assert_equal 200, customer_list[:status].to_i
+    assert_equal 200, customer_list[:status].to_i, customer_list.inspect
     assert customer_list[:json].any?{ |x| x[:id] == customer_1000_id }
 
   ensure
@@ -417,7 +417,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_list_staff
     staff_list = @api.list_staff
-    assert_equal 200, staff_list[:status].to_i
+    assert_equal 200, staff_list[:status].to_i, staff_list.inspect
     assert(staff_list.size > 0)
   end
 
@@ -426,19 +426,19 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     first_staff_id = staff_list[:json].first[:id]
 
     staff_data_list = @api.list_staff_data(first_staff_id)
-    assert_equal 200, staff_data_list[:status].to_i
+    assert_equal 200, staff_data_list[:status].to_i, staff_data_list.inspect
     assert staff_data_list[:json].all?{ |x| x[:staff_id] == first_staff_id }
   end
 
   def test_list_staff_datum_masters
     staff_datum_masters_list = @api.list_staff_datum_masters
-    assert_equal 200, staff_datum_masters_list[:status].to_i
+    assert_equal 200, staff_datum_masters_list[:status].to_i, staff_datum_masters_list.inspect
     assert(staff_datum_masters_list.size > 0)
   end
 
   def test_list_manual_journals
     manual_journals_list = @api.list_manual_journals(2016, 4)
-    assert_equal 200, manual_journals_list[:status].to_i
+    assert_equal 200, manual_journals_list[:status].to_i, manual_journals_list.inspect
     assert(manual_journals_list.size > 0)
   end
 
@@ -451,7 +451,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     options = { start_date: "2015-08-01", finish_date: "2015-08-31" }
     journals_list = @api.list_journals(options)
     records = journals_list[:json][:records]
-    assert_equal 200, journals_list[:status].to_i
+    assert_equal 200, journals_list[:status].to_i, journals_list.inspect
     record_timestamps = records.map { |x| x[:journal_timestamp].split(" ")[0] }
     assert_includes record_timestamps, august_sale[:json][:realization_timestamp]
     assert_includes record_timestamps, august_purchase[:json][:accrual_timestamp]
@@ -459,7 +459,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     options = { price: 10800 }
     journals_list = @api.list_journals(options)
     records = journals_list[:json][:records]
-    assert_equal 200, journals_list[:status].to_i
+    assert_equal 200, journals_list[:status].to_i, journals_list.inspect
     record_prices = records.map { |x| x[:journal_dcs].map { |y| y[:debit][:price_including_tax] } }.flatten(1)
     assert_includes record_prices, august_sale[:json][:price_including_tax]
     assert_includes record_prices, september_sale[:json][:price_including_tax]
@@ -467,7 +467,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     options = { dept: "SETSURITSU" }
     journals_list = @api.list_journals(options)
     records = journals_list[:json][:records]
-    assert_equal 200, journals_list[:status].to_i
+    assert_equal 200, journals_list[:status].to_i, journals_list.inspect
     record_depts = records.map { |x| x[:journal_dcs].map { |y| y[:dept_code] } }.flatten(1)
     assert_includes record_depts, august_sale[:json][:dept_code]
     assert_includes record_depts, september_sale[:json][:dept_code]
@@ -489,7 +489,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement_b_id = reimbursement_b[:json][:id]
 
     reimbursements_list = @api.list_reimbursements(2016, 3)
-    assert_equal 200, reimbursements_list[:status].to_i
+    assert_equal 200, reimbursements_list[:status].to_i, reimbursements_list.inspect
     assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_a_id }
     assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_b_id }
 
@@ -505,7 +505,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement_transaction_2 = @api.create_reimbursement_transaction(@reimbursement_tx_2.merge(options))
 
     reimbursement_transactions = @api.list_reimbursement_transactions(reimbursement[:json][:id])
-    assert_equal 200, reimbursement_transactions[:status].to_i
+    assert_equal 200, reimbursement_transactions[:status].to_i, reimbursement_transactions.inspect
     assert reimbursement_transactions[:json].any?{ |x| x[:id] == reimbursement_transaction_1[:json][:id] }
     assert reimbursement_transactions[:json].any?{ |x| x[:id] == reimbursement_transaction_2[:json][:id] }
 
