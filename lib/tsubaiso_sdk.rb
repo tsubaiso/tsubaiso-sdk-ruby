@@ -84,8 +84,8 @@ class TsubaisoSDK
                "timestamp_order" => options[:timestamp_order],
                "account_code" => options[:account_code],
                "price" => options[:price],
-               "brief" => options[:brief],
-               "dept" => options[:dept],
+               "memo" => options[:memo],
+               "dept_code" => options[:dept_code],
                "tag_list" => options[:tag_list],
                "id" => options[:id],
                "format" => "json"

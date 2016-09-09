@@ -464,7 +464,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_includes record_prices, august_sale[:json][:price_including_tax]
     assert_includes record_prices, september_sale[:json][:price_including_tax]
 
-    options = { dept: "SETSURITSU" }
+    options = { dept_code: "SETSURITSU" }
     journals_list = @api.list_journals(options)
     records = journals_list[:json][:records]
     assert_equal 200, journals_list[:status].to_i, journals_list.inspect
