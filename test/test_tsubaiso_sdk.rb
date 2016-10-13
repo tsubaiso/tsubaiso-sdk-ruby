@@ -234,14 +234,16 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   def test_update_dept
     dept = @api.create_dept(@dept_1)
     options = { id: dept[:json][:id],
-                memo: dept[:json][:memo],
-                name: dept[:json][:name]
+                memo: "updated at test",
+                name: "更新部門",
+                name_abbr: "更新部門",
               }
 
     updated_dept = @api.update_dept(dept[:json][:id], options)
     assert_equal 200, updated_dept[:status].to_i, updated_dept.inspect
     assert_equal options[:memo], updated_dept[:json][:memo]
     assert_equal options[:name], updated_dept[:json][:name]
+    assert_equal options[:name_abbr], updated_dept[:json][:name_abbr]
 
   ensure
     @api.destroy_dept(updated_dept[:json][:id] || dept[:json][:id]) if updated_dept[:json][:id] || dept[:json][:id]
