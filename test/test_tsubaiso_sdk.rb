@@ -21,6 +21,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
                          debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ] }
+    @dept_1= {code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
   end
 
   def test_failed_request
@@ -106,6 +107,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     ensure
     @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
     @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+  end
+
+  def test_create_dept
+    dept = @api.create_dept(@dept_1)
+    assert_equal 200, dept[:status].to_i, dept.inspect
+    assert_equal @dept_1[:code], dept[:json][:code]
+
+    ensure
+    @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
   end
 
   def test_update_sale
@@ -219,6 +229,22 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   ensure
     @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+  end
+
+  def test_update_dept
+    dept = @api.create_dept(@dept_1)
+    options = { id: dept[:json][:id],
+                memo: dept[:json][:memo],
+                name: dept[:json][:name]
+              }
+
+    updated_dept = @api.update_dept(dept[:json][:id], options)
+    assert_equal 200, updated_dept[:status].to_i, updated_dept.inspect
+    assert_equal options[:memo], updated_dept[:json][:memo]
+    assert_equal options[:name], updated_dept[:json][:name]
+
+  ensure
+    @api.destroy_dept(updated_dept[:json][:id] || dept[:json][:id]) if updated_dept[:json][:id] || dept[:json][:id]
   end
 
   def test_show_sale
@@ -358,6 +384,16 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   ensure
     @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+  end
+
+  def test_show_dept
+    dept = @api.create_dept(@dept_1)
+    dept = @api.show_dept(dept[:json][:id])
+
+    assert_equal 200, dept[:status].to_i, dept.inspect
+    assert_equal @dept_1[:memo], dept[:json][:memo]
+  ensure
+    @api.destroy_dept(dept[:json][:id])
   end
 
   def test_list_sales
@@ -513,6 +549,17 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_reimbursement_transaction(reimbursement_transaction_1[:json][:id]) if reimbursement_transaction_1[:json][:id]
     @api.destroy_reimbursement_transaction(reimbursement_transaction_1[:json][:id]) if reimbursement_transaction_1[:json][:id]
     @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+  end
+
+  def test_list_depts
+    dept = @api.create_dept(@dept_1)
+    
+    depts = @api.list_depts
+    assert_equal 200, depts[:status].to_i, depts.inspect
+    assert depts[:json].any?{ |x| x[:id] == dept[:json][:id] }
+  
+  ensure
+    @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
   end
 
   private
