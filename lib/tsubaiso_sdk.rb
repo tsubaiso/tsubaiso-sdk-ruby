@@ -100,6 +100,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_tags
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/tags/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -204,6 +210,14 @@ class TsubaisoSDK
                "id" => dept_id.to_i
               }
     uri = URI.parse(@base_url + "/depts/show/")
+    api_request(uri, "GET", params)
+  end
+
+  def show_tag(tag_id)
+    params = { "format" => "json",
+               "id" => tag_id.to_i
+              }
+    uri = URI.parse(@base_url + "/tags/show/")
     api_request(uri, "GET", params)
   end
 
@@ -327,6 +341,19 @@ class TsubaisoSDK
                "finish_date" => options[:finish_date]
              }
     uri = URI.parse(@base_url + '/depts/create/')
+    api_request(uri, "POST", params)
+  end
+
+  def create_tag(options)
+    params = { "format" => "json",
+               "code" => options[:code],
+               "name" => options[:name],
+               "sort_no" => options[:sort_no],
+               "tag_group_code" => options[:tag_group_code],
+               "start_ymd" => options[:start_ymd],
+               "finish_ymd" => options[:finish_ymd]
+             }
+    uri = URI.parse(@base_url + '/tags/create/')
     api_request(uri, "POST", params)
   end
 
@@ -459,6 +486,21 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
 
+  def update_tag(tag_id, options)
+    params = { "format" => "json",
+               "id" => tag_id,
+               "code" => options[:code],
+               "name" => options[:name],
+               "name_abbr" => options[:name_abbr],
+               "color" => options[:color],
+               "memo" => options[:memo],
+               "start_date" => options[:start_date],
+               "finish_date" => options[:finish_date]
+             }
+    uri = URI.parse(@base_url + "/tags/update/")
+    api_request(uri, "POST", params)
+  end
+
   def destroy_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "id" => sale_id,
@@ -522,6 +564,14 @@ class TsubaisoSDK
                "format" => "json"
              }
     uri = URI.parse(@base_url + "/depts/destroy/")
+    api_request(uri, "POST", params)
+  end
+
+  def destroy_tag(tag_id)
+    params = { "id" => tag_id,
+               "format" => "json"
+             }
+    uri = URI.parse(@base_url + "/tags/destroy/")
     api_request(uri, "POST", params)
   end
 
