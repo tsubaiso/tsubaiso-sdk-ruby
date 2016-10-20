@@ -22,6 +22,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
                          debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ] }
     @dept_1= {code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
+    @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
   end
 
   def test_failed_request
@@ -116,6 +117,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     ensure
     @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
+  end
+
+  def test_create_tag
+    tag = @api.create_tag(@tag_1)
+    assert_equal 200, tag[:status].to_i, tag.inspect
+    assert_equal @tag_1[:code], tag[:json][:code]
+
+    ensure
+    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
   def test_update_sale
@@ -247,6 +257,21 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   ensure
     @api.destroy_dept(updated_dept[:json][:id] || dept[:json][:id]) if updated_dept[:json][:id] || dept[:json][:id]
+  end
+
+  def test_update_tag
+    tag = @api.create_tag(@tag_1)
+    options = { name: "更新タグ",
+                code: "updated_tag"
+              }
+
+    updated_tag = @api.update_tag(tag[:json][:id], options)
+    assert_equal 200, updated_tag[:status].to_i, updated_tag.inspect
+    assert_equal options[:name], updated_tag[:json][:name]
+    assert_equal options[:code], updated_tag[:json][:code]
+
+  ensure
+    @api.destroy_tag(updated_tag[:json][:id] || tag[:json][:id]) if updated_tag[:json][:id] || tag[:json][:id]
   end
 
   def test_show_sale
@@ -396,6 +421,16 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal @dept_1[:memo], dept[:json][:memo]
   ensure
     @api.destroy_dept(dept[:json][:id])
+  end
+
+  def test_show_tag
+    tag = @api.create_tag(@tag_1)
+    tag = @api.show_tag(tag[:json][:id])
+
+    assert_equal 200, tag[:status].to_i, tag.inspect
+    assert_equal @tag_1[:name], tag[:json][:name]
+  ensure
+    @api.destroy_tag(tag[:json][:id])
   end
 
   def test_list_sales
@@ -555,13 +590,24 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_list_depts
     dept = @api.create_dept(@dept_1)
-    
+
     depts = @api.list_depts
     assert_equal 200, depts[:status].to_i, depts.inspect
     assert depts[:json].any?{ |x| x[:id] == dept[:json][:id] }
-  
+
   ensure
     @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
+  end
+
+  def test_list_tags
+    tag = @api.create_tag(@tag_1)
+
+    tags = @api.list_tags
+    assert_equal 200, tags[:status].to_i, tags.inspect
+    assert tags[:json][@tag_1[:tag_group_code].to_sym].any?{ |x| x[:id] == tag[:json][:id] }
+
+  ensure
+    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
   private
