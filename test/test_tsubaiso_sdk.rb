@@ -261,8 +261,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_update_tag
     tag = @api.create_tag(@tag_1)
-    options = { id: tag[:json][:id],
-                name: "更新タグ",
+    options = { name: "更新タグ",
                 code: "updated_tag"
               }
 

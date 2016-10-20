@@ -214,10 +214,8 @@ class TsubaisoSDK
   end
 
   def show_tag(tag_id)
-    params = { "format" => "json",
-               "id" => tag_id.to_i
-              }
-    uri = URI.parse(@base_url + "/tags/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/tags/show/#{tag_id}")
     api_request(uri, "GET", params)
   end
 
@@ -488,16 +486,14 @@ class TsubaisoSDK
 
   def update_tag(tag_id, options)
     params = { "format" => "json",
-               "id" => tag_id,
                "code" => options[:code],
                "name" => options[:name],
-               "name_abbr" => options[:name_abbr],
-               "color" => options[:color],
-               "memo" => options[:memo],
-               "start_date" => options[:start_date],
-               "finish_date" => options[:finish_date]
+               "sort_no" => options[:sort_no],
+               "tag_group_code" => options[:tag_group_code],
+               "start_ymd" => options[:start_ymd],
+               "finish_ymd" => options[:finish_ymd]
              }
-    uri = URI.parse(@base_url + "/tags/update/")
+    uri = URI.parse(@base_url + "/tags/update/#{tag_id}")
     api_request(uri, "POST", params)
   end
 
@@ -568,10 +564,8 @@ class TsubaisoSDK
   end
 
   def destroy_tag(tag_id)
-    params = { "id" => tag_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/tags/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/tags/destroy/#{tag_id}")
     api_request(uri, "POST", params)
   end
 
