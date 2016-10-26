@@ -8,16 +8,16 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
 
     # data
-    @sale_201508 = { price_including_tax: 10800, realization_timestamp: "2015-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25", tag_list: "Banana" }
-    @sale_201509 = { price_including_tax: 10800, realization_timestamp: "2015-09-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2015-09-25", tag_list: "Banana" }
-    @purchase_201508 = { price_including_tax: 5400, year: 2015, month: 8, accrual_timestamp: "2015-08-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "Canada,Banana" }
-    @purchase_201509 = { price_including_tax: 5400, year: 2015, month: 9, accrual_timestamp: "2015-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "Banana"}
+    @sale_201608 = { price_including_tax: 10800, realization_timestamp: "2016-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2016-09-25", tag_list: "BANANA" }
+    @sale_201609 = { price_including_tax: 10800, realization_timestamp: "2016-09-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2016-09-25", tag_list: "BANANA" }
+    @purchase_201608 = { price_including_tax: 5400, year: 2016, month: 8, accrual_timestamp: "2016-08-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "CANADA,BANANA" }
+    @purchase_201609 = { price_including_tax: 5400, year: 2016, month: 9, accrual_timestamp: "2016-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "BANANA"}
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
-    @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2015-01-01", no_finish_timestamp: "1", memo: "First memo" }
+    @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2016-01-01", no_finish_timestamp: "1", memo: "First memo" }
     @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
     @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
-    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"MEETING", brief:"everyting going well", memo:"easy", tag_list:"Canada,Banana" }
-    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"SUPPLIES", brief:"not well", memo:"hard", tag_list:"Canada" }
+    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"MEETING", brief:"everyting going well", memo:"easy", tag_list:"CANADA,BANANA" }
+    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"SUPPLIES", brief:"not well", memo:"hard", tag_list:"CANADA" }
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
                          debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ] }
@@ -27,7 +27,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_failed_request
     @api_fail = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: "fake token" })
-    sale = @api_fail.create_sale(@sale_201508)
+    sale = @api_fail.create_sale(@sale_201608)
 
     assert_equal 401, sale[:status].to_i, sale.inspect
     assert_equal "Bad credentials", sale[:json][:error]
@@ -44,20 +44,20 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_create_sale
-    sale = @api.create_sale(@sale_201508)
+    sale = @api.create_sale(@sale_201608)
 
     assert_equal 200, sale[:status].to_i, sale.inspect
-    assert_equal @sale_201508[:dept_code], sale[:json][:dept_code]
+    assert_equal @sale_201608[:dept_code], sale[:json][:dept_code]
 
   ensure
     @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
   end
 
   def test_create_purchase
-    purchase = @api.create_purchase(@purchase_201508)
+    purchase = @api.create_purchase(@purchase_201608)
 
     assert_equal 200, purchase[:status].to_i, purchase.inspect
-    assert_equal @purchase_201508[:dept_code], purchase[:json][:dept_code]
+    assert_equal @purchase_201608[:dept_code], purchase[:json][:dept_code]
 
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
@@ -129,7 +129,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_update_sale
-    sale = @api.create_sale(@sale_201508)
+    sale = @api.create_sale(@sale_201608)
     options = { id: sale[:json][:id],
                 price_including_tax: 25000,
                 memo: "Updated memo" }
@@ -145,7 +145,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_update_purchase
-    purchase = @api.create_purchase(@purchase_201508)
+    purchase = @api.create_purchase(@purchase_201608)
     options = { id: purchase[:json][:id],
                 price_including_tax: 50000,
                 memo: "Updated memo"}
@@ -275,7 +275,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_show_sale
-    sale = @api.create_sale(@sale_201508)
+    sale = @api.create_sale(@sale_201608)
 
     get_sale = @api.show_sale("AR#{sale[:json][:id]}")
     assert_equal 200, get_sale[:status].to_i, get_sale.inspect
@@ -286,7 +286,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_show_purchase
-    purchase = @api.create_purchase(@purchase_201508)
+    purchase = @api.create_purchase(@purchase_201608)
 
     get_purchase = @api.show_purchase("AP#{purchase[:json][:id]}")
     assert_equal 200, get_purchase[:status].to_i, get_purchase.inspect
@@ -375,6 +375,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_show_reimbursement_transaction
     reimbursement = @api.create_reimbursement(@reimbursement_1)
+    Rails.logger.debug("############ in test of API############")
     options = { :reimbursement_id => reimbursement[:json][:id].to_i }
     reimbursement_transaction = @api.create_reimbursement_transaction(@reimbursement_tx_1.merge(options))
     reimbursement_transaction = @api.show_reimbursement_transaction(reimbursement_transaction[:json][:id])
@@ -434,15 +435,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_sales
-    august_sale_a = @api.create_sale(@sale_201508)
-    august_sale_b = @api.create_sale(@sale_201508)
-    september_sale = @api.create_sale(@sale_201509)
+    august_sale_a = @api.create_sale(@sale_201608)
+    august_sale_b = @api.create_sale(@sale_201608)
+    september_sale = @api.create_sale(@sale_201609)
 
     august_sale_a_id = august_sale_a[:json][:id]
     august_sale_b_id = august_sale_b[:json][:id]
     september_sale_id = september_sale[:json][:id]
 
-    sales_list = @api.list_sales(2015, 8)
+    sales_list = @api.list_sales(2016, 8)
     assert_equal 200, sales_list[:status].to_i, sales_list.inspect
     assert sales_list[:json].any?{ |x| x[:id] == august_sale_a_id }
     assert sales_list[:json].any?{ |x| x[:id] == august_sale_b_id }
@@ -455,15 +456,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_purchases
-    august_purchase_a = @api.create_purchase(@purchase_201508)
-    august_purchase_b = @api.create_purchase(@purchase_201508)
-    september_purchase = @api.create_purchase(@purchase_201509)
+    august_purchase_a = @api.create_purchase(@purchase_201608)
+    august_purchase_b = @api.create_purchase(@purchase_201608)
+    september_purchase = @api.create_purchase(@purchase_201609)
 
     august_purchase_a_id = august_purchase_a[:json][:id]
     august_purchase_b_id = august_purchase_b[:json][:id]
     september_purchase_id = september_purchase[:json][:id]
 
-    purchase_list = @api.list_purchases(2015, 8)
+    purchase_list = @api.list_purchases(2016, 8)
     assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
     assert purchase_list[:json].any?{ |x| x[:id] == august_purchase_a_id }
     assert purchase_list[:json].any?{ |x| x[:id] == august_purchase_b_id }
@@ -516,12 +517,12 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_journals
-    august_sale = @api.create_sale(@sale_201508)
-    september_sale = @api.create_sale(@sale_201509)
-    august_purchase = @api.create_purchase(@purchase_201508)
-    september_purchase = @api.create_purchase(@purchase_201509)
+    august_sale = @api.create_sale(@sale_201608)
+    september_sale = @api.create_sale(@sale_201609)
+    august_purchase = @api.create_purchase(@purchase_201608)
+    september_purchase = @api.create_purchase(@purchase_201609)
 
-    options = { start_date: "2015-08-01", finish_date: "2015-08-31" }
+    options = { start_date: "2016-08-01", finish_date: "2016-08-31" }
     journals_list = @api.list_journals(options)
     records = journals_list[:json][:records]
     assert_equal 200, journals_list[:status].to_i, journals_list.inspect
@@ -562,6 +563,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement_b_id = reimbursement_b[:json][:id]
 
     reimbursements_list = @api.list_reimbursements(2016, 3)
+    puts reimbursements_list
     assert_equal 200, reimbursements_list[:status].to_i, reimbursements_list.inspect
     assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_a_id }
     assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_b_id }

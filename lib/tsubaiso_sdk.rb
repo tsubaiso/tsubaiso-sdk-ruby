@@ -108,108 +108,89 @@ class TsubaisoSDK
 
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
-    params = { "id" => sale_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/ar/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar/show/#{sale_id}")
     api_request(uri, "GET", params)
   end
 
   def show_purchase(voucher)
     purchase_id = voucher.scan(/\d/).join("")
-    params = { "id" => purchase_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/ap_payments/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ap_payments/show/#{purchase_id}")
     api_request(uri, "GET", params)
   end
 
   def show_customer(customer_id)
     customer_id = customer_id.to_i
-    params = { "id" => customer_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/customer_masters/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/customer_masters/show/#{customer_id}")
     api_request(uri, "GET", params)
   end
 
   def show_staff(staff_id)
     staff_id = staff_id.to_i
-    params = { "id" => staff_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/staffs/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/staffs/show/#{staff_id}")
     api_request(uri, "GET", params)
   end
 
   def show_staff_data(options)
     if options.is_a?(Hash)
-      params = { "id" => options[:id],
-                 "staff_id" => options[:staff_id],
+      params = { "staff_id" => options[:staff_id],
                  "code" => options[:code],
                  "time" => options[:time],
                  "format" => "json"
                }
+      id = options[:id]
     else
-      params = { "id" => options,
-                 "format" => "json"
-               }
+      params = { "format" => "json" }
+      id = options
     end
-    uri = URI.parse(@base_url + "/staff_data/show")
+    uri = URI.parse(@base_url + "/staff_data/show/#{id}")
     api_request(uri, "GET", params)
   end
 
   def show_staff_datum_master(options)
     if options.is_a?(Hash)
-      params = { "id" => options[:id],
-                 "code" => options[:code],
+      params = { "code" => options[:code],
                  "format" => "json"
-      }
+               }
+      id = options[:id]
     else
-      params = { "id" => options,
-                 "format" => "json"
-      }
+      params = { "format" => "json" }
+      id = options
     end
-    uri = URI.parse(@base_url + "/staff_datum_masters/show")
+    uri = URI.parse(@base_url + "/staff_datum_masters/show/#{id}")
     api_request(uri, "GET", params)
   end
 
   def show_manual_journal(manual_journal_id)
-    params = { "id" => manual_journal_id,
-               "format" => "json"
-      }
-    uri = URI.parse(@base_url + "/manual_journals/show")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/manual_journals/show/#{manual_journal_id}")
     api_request(uri, "GET", params)
   end
 
-  def show_journal(manual_journal_id)
-    params = { "id" => manual_journal_id,
-               "format" => "json"
-      }
-    uri = URI.parse(@base_url + "/journals/show")
+  def show_journal(journal_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/journals/show/#{journal_id}")
     api_request(uri, "GET", params)
   end
 
   def show_reimbursement(reimbursement_id)
-    params = { "format" => "json",
-               "id" => reimbursement_id.to_i
-             }
-    uri = URI.parse(@base_url + "/reimbursements/show/")
+    params = { "id" => reimbursement_id.to_i }
+    uri = URI.parse(@base_url + "/reimbursements/show/#{reimbursement_id}")
     api_request(uri, "GET", params)
   end
 
   def show_reimbursement_transaction(reimbursement_transaction_id)
-    params = { "format" => "json",
-               "id"     => reimbursement_transaction_id.to_i }
-    uri = URI.parse(@base_url + "/reimbursement_transactions/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursement_transactions/show/#{reimbursement_transaction_id}")
     api_request(uri, "GET", params)
   end
 
   def show_dept(dept_id)
-    params = { "format" => "json",
-               "id" => dept_id.to_i
-              }
-    uri = URI.parse(@base_url + "/depts/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/depts/show/#{dept_id}")
     api_request(uri, "GET", params)
   end
 
@@ -356,8 +337,7 @@ class TsubaisoSDK
   end
 
   def update_sale(options)
-    params = { "id" => options[:id],
-               "price_including_tax" => options[:price_including_tax],
+    params = { "price_including_tax" => options[:price_including_tax],
                "realization_timestamp" => options[:realization_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -371,13 +351,12 @@ class TsubaisoSDK
                "tag_list" => options[:tag_list],
                "format" => "json"
              }
-    uri = URI.parse(@base_url + '/ar/update')
+    uri = URI.parse(@base_url + "/ar/update/#{options[:id]}")
     api_request(uri, "POST", params)
   end
 
   def update_purchase(options)
-    params = { "id" => options[:id],
-               "price_including_tax" => options[:price_including_tax],
+    params = { "price_including_tax" => options[:price_including_tax],
                "accrual_timestamp" => options[:accrual_timestamp],
                "customer_master_code" => options[:customer_master_code],
                "dept_code" => options[:dept_code],
@@ -389,13 +368,12 @@ class TsubaisoSDK
                "tag_list" => options[:tag_list],
                "format" => "json"}
 
-    uri = URI.parse(@base_url + '/ap_payments/update')
+    uri = URI.parse(@base_url + "/ap_payments/update/#{options[:id]}")
     api_request(uri, "POST", params)
   end
 
   def update_customer(options)
-    params = { "id" => options[:id],
-               "name" => options[:name],
+    params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
                "code" => options[:code],
                "tax_type_for_remittance_charge" => options[:tax_type_for_remittance_charge],
@@ -407,13 +385,12 @@ class TsubaisoSDK
                "format" => "json"
              }
 
-    uri = URI.parse(@base_url + '/customer_masters/update')
+    uri = URI.parse(@base_url + "/customer_masters/update/#{options[:id]}")
     api_request(uri, "POST", params)
   end
 
   def update_staff_data(options)
-    params = { "id" => options[:id],
-               "memo" => options[:memo],
+    params = { "memo" => options[:memo],
                "value" => options[:value],
                "start_timestamp" => options[:start_timestamp],
                "format" => "json"
@@ -425,36 +402,33 @@ class TsubaisoSDK
       params[:no_finish_timestamp] = options[:no_finish_timestamp]
     end
 
-    uri = URI.parse(@base_url + '/staff_data/update')
+    uri = URI.parse(@base_url + "/staff_data/update/#{options[:id]}")
     api_request(uri, "POST", params)
   end
 
   def update_manual_journal(options)
-    params = { "id" => options[:id],
-               "journal_timestamp" => options[:journal_timestamp],
+    params = { "journal_timestamp" => options[:journal_timestamp],
                "journal_dcs" => make_journal_dcs(options[:journal_dcs]),
                "format" => "json" }
 
-    uri = URI.parse(@base_url + '/manual_journals/update')
+    uri = URI.parse(@base_url + "/manual_journals/update/#{options[:id]}")
     api_request(uri, "POST", params)
   end
 
   def update_reimbursement(reimbursement_id, options)
     params = { "format" => "json",
-               "id" => reimbursement_id,
                "applicant" => options[:applicant],
                "application_term" => options[:application_term],
                "staff_code" => options[:staff_code],
                "dept_code" => options[:dept_code],
                "memo" => options[:memo]
              }
-    uri = URI.parse(@base_url + "/reimbursements/update/")
+    uri = URI.parse(@base_url + "/reimbursements/update/#{reimbursement_id}")
     api_request(uri, "POST", params)
   end
 
   def update_reimbursement_transaction(options)
     params = { "format" => "json",
-               "id" => options[:id].to_i,
                "port_type" => options[:port_type],
                "transaction_timestamp" => options[:transaction_timestamp],
                "price_value" => options[:price_value],
@@ -465,13 +439,12 @@ class TsubaisoSDK
                "tag_list" => options[:tag_list],
                "tax_type" => options[:tax_type]
              }
-    uri = URI.parse(@base_url + "/reimbursement_transactions/update/")
+    uri = URI.parse(@base_url + "/reimbursement_transactions/update/#{options[:id]}")
     api_request(uri, "POST", params)
   end
 
   def update_dept(dept_id, options)
     params = { "format" => "json",
-               "id" => dept_id,
                "code" => options[:code],
                "name" => options[:name],
                "name_abbr" => options[:name_abbr],
@@ -480,7 +453,7 @@ class TsubaisoSDK
                "start_date" => options[:start_date],
                "finish_date" => options[:finish_date]
              }
-    uri = URI.parse(@base_url + "/depts/update/")
+    uri = URI.parse(@base_url + "/depts/update/#{dept_id}")
     api_request(uri, "POST", params)
   end
 
@@ -499,10 +472,8 @@ class TsubaisoSDK
 
   def destroy_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
-    params = { "id" => sale_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/ar/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar/destroy/#{sale_id}")
     api_request(uri, "POST", params)
   end
 
