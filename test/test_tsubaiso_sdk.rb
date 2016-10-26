@@ -14,8 +14,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @purchase_201609 = { price_including_tax: 5400, year: 2016, month: 9, accrual_timestamp: "2016-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1, tag_list: "BANANA"}
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2016-01-01", no_finish_timestamp: "1", memo: "First memo" }
-    @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
-    @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa", dept_code: "SETSURITSU" }
+    @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
+    @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
     @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"MEETING", brief:"everyting going well", memo:"easy", tag_list:"CANADA,BANANA" }
     @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"SUPPLIES", brief:"not well", memo:"hard", tag_list:"CANADA" }
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
@@ -375,7 +375,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_show_reimbursement_transaction
     reimbursement = @api.create_reimbursement(@reimbursement_1)
-    Rails.logger.debug("############ in test of API############")
     options = { :reimbursement_id => reimbursement[:json][:id].to_i }
     reimbursement_transaction = @api.create_reimbursement_transaction(@reimbursement_tx_1.merge(options))
     reimbursement_transaction = @api.show_reimbursement_transaction(reimbursement_transaction[:json][:id])
@@ -563,7 +562,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reimbursement_b_id = reimbursement_b[:json][:id]
 
     reimbursements_list = @api.list_reimbursements(2016, 3)
-    puts reimbursements_list
     assert_equal 200, reimbursements_list[:status].to_i, reimbursements_list.inspect
     assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_a_id }
     assert reimbursements_list[:json].any?{ |x| x[:id] == reimbursement_b_id }
