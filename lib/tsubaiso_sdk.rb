@@ -481,34 +481,26 @@ class TsubaisoSDK
 
   def destroy_purchase(voucher)
     purchase_id = voucher.scan(/\d/).join("")
-    params = { "id" => purchase_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/ap/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ap/destroy/#{purchase_id}")
     api_request(uri, "POST", params)
   end
 
   def destroy_customer(customer_id)
-    params = { "id" => customer_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/customer_masters/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/customer_masters/destroy/#{customer_id}")
     api_request(uri, "POST", params)
   end
 
   def destroy_staff_data(staff_data_id)
-    params = { "id" => staff_data_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/staff_data/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/staff_data/destroy/#{staff_data_id}")
     api_request(uri, "POST", params)
   end
 
   def destroy_manual_journal(manual_journal_id)
-    params = { "id" => manual_journal_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/manual_journals/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/manual_journals/destroy/#{manual_journal_id}")
     api_request(uri, "POST", params)
   end
 
@@ -521,18 +513,14 @@ class TsubaisoSDK
   end
 
   def destroy_reimbursement_transaction(reimbursement_transaction_id)
-    params = { "format" => "json",
-               "id" => reimbursement_transaction_id.to_i
-             }
-    uri = URI.parse(@base_url + "/reimbursement_transactions/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursement_transactions/destroy/#{reimbursement_transaction_id}")
     api_request(uri, "POST", params)
   end
 
   def destroy_dept(dept_id)
-    params = { "id" => dept_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/depts/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/depts/destroy/#{dept_id}")
     api_request(uri, "POST", params)
   end
 
