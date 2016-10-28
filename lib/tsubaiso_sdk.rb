@@ -183,10 +183,8 @@ class TsubaisoSDK
   end
 
   def show_reimbursement_transaction(reimbursement_transaction_id)
-    params = { "id" => reimbursement_transaction_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/reimbursement_transactions/show/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursement_transactions/show/#{reimbursement_transaction_id}")
     api_request(uri, "GET", params)
   end
 
