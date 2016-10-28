@@ -503,10 +503,8 @@ class TsubaisoSDK
   end
 
   def destroy_reimbursement(reimbursement_id)
-    params = { "id" => reimbursement_id,
-               "format" => "json"
-             }
-    uri = URI.parse(@base_url + "/reimbursements/destroy/")
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursements/destroy/#{reimbursement_id}")
     api_request(uri, "POST", params)
   end
 

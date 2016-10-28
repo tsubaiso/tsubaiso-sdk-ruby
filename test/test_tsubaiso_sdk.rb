@@ -16,8 +16,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2016-01-01", no_finish_timestamp: "1", memo: "First memo" }
     @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
     @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
-    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"MEETING", brief:"everyting going well", memo:"easy", tag_list:"CANADA,BANANA" }
-    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"SUPPLIES", brief:"not well", memo:"hard", tag_list:"CANADA" }
+    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"AP_PAYMENT", brief:"everyting going well", memo:"easy", tag_list:"CANADA,BANANA" }
+    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"AP_PAYMENT", brief:"not well", memo:"hard", tag_list:"CANADA" }
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
                          debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ] }
