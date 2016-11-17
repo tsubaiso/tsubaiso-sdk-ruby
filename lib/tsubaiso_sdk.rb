@@ -311,6 +311,7 @@ class TsubaisoSDK
 
   def create_dept(options)
     params = { "format" => "json",
+               "sort_no" => options[:sort_no],
                "code" => options[:code],
                "name" => options[:name],
                "name_abbr" => options[:name_abbr],
@@ -445,6 +446,7 @@ class TsubaisoSDK
 
   def update_dept(dept_id, options)
     params = { "format" => "json",
+               "sort_no" => options[:sort_no],
                "code" => options[:code],
                "name" => options[:name],
                "name_abbr" => options[:name_abbr],
