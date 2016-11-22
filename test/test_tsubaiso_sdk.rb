@@ -21,7 +21,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
                          debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ] }
-    @dept_1= {code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
+    @dept_1= {sort_no: 12345678, code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
     @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
   end
 
@@ -244,6 +244,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   def test_update_dept
     dept = @api.create_dept(@dept_1)
     options = { id: dept[:json][:id],
+                sort_no: 98765,
                 memo: "updated at test",
                 name: "更新部門",
                 name_abbr: "更新部門",
