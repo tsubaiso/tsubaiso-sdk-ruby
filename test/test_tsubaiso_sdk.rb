@@ -266,7 +266,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
                 code: "updated_tag"
               }
 
-    updated_tag = @api.update_tag(tag[:json][:id], options)
+    updated_tag = @api.update_tag(tag[:json][:id], options) 
     assert_equal 200, updated_tag[:status].to_i, updated_tag.inspect
     assert_equal options[:name], updated_tag[:json][:name]
     assert_equal options[:code], updated_tag[:json][:code]
@@ -372,6 +372,18 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
   ensure
     @api.destroy_reimbursement(reimbursement[:json][:id])
+  end
+
+  def test_show_reimbursement_reason_master
+    reim_reason_msts = @api.list_reimbursement_reason_masters
+    assert_equal 200, reim_reason_msts[:status].to_i, reim_reason_msts.inspect
+    assert reim_reason_msts[:json]
+
+    reim_reason_mst_id = reim_reason_msts[:json].first[:id]
+    reim_reason_mst = @api.show_reimbursement_reason_master(reim_reason_mst_id)
+    
+    assert_equal 200, reim_reason_mst[:status].to_i, reim_reason_mst.inspect
+    assert_equal reim_reason_mst[:json][:id], reim_reason_mst_id
   end
 
   def test_show_reimbursement_transaction
@@ -570,6 +582,13 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   ensure
     @api.destroy_reimbursement(reimbursement_a_id) if reimbursement_a_id
     @api.destroy_reimbursement(reimbursement_b_id) if reimbursement_b_id
+  end
+
+  def test_list_reimbursement_reason_masters
+    reimbursement_reason_masters_list = @api.list_reimbursement_reason_masters
+    assert_equal 200, reimbursement_reason_masters_list[:status].to_i, reimbursement_reason_masters_list.inspect
+    assert reimbursement_reason_masters_list[:json]
+    assert(reimbursement_reason_masters_list[:json].size > 0)
   end
 
   def test_list_reimbursement_transactions
