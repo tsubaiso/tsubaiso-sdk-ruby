@@ -76,6 +76,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_reimbursement_reason_masters
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursement_reason_masters/list/")
+    api_request(uri, "GET", params)
+  end
+
   def list_manual_journals(year = nil, month = nil)
     params = { "year" => year,
                "month" => month,
@@ -112,6 +118,12 @@ class TsubaisoSDK
   def list_tags
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/tags/list/")
+    api_request(uri, "GET", params)
+  end
+
+  def list_ar_reason_masters
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar_reason_masters/list/")
     api_request(uri, "GET", params)
   end
 
@@ -197,6 +209,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def show_reimbursement_reason_master(reimbursement_reason_master_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursement_reason_masters/show/#{reimbursement_reason_master_id}")
+    api_request(uri, "GET", params)
+  end
+
   def show_dept(dept_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/depts/show/#{dept_id}")
@@ -212,6 +230,12 @@ class TsubaisoSDK
   def show_payroll(payroll_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/payrolls/show/#{payroll_id}")
+    api_request(uri, "GET", params)
+  end
+
+  def show_ar_reason_master(ar_reason_master_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar_reason_masters/show/#{ar_reason_master_id}")
     api_request(uri, "GET", params)
   end
 

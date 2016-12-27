@@ -266,7 +266,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
                 code: "updated_tag"
               }
 
-    updated_tag = @api.update_tag(tag[:json][:id], options)
+    updated_tag = @api.update_tag(tag[:json][:id], options) 
     assert_equal 200, updated_tag[:status].to_i, updated_tag.inspect
     assert_equal options[:name], updated_tag[:json][:name]
     assert_equal options[:code], updated_tag[:json][:code]
@@ -374,6 +374,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_reimbursement(reimbursement[:json][:id])
   end
 
+  def test_show_reimbursement_reason_master
+    reim_reason_msts = @api.list_reimbursement_reason_masters
+    reim_reason_mst_id = reim_reason_msts[:json].first[:id]
+    reim_reason_mst = @api.show_reimbursement_reason_master(reim_reason_mst_id)
+    
+    assert_equal 200, reim_reason_mst[:status].to_i, reim_reason_mst.inspect
+    assert_equal reim_reason_mst[:json][:id], reim_reason_mst_id
+  end
+
   def test_show_reimbursement_transaction
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = { :reimbursement_id => reimbursement[:json][:id].to_i }
@@ -441,6 +450,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     payroll = @api.show_payroll(first_payroll_id)
     assert_equal 200, payroll[:status].to_i, payroll.inspect
     assert_equal first_payroll_id, payroll[:json][:id]
+  end
+
+  def test_show_ar_reason_master
+    ar_reason_masters = @api.list_ar_reason_masters
+    ar_reason_master_id = ar_reason_masters[:json].first[:id]
+    ar_reason_master = @api.show_ar_reason_master(ar_reason_master_id)
+
+    assert_equal 200, ar_reason_master[:status].to_i, ar_reason_master.inspect
+    assert_equal ar_reason_master[:json][:id], ar_reason_master_id
   end
 
   def test_list_sales
@@ -581,6 +599,13 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_reimbursement(reimbursement_b_id) if reimbursement_b_id
   end
 
+  def test_list_reimbursement_reason_masters
+    reimbursement_reason_masters_list = @api.list_reimbursement_reason_masters
+    assert_equal 200, reimbursement_reason_masters_list[:status].to_i, reimbursement_reason_masters_list.inspect
+    assert reimbursement_reason_masters_list[:json]
+    assert(reimbursement_reason_masters_list[:json].size > 0)
+  end
+
   def test_list_reimbursement_transactions
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = { :reimbursement_id => reimbursement[:json][:id].to_i }
@@ -620,11 +645,19 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
+<<<<<<< HEAD
   def test_list_payrolls
     payrolls_list = @api.list_payrolls(2016, 2)
 
     assert_equal 200, payrolls_list[:status].to_i, payrolls_list.inspect
     assert(payrolls_list.size > 0)
+=======
+  def test_list_ar_reason_masters
+    ar_reason_masters_list = @api.list_ar_reason_masters
+    assert_equal 200, ar_reason_masters_list[:status].to_i, ar_reason_masters_list.inspect
+    assert ar_reason_masters_list[:json]
+    assert(ar_reason_masters_list[:json].size > 0)
+>>>>>>> master
   end
 
   private
