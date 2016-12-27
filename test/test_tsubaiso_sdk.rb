@@ -376,9 +376,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_show_reimbursement_reason_master
     reim_reason_msts = @api.list_reimbursement_reason_masters
-    assert_equal 200, reim_reason_msts[:status].to_i, reim_reason_msts.inspect
-    assert reim_reason_msts[:json]
-
     reim_reason_mst_id = reim_reason_msts[:json].first[:id]
     reim_reason_mst = @api.show_reimbursement_reason_master(reim_reason_mst_id)
     
