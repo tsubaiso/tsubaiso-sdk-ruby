@@ -436,9 +436,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_show_ar_reason_master
     ar_reason_masters = @api.list_ar_reason_masters
-    assert_equal 200, ar_reason_masters[:status].to_i, ar_reason_masters.inspect
-    assert ar_reason_masters[:json]
-
     ar_reason_master_id = ar_reason_masters[:json].first[:id]
     ar_reason_master = @api.show_ar_reason_master(ar_reason_master_id)
 
