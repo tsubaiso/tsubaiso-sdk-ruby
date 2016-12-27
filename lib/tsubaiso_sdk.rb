@@ -106,6 +106,15 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_bonuses(bonus_no, target_year)
+    params = { "format" => "json",
+               "bonus_no" => bonus_no,
+               "target_year" => target_year
+             }
+    uri = URI.parse(@base_url + "/bonuses/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "format" => "json" }
@@ -197,6 +206,12 @@ class TsubaisoSDK
   def show_tag(tag_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/tags/show/#{tag_id}")
+    api_request(uri, "GET", params)
+  end
+
+  def show_bonus(bonus_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/bonuses/show/#{bonus_id}")
     api_request(uri, "GET", params)
   end
 

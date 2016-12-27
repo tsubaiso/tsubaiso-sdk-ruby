@@ -434,6 +434,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_tag(tag[:json][:id])
   end
 
+  def test_show_bonus
+    bonuses = @api.list_bonuses(1, 2016)
+    bonus_id = bonuses[:json].first[:id]
+    bonus = @api.show_bonus(bonus_id)
+
+    assert_equal 200, bonus[:status].to_i, bonus.inspect
+    assert_equal bonus[:json][:id], bonus_id
+  end
+
   def test_list_sales
     august_sale_a = @api.create_sale(@sale_201608)
     august_sale_b = @api.create_sale(@sale_201608)
@@ -609,6 +618,13 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   ensure
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
+  end
+
+  def test_list_bonuses
+    bonuses_list = @api.list_bonuses(1, 2016)
+    assert_equal 200, bonuses_list[:status].to_i, bonuses_list.inspect
+    assert bonuses_list[:json]
+    assert(bonuses_list[:json].size > 0)
   end
 
   private
