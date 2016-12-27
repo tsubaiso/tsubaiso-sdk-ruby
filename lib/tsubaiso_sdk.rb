@@ -112,6 +112,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_ar_reason_masters
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar_reason_masters/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "format" => "json" }
@@ -209,6 +215,12 @@ class TsubaisoSDK
   def show_tag(tag_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/tags/show/#{tag_id}")
+    api_request(uri, "GET", params)
+  end
+
+  def show_ar_reason_master(ar_reason_master_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar_reason_masters/show/#{ar_reason_master_id}")
     api_request(uri, "GET", params)
   end
 

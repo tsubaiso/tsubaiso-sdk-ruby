@@ -443,6 +443,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_tag(tag[:json][:id])
   end
 
+  def test_show_ar_reason_master
+    ar_reason_masters = @api.list_ar_reason_masters
+    ar_reason_master_id = ar_reason_masters[:json].first[:id]
+    ar_reason_master = @api.show_ar_reason_master(ar_reason_master_id)
+
+    assert_equal 200, ar_reason_master[:status].to_i, ar_reason_master.inspect
+    assert_equal ar_reason_master[:json][:id], ar_reason_master_id
+  end
+
   def test_list_sales
     august_sale_a = @api.create_sale(@sale_201608)
     august_sale_b = @api.create_sale(@sale_201608)
@@ -625,6 +634,13 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   ensure
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
+  end
+
+  def test_list_ar_reason_masters
+    ar_reason_masters_list = @api.list_ar_reason_masters
+    assert_equal 200, ar_reason_masters_list[:status].to_i, ar_reason_masters_list.inspect
+    assert ar_reason_masters_list[:json]
+    assert(ar_reason_masters_list[:json].size > 0)
   end
 
   private
