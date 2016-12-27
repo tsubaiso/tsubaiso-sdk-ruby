@@ -645,19 +645,18 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
-<<<<<<< HEAD
   def test_list_payrolls
     payrolls_list = @api.list_payrolls(2016, 2)
 
     assert_equal 200, payrolls_list[:status].to_i, payrolls_list.inspect
     assert(payrolls_list.size > 0)
-=======
+  end
+
   def test_list_ar_reason_masters
     ar_reason_masters_list = @api.list_ar_reason_masters
     assert_equal 200, ar_reason_masters_list[:status].to_i, ar_reason_masters_list.inspect
     assert ar_reason_masters_list[:json]
     assert(ar_reason_masters_list[:json].size > 0)
->>>>>>> master
   end
 
   private
