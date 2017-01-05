@@ -470,6 +470,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal ar_reason_master[:json][:id], ar_reason_master_id
   end
 
+  def test_show_ap_reason_master
+    ap_reason_masters = @api.list_ap_reason_masters
+    first_ap_reason_master = ap_reason_masters[:json].first
+    ap_reason_master = @api.show_ap_reason_master(first_ap_reason_master[:id])
+
+    assert_equal 200, ap_reason_master[:status].to_i, ap_reason_master.inspect
+    assert_equal first_ap_reason_master[:reason_code], ap_reason_master[:json][:reason_code]
+  end
+
   def test_list_sales
     august_sale_a = @api.create_sale(@sale_201608)
     august_sale_b = @api.create_sale(@sale_201608)
@@ -673,6 +682,12 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, ar_reason_masters_list[:status].to_i, ar_reason_masters_list.inspect
     assert ar_reason_masters_list[:json]
     assert(ar_reason_masters_list[:json].size > 0)
+  end
+
+  def test_list_ap_reason_masters
+    ap_reason_masters_list = @api.list_ap_reason_masters
+    assert_equal 200, ap_reason_masters_list[:status].to_i, ap_reason_masters_list.inspect
+    assert(ap_reason_masters_list.size > 0)
   end
 
   private

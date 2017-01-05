@@ -130,6 +130,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_ap_reason_masters
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ap_reason_masters/list")
+    api_request(uri, "GET", params)
+  end
+
   def list_ar_reason_masters
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/ar_reason_masters/list/")
@@ -254,6 +260,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def show_ap_reason_master(ap_reason_master_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ap_reason_masters/show/#{ap_reason_master_id}")
+    api_request(uri, "GET", params)
+  end
+  
   def create_customer(options)
     params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
