@@ -31,6 +31,15 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_payrolls(year, month)
+    params = { "format" => "json",
+               "year" => year,
+               "month" => month
+             }
+    uri = URI.parse(@base_url + "/payrolls/list/")
+    api_request(uri, "GET", params)
+  end
+
   def list_staff
     params = { "format" => "json"}
     uri = URI.parse(@base_url + "/staffs/list/")
@@ -64,6 +73,12 @@ class TsubaisoSDK
                "id" => reimbursement_id.to_i
              }
     uri = URI.parse(@base_url + "/reimbursement_transactions/list/")
+    api_request(uri, "GET", params)
+  end
+
+  def list_reimbursement_reason_masters
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursement_reason_masters/list/")
     api_request(uri, "GET", params)
   end
 
@@ -106,9 +121,24 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_bonuses(bonus_no, target_year)
+    params = { "format" => "json",
+               "bonus_no" => bonus_no,
+               "target_year" => target_year
+             }
+    uri = URI.parse(@base_url + "/bonuses/list/")
+    api_request(uri, "GET", params)
+  end
+
   def list_ap_reason_masters
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/ap_reason_masters/list")
+    api_request(uri, "GET", params)
+  end
+
+  def list_ar_reason_masters
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar_reason_masters/list/")
     api_request(uri, "GET", params)
   end
 
@@ -194,6 +224,12 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def show_reimbursement_reason_master(reimbursement_reason_master_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/reimbursement_reason_masters/show/#{reimbursement_reason_master_id}")
+    api_request(uri, "GET", params)
+  end
+
   def show_dept(dept_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/depts/show/#{dept_id}")
@@ -206,12 +242,30 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def show_bonus(bonus_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/bonuses/show/#{bonus_id}")
+    api_request(uri, "GET", params)
+  end
+
+  def show_payroll(payroll_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/payrolls/show/#{payroll_id}")
+    api_request(uri, "GET", params)
+  end
+
+  def show_ar_reason_master(ar_reason_master_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/ar_reason_masters/show/#{ar_reason_master_id}")
+    api_request(uri, "GET", params)
+  end
+
   def show_ap_reason_master(ap_reason_master_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/ap_reason_masters/show/#{ap_reason_master_id}")
     api_request(uri, "GET", params)
   end
-
+  
   def create_customer(options)
     params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
