@@ -31,6 +31,15 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_payrolls(year, month)
+    params = { "format" => "json",
+               "year" => year,
+               "month" => month
+             }
+    uri = URI.parse(@base_url + "/payrolls/list/")
+    api_request(uri, "GET", params)
+  end
+
   def list_staff
     params = { "format" => "json"}
     uri = URI.parse(@base_url + "/staffs/list/")
@@ -230,6 +239,12 @@ class TsubaisoSDK
   def show_bonus(bonus_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/bonuses/show/#{bonus_id}")
+    api_request(uri, "GET", params)
+  end
+
+  def show_payroll(payroll_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/payrolls/show/#{payroll_id}")
     api_request(uri, "GET", params)
   end
 

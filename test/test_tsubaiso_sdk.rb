@@ -452,6 +452,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal bonus[:json][:id], bonus_id
   end
 
+  def test_show_payroll
+    payrolls_list = @api.list_payrolls(2016, 2)
+    first_payroll_id = payrolls_list[:json].first[:id]
+
+    payroll = @api.show_payroll(first_payroll_id)
+    assert_equal 200, payroll[:status].to_i, payroll.inspect
+    assert_equal first_payroll_id, payroll[:json][:id]
+  end
+
   def test_show_ar_reason_master
     ar_reason_masters = @api.list_ar_reason_masters
     ar_reason_master_id = ar_reason_masters[:json].first[:id]
@@ -650,6 +659,13 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, bonuses_list[:status].to_i, bonuses_list.inspect
     assert bonuses_list[:json]
     assert(bonuses_list[:json].size > 0)
+  end
+
+  def test_list_payrolls
+    payrolls_list = @api.list_payrolls(2016, 2)
+
+    assert_equal 200, payrolls_list[:status].to_i, payrolls_list.inspect
+    assert(payrolls_list.size > 0)
   end
 
   def test_list_ar_reason_masters
