@@ -500,6 +500,12 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
   end
 
+  def test_list_sale_balances
+    balances_list = @api.list_purchase_balances(2014,2)
+    assert_equal 200, balances_list[:status].to_i, balances_list.inspect
+    assert(balances_list[:json].count > 0)
+  end
+
   def test_list_purchases
     august_purchase_a = @api.create_purchase(@purchase_201608)
     august_purchase_b = @api.create_purchase(@purchase_201608)
@@ -519,6 +525,12 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     @api.destroy_purchase("AP#{august_purchase_a[:json][:id]}") if august_purchase_a[:json][:id]
     @api.destroy_purchase("AP#{august_purchase_b[:json][:id]}") if august_purchase_b[:json][:id]
     @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
+  end
+
+  def test_list_purchase_balances
+    balances_list = @api.list_purchase_balances(2014,2)
+    assert_equal 200, balances_list[:status].to_i, balances_list.inspect
+    assert(balances_list[:json].count > 0)
   end
 
   def test_list_customers
