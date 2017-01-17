@@ -501,7 +501,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_sale_balances
-    balances_list = @api.list_purchase_balances(2014,2)
+    balances_list = @api.list_sale_balances(2014,2)
     assert_equal 200, balances_list[:status].to_i, balances_list.inspect
     assert(balances_list[:json].count > 0)
   end
@@ -699,7 +699,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   def test_list_ap_reason_masters
     ap_reason_masters_list = @api.list_ap_reason_masters
     assert_equal 200, ap_reason_masters_list[:status].to_i, ap_reason_masters_list.inspect
-    assert(ap_reason_masters_list.size > 0)
+    assert ap_reason_masters_list[:json]
+    assert(ap_reason_masters_list[:json].size > 0)
   end
 
   private
