@@ -162,7 +162,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal purchase[:json][:id], updated_purchase[:json][:id]
     assert_equal "Updated memo", updated_purchase[:json][:memo]
     assert_equal 50000, updated_purchase[:json][:price_including_tax]
-    assert_equal "300", updated_sale[:json][:data_partner][:id_code]
+    assert_equal "300", updated_purchase[:json][:data_partner][:id_code]
     
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
@@ -247,7 +247,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     updated_manual_journal = @api.update_manual_journal(options)
     assert_equal 200, updated_manual_journal[:status].to_i, updated_manual_journal.inspect
     assert_equal options[:journal_dcs][0][:debit][:price_including_tax], updated_manual_journal[:json][:journal_dcs][0][:debit][:price_including_tax]
-#    assert_equal options[:data_partner][:id_code], updated_manual_journal[:json][:data_partner][:id_code]
+    assert_equal options[:data_partner][:id_code], updated_manual_journal[:json][:data_partner][:id_code]
 
   ensure
     @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
