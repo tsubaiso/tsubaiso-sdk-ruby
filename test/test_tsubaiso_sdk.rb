@@ -49,7 +49,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, sale[:status].to_i, sale.inspect
     assert_equal @sale_201608[:dept_code], sale[:json][:dept_code]
     assert_equal @sale_201608[:data_partner][:id_code], sale[:json][:data_partner][:id_code]
-    
+
   ensure
     @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
   end
@@ -60,7 +60,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, purchase[:status].to_i, purchase.inspect
     assert_equal @purchase_201608[:dept_code], purchase[:json][:dept_code]
     assert_equal @purchase_201608[:data_partner][:id_code], purchase[:json][:data_partner][:id_code]
-    
+
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
   end
@@ -86,7 +86,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
       assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
       assert_equal @manual_journal_1[:journal_dcs][0][:price_including_tax], manual_journal[:json][:journal_dcs][0]["price_including_tax"]
       assert_equal @manual_journal_1[:data_partner][:id_code], manual_journal[:json][:data_partner][:id_code]
-      
+
     ensure
       @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
     end
@@ -108,7 +108,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, reimbursement_transaction[:status].to_i, reimbursement_transaction.inspect
     assert_equal @reimbursement_tx_1[:price_value], reimbursement_transaction[:json][:price_value]
     assert_equal @reimbursement_tx_1[:data_partner][:id_code], reimbursement_transaction[:json][:data_partner][:id_code]
-    
+
     ensure
     @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
     @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
@@ -145,7 +145,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal "Updated memo", updated_sale[:json][:memo]
     assert_equal 25000, updated_sale[:json][:price_including_tax]
     assert_equal "100", updated_sale[:json][:data_partner][:id_code]
-    
+
   ensure
     @api.destroy_sale("AP#{sale[:json][:id]}") if sale[:json][:id]
   end
@@ -163,7 +163,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal "Updated memo", updated_purchase[:json][:memo]
     assert_equal 50000, updated_purchase[:json][:price_including_tax]
     assert_equal "300", updated_purchase[:json][:data_partner][:id_code]
-    
+
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
   end
