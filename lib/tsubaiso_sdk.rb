@@ -20,7 +20,7 @@ class TsubaisoSDK
     params = { "year" => year,
                "month" => month,
                "customer_master_id" => options[:customer_master_id],
-               "ap_segment" => options[:ar_segment],
+               "ar_segment" => options[:ar_segment],
                "format" => "json"
     }
     uri = URI.parse(@base_url + "/ar_receipts/balance/")
