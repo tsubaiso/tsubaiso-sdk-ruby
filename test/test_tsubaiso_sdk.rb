@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'minitest/autorun'
 require './lib/tsubaiso_sdk'
+require 'time'
 
 class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
@@ -501,25 +502,25 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_sale_balances
-    # Without customer_master_id and ar_segment option parameters
-    balance_list_before = @api.list_sale_balances(2016,8)
+    first_sale = @api.create_sale(@sale_201608)
+    ar_segment = @api.show_customer(first_sale[:json][:customer_master_id])[:json][:used_in_ar]
+    realization_timestamp = Time.parse(first_sale[:json][:realization_timestamp])
+
+    customer_master_id = first_sale[:json][:customer_master_id]
+
+    balance_list_before = @api.list_sale_balances(realization_timestamp.year, realization_timestamp.month)
     assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
     assert(balance_list_before[:json].count > 0)
 
-    new_sale = @api.create_sale(@sale_201608) # Create an Ar Receipt
+    second_sale = @api.create_sale(@sale_201609)
 
-    balance_list_after = @api.list_sale_balances(2016,8)
+    balance_list_after = @api.list_sale_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_id => customer_master_id, :ar_segment => ar_segment)
     assert_equal 200, balance_list_after[:status].to_i, balance_list_after.inspect
-    assert(balance_list_after[:json].count > 0)
-    assert(balance_list_before != balance_list_after)
-
-    # With customer_master_id and ar_segment option parameters
-    balance_list = @api.list_sale_balances(2017,1, :customer_master_id => 0, :ar_segment => 1)
-    assert_equal 200, balance_list[:status].to_i, balance_list.inspect
-    assert(balance_list[:json].count > 0)
+    assert(balance_list_after[:json] == balance_list_before[:json])
 
   ensure
-    @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
+    @api.destroy_sale("AR#{first_sale[:json][:id]}") if first_sale[:json][:id]
+    @api.destroy_sale("AR#{second_sale[:json][:id]}") if second_sale[:json][:id]
   end
 
   def test_list_purchases
@@ -544,26 +545,24 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_list_purchase_balances
-    # Without customer_master_id and ap_segment option parameters
-    purchase_list_before = @api.list_purchase_balances(2016,9)
-    assert_equal 200, purchase_list_before[:status].to_i, purchase_list_before.inspect
-    assert(purchase_list_before[:json].count > 0)
+    first_purchase = @api.create_purchase(@purchase_201608)
+    ap_segment = @api.show_customer(first_purchase[:json][:customer_master_id])[:json][:used_in_ap]
+    accrual_timestamp = Time.parse(first_purchase[:json][:accrual_timestamp])
+    customer_master_id = first_purchase[:json][:customer_master_id]
 
-    @purchase_201609[:customer_master_code] = "KAI"
-    new_purchase = @api.create_purchase(@purchase_201609) # Create an Ap Payment
+    balance_list_before = @api.list_purchase_balances(accrual_timestamp.year, accrual_timestamp.month)
+    assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
+    assert(balance_list_before[:json].count > 0)
 
-    purchase_list_after = @api.list_purchase_balances(2016,9)
-    assert_equal 200, purchase_list_after[:status].to_i, purchase_list_after.inspect
-    assert(purchase_list_after[:json].count > 0)
-    assert(purchase_list_before != purchase_list_after)
+    second_purchase = @api.create_purchase(@purchase_201609)
 
-    # With customer_master_id and ap_segment option parameters
-    purchase_list = @api.list_purchase_balances(2017,1, :customer_master_id => 105, :ap_segment => 2)
-    assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
-    assert(purchase_list[:json].count > 0)
+    balance_list_after = @api.list_purchase_balances(accrual_timestamp.year, accrual_timestamp.month, :customer_master_id => customer_master_id, :ap_segment => ap_segment)
+    assert_equal 200, balance_list_after[:status].to_i, balance_list_after.inspect
+    assert(balance_list_after[:json] == balance_list_before[:json])
 
   ensure
-    @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
+    @api.destroy_purchase("AP#{first_purchase[:json][:id]}") if first_purchase[:json][:id]
+    @api.destroy_purchase("AP#{second_purchase[:json][:id]}") if second_purchase[:json][:id]
   end
 
   def test_list_customers
