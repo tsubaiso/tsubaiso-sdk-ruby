@@ -16,7 +16,7 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
-  def list_sale_balances(year, month, options = {})
+  def list_sales_and_account_balances(year, month, options = {})
     params = { "year" => year,
                "month" => month,
                "customer_master_id" => options[:customer_master_id],
@@ -36,7 +36,7 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
-  def list_purchase_balances(year, month, options = {})
+  def list_purchases_and_account_balances(year, month, options = {})
     params = { "year" => year,
                "month" => month,
                "customer_master_id" => options[:customer_master_id],
@@ -89,7 +89,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/reimbursements/list/")
     api_request(uri, "GET", params)
   end
-  
+
   def list_reimbursement_transactions(reimbursement_id)
     params = { "format" => "json",
                "id" => reimbursement_id.to_i
@@ -287,7 +287,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ap_reason_masters/show/#{ap_reason_master_id}")
     api_request(uri, "GET", params)
   end
-  
+
   def create_customer(options)
     params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
@@ -677,6 +677,3 @@ class TsubaisoSDK
     }
   end
 end
-
-
-
