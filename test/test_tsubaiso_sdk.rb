@@ -141,10 +141,10 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     updated_sale = @api.update_sale(options)
     assert_equal 200, updated_sale[:status].to_i
-    assert_equal sale[:json][:id], updated_sale[:json][:id]
-    assert_equal "Updated memo", updated_sale[:json][:memo]
-    assert_equal 25000, updated_sale[:json][:price_including_tax]
-    assert_equal "100", updated_sale[:json][:data_partner][:id_code]
+    assert_equal options[:id], updated_sale[:json][:id]
+    assert_equal options[:memo], updated_sale[:json][:memo]
+    assert_equal options[:price_including_tax], updated_sale[:json][:price_including_tax]
+    assert_equal options[:data_partner][:id_code], updated_sale[:json][:data_partner][:id_code]
 
   ensure
     @api.destroy_sale("AP#{sale[:json][:id]}") if sale[:json][:id]
@@ -159,10 +159,10 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     updated_purchase = @api.update_purchase(options)
     assert_equal 200, updated_purchase[:status].to_i, updated_purchase.inspect
-    assert_equal purchase[:json][:id], updated_purchase[:json][:id]
-    assert_equal "Updated memo", updated_purchase[:json][:memo]
-    assert_equal 50000, updated_purchase[:json][:price_including_tax]
-    assert_equal "300", updated_purchase[:json][:data_partner][:id_code]
+    assert_equal options[:id], updated_purchase[:json][:id]
+    assert_equal options[:memo], updated_purchase[:json][:memo]
+    assert_equal options[:price_including_tax], updated_purchase[:json][:price_including_tax]
+    assert_equal options[:data_partner][:id_code], updated_purchase[:json][:data_partner][:id_code]
 
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
@@ -238,11 +238,10 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     manual_journal = @api.create_manual_journal(@manual_journal_1)
     options = { id: manual_journal[:json][:id],
                 journal_dcs: manual_journal[:json][:journal_dcs],
-                data_partner: manual_journal[:json][:data_partner]
+                data_partner: { :id_code => "700" }
               }
     options[:journal_dcs][0][:debit][:price_including_tax]  = 2000
     options[:journal_dcs][0][:credit][:price_including_tax] = 2000
-#    options[:data_partner][:id_code] = "700"
 
     updated_manual_journal = @api.update_manual_journal(options)
     assert_equal 200, updated_manual_journal[:status].to_i, updated_manual_journal.inspect
@@ -278,7 +277,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
                 code: "updated_tag"
               }
 
-    updated_tag = @api.update_tag(tag[:json][:id], options) 
+    updated_tag = @api.update_tag(tag[:json][:id], options)
     assert_equal 200, updated_tag[:status].to_i, updated_tag.inspect
     assert_equal options[:name], updated_tag[:json][:name]
     assert_equal options[:code], updated_tag[:json][:code]
@@ -390,7 +389,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     reim_reason_msts = @api.list_reimbursement_reason_masters
     reim_reason_mst_id = reim_reason_msts[:json].first[:id]
     reim_reason_mst = @api.show_reimbursement_reason_master(reim_reason_mst_id)
-    
+
     assert_equal 200, reim_reason_mst[:status].to_i, reim_reason_mst.inspect
     assert_equal reim_reason_mst[:json][:id], reim_reason_mst_id
   end
