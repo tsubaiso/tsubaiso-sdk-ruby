@@ -67,7 +67,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/reimbursements/list/")
     api_request(uri, "GET", params)
   end
-  
+
   def list_reimbursement_transactions(reimbursement_id)
     params = { "format" => "json",
                "id" => reimbursement_id.to_i
@@ -265,7 +265,7 @@ class TsubaisoSDK
     uri = URI.parse(@base_url + "/ap_reason_masters/show/#{ap_reason_master_id}")
     api_request(uri, "GET", params)
   end
-  
+
   def create_customer(options)
     params = { "name" => options[:name],
                "name_kana" => options[:name_kana],
@@ -295,6 +295,7 @@ class TsubaisoSDK
                "scheduled_memo" => options[:scheduled_memo],
                "scheduled_receive_timestamp" => options[:scheduled_receive_timestamp],
                "tag_list" => options[:tag_list],
+               "data_partner" => options[:data_partner],
                "format" => "json"
              }
     uri = URI.parse(@base_url + '/ar/create')
@@ -312,6 +313,7 @@ class TsubaisoSDK
                "tax_code" => options[:tax_code],
                "port_type" => options[:port_type],
                "tag_list" => options[:tag_list],
+               "data_partner" => options[:data_partner],
                "format" => "json"
              }
     uri = URI.parse(@base_url + '/ap_payments/create')
@@ -340,6 +342,7 @@ class TsubaisoSDK
   def create_manual_journal(options)
     params = { "journal_timestamp" => options[:journal_timestamp],
                "journal_dcs" => make_journal_dcs(options[:journal_dcs]),
+               "data_partner" => options[:data_partner],
                "format" => "json" }
 
     uri = URI.parse(@base_url + '/manual_journals/create')
@@ -369,7 +372,8 @@ class TsubaisoSDK
                "brief" => options[:brief],
                "memo" => options[:memo],
                "tag_list" => options[:tag_list],
-               "tax_type" => options[:tax_type]
+               "tax_type" => options[:tax_type],
+               "data_partner" => options[:data_partner]
              }
     uri = URI.parse(@base_url + '/reimbursement_transactions/create/')
     api_request(uri, "POST", params)
@@ -416,6 +420,7 @@ class TsubaisoSDK
                "scheduled_memo" => options[:scheduled_memo],
                "scheduled_receive_timestamp" => options[:scheduled_receive_timestamp],
                "tag_list" => options[:tag_list],
+               "data_partner" => options[:data_partner],
                "format" => "json"
              }
     uri = URI.parse(@base_url + "/ar/update/#{options[:id]}")
@@ -433,6 +438,7 @@ class TsubaisoSDK
                "tax_code" => options[:tax_code],
                "port_type" => options[:port_type],
                "tag_list" => options[:tag_list],
+               "data_partner" => options[:data_partner],
                "format" => "json"}
 
     uri = URI.parse(@base_url + "/ap_payments/update/#{options[:id]}")
@@ -476,6 +482,7 @@ class TsubaisoSDK
   def update_manual_journal(options)
     params = { "journal_timestamp" => options[:journal_timestamp],
                "journal_dcs" => make_journal_dcs(options[:journal_dcs]),
+               "data_partner" => options[:data_partner],
                "format" => "json" }
 
     uri = URI.parse(@base_url + "/manual_journals/update/#{options[:id]}")
@@ -504,7 +511,8 @@ class TsubaisoSDK
                "brief" => options[:brief],
                "memo"  => options[:memo],
                "tag_list" => options[:tag_list],
-               "tax_type" => options[:tax_type]
+               "tax_type" => options[:tax_type],
+               "data_partner" => options[:data_partner]
              }
     uri = URI.parse(@base_url + "/reimbursement_transactions/update/#{options[:id]}")
     api_request(uri, "POST", params)
@@ -655,6 +663,3 @@ class TsubaisoSDK
     }
   end
 end
-
-
-
