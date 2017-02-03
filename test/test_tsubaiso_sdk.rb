@@ -11,9 +11,10 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     # data
     @sale_201608 = { price_including_tax: 10800, realization_timestamp: "2016-08-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2016-09-25" }
     @sale_201609 = { price_including_tax: 10800, realization_timestamp: "2016-09-01", customer_master_code: "101", dept_code: "SETSURITSU", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 1007, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2016-09-25" }
+    @sale_201702 = { price_including_tax: 10800, realization_timestamp: "2017-02-28", customer_master_code: "105", reason_master_code: "SALES", dc: 'd', memo: "", tax_code: 18, scheduled_memo: "This is a scheduled memo.", scheduled_receive_timestamp: "2017-03-25" }
     @purchase_201608 = { price_including_tax: 5400, year: 2016, month: 8, accrual_timestamp: "2016-08-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1}
     @purchase_201609 = { price_including_tax: 5400, year: 2016, month: 9, accrual_timestamp: "2016-09-01", customer_master_code: "102", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1}
-    @purchase_201610 = { price_including_tax: 5400, year: 2016, month: 10, accrual_timestamp: "2016-10-01", customer_master_code: "KAI", dept_code: "SETSURITSU", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 1007, port_type: 1}
+    @purchase_201702 = { price_including_tax: 5400, year: 2017, month: 2, accrual_timestamp: "2017-02-28", customer_master_code: "105", reason_master_code: "BUYING_IN", dc: 'c', memo: "", tax_code: 18, port_type: 1}
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2016-01-01", no_finish_timestamp: "1", memo: "First memo" }
     @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
@@ -504,14 +505,13 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_list_sales_and_account_balances
     begin
-      realization_timestamp = Time.parse(@sale_201608[:realization_timestamp])
+      realization_timestamp = Time.parse(@sale_201702[:realization_timestamp])
 
       # Without customer_master_id and ar_segment option parameters
       balance_list_before = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month)
       assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
-      assert(balance_list_before[:json].count > 0)
 
-      new_sale = @api.create_sale(@sale_201608)
+      new_sale = @api.create_sale(@sale_201702)
       assert_equal 200, new_sale[:status].to_i, new_sale.inspect
       assert(new_sale[:json].count > 0)
 
@@ -532,6 +532,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
       balance_list = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_id => customer_master_id, :ar_segment => ar_segment)
       assert_equal 200, balance_list[:status].to_i, balance_list.inspect
       assert(balance_list[:json].count > 0)
+      assert balance_list[:json].any?{ |x| x[:customer_master_id] == customer_master_id }
+      assert balance_list[:json].any?{ |x| x[:ar_segment] == ar_segment }
 
     rescue => e
       STDERR.puts(e.inspect)
@@ -564,14 +566,13 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
   def test_list_purchases_and_account_balances
     begin
-      accrual_timestamp = Time.parse(@purchase_201610[:accrual_timestamp])
+      accrual_timestamp = Time.parse(@purchase_201702[:accrual_timestamp])
 
       # Without customer_master_id and ap_segment option parameters
       balance_list_before = @api.list_purchases_and_account_balances(accrual_timestamp.year, accrual_timestamp.month)
       assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
-      assert(balance_list_before[:json].count > 0)
 
-      new_purchase = @api.create_purchase(@purchase_201610)
+      new_purchase = @api.create_purchase(@purchase_201702)
       assert_equal 200, new_purchase[:status].to_i, new_purchase.inspect
       assert(new_purchase[:json].count > 0)
 
@@ -586,12 +587,15 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
       balance_list_after = @api.list_purchases_and_account_balances(accrual_timestamp.year, accrual_timestamp.month)
       assert_equal 200, balance_list_after[:status].to_i, balance_list_after.inspect
       assert(balance_list_after[:json].count > 0)
+
       assert(balance_list_after[:json] != balance_list_before[:json])
 
       # With customer_master_id and ap_segment option parameters
       balance_list = @api.list_purchases_and_account_balances(accrual_timestamp.year, accrual_timestamp.month, :customer_master_id => customer_master_id, :ap_segment => ap_segment)
       assert_equal 200, balance_list[:status].to_i, balance_list.inspect
       assert(balance_list[:json].count > 0)
+      assert balance_list[:json].any?{ |x| x[:customer_master_id] == customer_master_id }
+      assert balance_list[:json].any?{ |x| x[:ap_segment] == ap_segment }
 
     rescue => e
       STDERR.puts(e.inspect)
