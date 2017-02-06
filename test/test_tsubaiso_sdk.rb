@@ -526,7 +526,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
       new_sale = @api.create_sale(@sale_201702)
       assert_equal 200, new_sale[:status].to_i, new_sale.inspect
       assert(new_sale[:json].count > 0)
-
       customer_masters_list = @api.list_customers
       assert_equal 200, customer_masters_list[:status].to_i, customer_masters_list.inspect
       assert customer_masters_list[:json].any?{ |x| x[:code] == new_sale[:json][:customer_master_code] }
@@ -546,10 +545,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
       assert(balance_list[:json].count > 0)
       assert balance_list[:json].any?{ |x| x[:customer_master_id] == customer_master_id }
       assert balance_list[:json].any?{ |x| x[:ar_segment] == ar_segment }
-
-    rescue => e
-      STDERR.puts(e.inspect)
-      STDERR.puts(e.backtrace.join("\n"))
     ensure
       @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
     end
@@ -609,9 +604,6 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
       assert balance_list[:json].any?{ |x| x[:customer_master_id] == customer_master_id }
       assert balance_list[:json].any?{ |x| x[:ap_segment] == ap_segment }
 
-    rescue => e
-      STDERR.puts(e.inspect)
-      STDERR.puts(e.backtrace.join("\n"))
     ensure
       @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
     end
