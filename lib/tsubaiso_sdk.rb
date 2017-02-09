@@ -16,12 +16,34 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  def list_sales_and_account_balances(year, month, options = {})
+    params = { "year" => year,
+               "month" => month,
+               "customer_master_id" => options[:customer_master_id],
+               "ar_segment" => options[:ar_segment],
+               "format" => "json"
+    }
+    uri = URI.parse(@base_url + "/ar_receipts/balance/")
+    api_request(uri, "GET", params)
+  end
+
   def list_purchases(year, month)
     params = { "year" => year,
                "month" => month,
                "format" => "json"
              }
     uri = URI.parse(@base_url + "/ap_payments/list/")
+    api_request(uri, "GET", params)
+  end
+
+  def list_purchases_and_account_balances(year, month, options = {})
+    params = { "year" => year,
+               "month" => month,
+               "customer_master_id" => options[:customer_master_id],
+               "ap_segment" => options[:ap_segment],
+               "format" => "json"
+    }
+    uri = URI.parse(@base_url + "/ap_payments/balance/")
     api_request(uri, "GET", params)
   end
 
