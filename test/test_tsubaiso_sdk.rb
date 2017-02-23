@@ -27,6 +27,8 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
     @dept_1= {sort_no: 12345678, code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
     @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
+    @journal_distribution_1 = { start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SHOP", memo: "",
+                                criteria: "dept", target_timestamp: "2017-02-01", distribution_conditions: { "SETSURITSU" => "1", "HEAD" => "1" } }
   end
 
   def test_failed_request
@@ -134,6 +136,26 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
 
     ensure
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
+  end
+
+  def test_create_journal_distribution
+    options = { start_date: @journal_distribution_1[:start_date], finish_date: @journal_distribution_1[:target_timestamp] }
+
+    journals_list_before = @api.list_journals(options)
+    records_before = journals_list_before[:json][:records]
+    assert_equal 200, journals_list_before[:status].to_i, journals_list_before.inspect
+
+    journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
+    assert_equal 200, journal_distribution[:status].to_i, journal_distribution.inspect
+    assert_equal Time.parse(@journal_distribution_1[:target_timestamp]), Time.parse(journal_distribution[:json][:target_ym])
+
+    journals_list_after = @api.list_journals(options)
+    records_after = journals_list_after[:json][:records]
+    assert_equal 200, journals_list_after[:status].to_i, journals_list_after.inspect
+    assert (records_before.count != records_after.count)
+
+  ensure
+    @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
   end
 
   def test_update_sale
