@@ -19,7 +19,7 @@ class TsubaisoSDK
   def list_sales_and_account_balances(year, month, options = {})
     params = { "year" => year,
                "month" => month,
-               "customer_master_id" => options[:customer_master_id],
+               "customer_master_code" => options[:customer_master_code],
                "ar_segment" => options[:ar_segment],
                "format" => "json"
     }

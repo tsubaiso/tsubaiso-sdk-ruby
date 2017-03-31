@@ -1,9 +1,9 @@
 # encoding: utf-8
 require 'minitest/autorun'
-require './lib/tsubaiso_sdk'
 require 'time'
+require './lib/tsubaiso_sdk'
 
-class TsubaisoSDKTest < MiniTest::Unit::TestCase
+class TsubaisoSDKTest < MiniTest::Test
 
   def setup
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
@@ -468,7 +468,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   end
 
   def test_show_payroll
-    payrolls_list = @api.list_payrolls(2016, 2)
+    payrolls_list = @api.list_payrolls(2017, 1)
     first_payroll_id = payrolls_list[:json].first[:id]
 
     payroll = @api.show_payroll(first_payroll_id)
@@ -518,7 +518,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
   def test_list_sales_and_account_balances
     realization_timestamp = Time.parse(@sale_201702[:realization_timestamp])
 
-    # Without customer_master_id and ar_segment option parameters
+    # Without customer_master_code and ar_segment option parameters
     balance_list_before = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month)
     assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
 
@@ -535,14 +535,17 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal 200, customer_masters_list[:status].to_i, customer_masters_list.inspect
     assert customer_masters_list[:json].any?{ |x| x[:code] == new_sale[:json][:customer_master_code] }
     filtered_customer_master = customer_masters_list[:json].select{ |x| x[:code] == new_sale[:json][:customer_master_code] }.first
-    customer_master_id = filtered_customer_master[:id]
+    customer_master_code = filtered_customer_master[:code]
     ar_segment = filtered_customer_master[:used_in_ar]
 
     # With customer_master_id and ar_segment option parameters
-    balance_list = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_id => customer_master_id, :ar_segment => ar_segment)
+    balance_list = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_code => customer_master_code, :ar_segment => ar_segment)
     assert_equal 200, balance_list[:status].to_i, balance_list.inspect
     assert(balance_list[:json].count > 0)
-    assert balance_list[:json].all?{ |x| x[:customer_master_id] == customer_master_id && x[:ar_segment] == ar_segment }
+    balance_list[:json].each do |x|
+      assert x[:customer_master_code] == customer_master_code, "#{x} customer_master_code is right"
+      assert x[:ar_segment] == ar_segment, "ar_segment is not right"
+    end
   ensure
     @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
   end
