@@ -142,7 +142,7 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     options = { start_date: @journal_distribution_1[:start_date], finish_date: @journal_distribution_1[:target_timestamp] }
 
     journals_list_before = @api.list_journals(options)
-    records_before = journals_list_before[:json][:records]
+    records_before_count = journals_list_before[:json][:records].count
     assert_equal 200, journals_list_before[:status].to_i, journals_list_before.inspect
 
     journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
@@ -150,9 +150,9 @@ class TsubaisoSDKTest < MiniTest::Unit::TestCase
     assert_equal Time.parse(@journal_distribution_1[:target_timestamp]), Time.parse(journal_distribution[:json][:target_ym])
 
     journals_list_after = @api.list_journals(options)
-    records_after = journals_list_after[:json][:records]
+    records_after_count = journals_list_after[:json][:records].count
     assert_equal 200, journals_list_after[:status].to_i, journals_list_after.inspect
-    assert (records_before.count != records_after.count)
+    assert (records_before_count != records_after_count)
 
   ensure
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
