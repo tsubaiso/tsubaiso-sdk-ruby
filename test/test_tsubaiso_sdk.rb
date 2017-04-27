@@ -490,7 +490,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_show_payroll
-    payrolls_list = @api.list_payrolls(2016, 2)
+    payrolls_list = @api.list_payrolls(2017, 2)
     first_payroll_id = payrolls_list[:json].first[:id]
 
     payroll = @api.show_payroll(first_payroll_id)
