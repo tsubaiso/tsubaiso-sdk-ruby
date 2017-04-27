@@ -2,7 +2,6 @@
 require 'minitest/autorun'
 require './lib/tsubaiso_sdk'
 require 'time'
-require 'pp'
 
 class TsubaisoSDKTest < Minitest::Test
 
@@ -671,9 +670,9 @@ class TsubaisoSDKTest < Minitest::Test
     journals_list = @api.list_journals(options)
     records = journals_list[:json][:records]
     assert_equal 200, journals_list[:status].to_i, journals_list.inspect
-    record_timestamps = records.map { |x| x[:journal_timestamp].split(" ")[0] }
-    assert_includes record_timestamps, august_sale[:json][:realization_timestamp]
-    assert_includes record_timestamps, august_purchase[:json][:accrual_timestamp]
+    record_timestamps = records.map { |x| Time.parse(x[:journal_timestamp]) }
+    assert_includes record_timestamps, Time.parse(august_sale[:json][:realization_timestamp])
+    assert_includes record_timestamps, Time.parse(august_purchase[:json][:accrual_timestamp])
 
     options = { price: 10800 }
     journals_list = @api.list_journals(options)
