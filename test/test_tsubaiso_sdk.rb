@@ -3,7 +3,7 @@ require 'minitest/autorun'
 require './lib/tsubaiso_sdk'
 require 'time'
 
-class TsubaisoSDKTest < MiniTest::Unit::TestCase
+class TsubaisoSDKTest < Minitest::Test
 
   def setup
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
