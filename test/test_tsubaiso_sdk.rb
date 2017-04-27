@@ -2,6 +2,7 @@
 require 'minitest/autorun'
 require './lib/tsubaiso_sdk'
 require 'time'
+require 'pp'
 
 class TsubaisoSDKTest < Minitest::Test
 
@@ -556,15 +557,13 @@ class TsubaisoSDKTest < Minitest::Test
     customer_masters_list = @api.list_customers
     assert_equal 200, customer_masters_list[:status].to_i, customer_masters_list.inspect
     assert customer_masters_list[:json].any?{ |x| x[:code] == new_sale[:json][:customer_master_code] }
-    filtered_customer_master = customer_masters_list[:json].select{ |x| x[:code] == new_sale[:json][:customer_master_code] }.first
-    customer_master_id = filtered_customer_master[:id]
-    ar_segment = filtered_customer_master[:used_in_ar]
+    filtered_cm = customer_masters_list[:json].select{ |x| x[:code] == new_sale[:json][:customer_master_code] }.first
 
     # With customer_master_id and ar_segment option parameters
-    balance_list = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_id => customer_master_id, :ar_segment => ar_segment)
+    balance_list = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_id => filtered_cm[:id], :ar_segment => filtered_cm[:used_in_ar])
     assert_equal 200, balance_list[:status].to_i, balance_list.inspect
     assert(balance_list[:json].count > 0)
-    assert balance_list[:json].all?{ |x| x[:customer_master_id] == customer_master_id && x[:ar_segment] == ar_segment }
+    assert balance_list[:json].all?{ |x| x[:customer_master_code] == filtered_cm[:code] && x[:ar_segment] == filtered_cm[:used_in_ar] }
   ensure
     @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
   end
