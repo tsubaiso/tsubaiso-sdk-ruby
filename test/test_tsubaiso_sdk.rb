@@ -166,7 +166,7 @@ class TsubaisoSDKTest < Minitest::Test
                 data_partner: { id_code: "100" } }
 
     updated_sale = @api.update_sale(options)
-    assert_equal 200, updated_sale[:status].to_i
+    assert_equal 200, updated_sale[:status].to_i, updated_sale[:json]
     assert_equal options[:id], updated_sale[:json][:id]
     assert_equal options[:memo], updated_sale[:json][:memo]
     assert_equal options[:price_including_tax], updated_sale[:json][:price_including_tax]
