@@ -3,7 +3,7 @@ require 'minitest/autorun'
 require 'time'
 require './lib/tsubaiso_sdk'
 
-class TsubaisoSDKTest < MiniTest::Test
+class TsubaisoSDKTest < Minitest::Test
 
   def setup
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
@@ -27,6 +27,8 @@ class TsubaisoSDKTest < MiniTest::Test
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
     @dept_1= {sort_no: 12345678, code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
     @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
+    @journal_distribution_1 = { start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SETSURITSU", memo: "",
+                                criteria: "dept", target_timestamp: "2017-02-01", distribution_conditions: { "SETSURITSU" => "1", "SYSTEM" => "1" } }
   end
 
   def test_failed_request
@@ -136,6 +138,26 @@ class TsubaisoSDKTest < MiniTest::Test
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
+  def test_create_journal_distribution
+    options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
+
+    journals_list_before = @api.list_journals(options)
+    records_before_count = journals_list_before[:json][:records].count
+    assert_equal 200, journals_list_before[:status].to_i, journals_list_before.inspect
+
+    journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
+    assert_equal 200, journal_distribution[:status].to_i, journal_distribution.inspect
+    assert_equal Time.parse(@journal_distribution_1[:target_timestamp]), Time.parse(journal_distribution[:json][:target_ym])
+
+    journals_list_after = @api.list_journals(options)
+    records_after_count = journals_list_after[:json][:records].count
+    assert_equal 200, journals_list_after[:status].to_i, journals_list_after.inspect
+    assert (records_before_count != records_after_count)
+
+  ensure
+    @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
+  end
+
   def test_update_sale
     sale = @api.create_sale(@sale_201608)
     options = { id: sale[:json][:id],
@@ -144,7 +166,7 @@ class TsubaisoSDKTest < MiniTest::Test
                 data_partner: { id_code: "100" } }
 
     updated_sale = @api.update_sale(options)
-    assert_equal 200, updated_sale[:status].to_i
+    assert_equal 200, updated_sale[:status].to_i, updated_sale[:json]
     assert_equal options[:id], updated_sale[:json][:id]
     assert_equal options[:memo], updated_sale[:json][:memo]
     assert_equal options[:price_including_tax], updated_sale[:json][:price_including_tax]
@@ -468,7 +490,7 @@ class TsubaisoSDKTest < MiniTest::Test
   end
 
   def test_show_payroll
-    payrolls_list = @api.list_payrolls(2017, 1)
+    payrolls_list = @api.list_payrolls(2017, 2)
     first_payroll_id = payrolls_list[:json].first[:id]
 
     payroll = @api.show_payroll(first_payroll_id)
@@ -534,18 +556,13 @@ class TsubaisoSDKTest < MiniTest::Test
     customer_masters_list = @api.list_customers
     assert_equal 200, customer_masters_list[:status].to_i, customer_masters_list.inspect
     assert customer_masters_list[:json].any?{ |x| x[:code] == new_sale[:json][:customer_master_code] }
-    filtered_customer_master = customer_masters_list[:json].select{ |x| x[:code] == new_sale[:json][:customer_master_code] }.first
-    customer_master_code = filtered_customer_master[:code]
-    ar_segment = filtered_customer_master[:used_in_ar]
+    filtered_cm = customer_masters_list[:json].select{ |x| x[:code] == new_sale[:json][:customer_master_code] }.first
 
     # With customer_master_id and ar_segment option parameters
-    balance_list = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_code => customer_master_code, :ar_segment => ar_segment)
+    balance_list = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month, :customer_master_id => filtered_cm[:id], :ar_segment => filtered_cm[:used_in_ar])
     assert_equal 200, balance_list[:status].to_i, balance_list.inspect
     assert(balance_list[:json].count > 0)
-    balance_list[:json].each do |x|
-      assert x[:customer_master_code] == customer_master_code, "#{x} customer_master_code is right"
-      assert x[:ar_segment] == ar_segment, "ar_segment is not right"
-    end
+    assert balance_list[:json].all?{ |x| x[:customer_master_code] == filtered_cm[:code] && x[:ar_segment] == filtered_cm[:used_in_ar] }
   ensure
     @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
   end
@@ -653,9 +670,9 @@ class TsubaisoSDKTest < MiniTest::Test
     journals_list = @api.list_journals(options)
     records = journals_list[:json][:records]
     assert_equal 200, journals_list[:status].to_i, journals_list.inspect
-    record_timestamps = records.map { |x| x[:journal_timestamp].split(" ")[0] }
-    assert_includes record_timestamps, august_sale[:json][:realization_timestamp]
-    assert_includes record_timestamps, august_purchase[:json][:accrual_timestamp]
+    record_timestamps = records.map { |x| Time.parse(x[:journal_timestamp]) }
+    assert_includes record_timestamps, Time.parse(august_sale[:json][:realization_timestamp])
+    assert_includes record_timestamps, Time.parse(august_purchase[:json][:accrual_timestamp])
 
     options = { price: 10800 }
     journals_list = @api.list_journals(options)

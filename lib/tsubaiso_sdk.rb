@@ -19,7 +19,7 @@ class TsubaisoSDK
   def list_sales_and_account_balances(year, month, options = {})
     params = { "year" => year,
                "month" => month,
-               "customer_master_code" => options[:customer_master_code],
+               "customer_master_id" => options[:customer_master_id],
                "ar_segment" => options[:ar_segment],
                "format" => "json"
     }
@@ -429,6 +429,24 @@ class TsubaisoSDK
     api_request(uri, "POST", params)
   end
 
+  def create_journal_distribution(options)
+    params = { "format" => "json",
+               "search_conditions" => {
+                 "start_date" => options[:start_date],
+                 "finish_date" => options[:finish_date],
+                 "account_codes" => options[:account_codes],
+                 "dept_code" => options[:dept_code],
+                 "tag_list" => options[:tag_list]
+               },
+               "target_timestamp" => options[:target_timestamp],
+               "memo" => options[:memo],
+               "criteria" => options[:criteria],
+               "distribution_conditions" => options[:distribution_conditions]
+             }
+    uri = URI.parse(@base_url + '/journal_distributions/create/')
+    api_request(uri, "POST", params)
+  end
+
   def update_sale(options)
     params = { "price_including_tax" => options[:price_including_tax],
                "realization_timestamp" => options[:realization_timestamp],
@@ -621,6 +639,12 @@ class TsubaisoSDK
   def destroy_tag(tag_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/tags/destroy/#{tag_id}")
+    api_request(uri, "POST", params)
+  end
+
+  def destroy_journal_distribution(journal_distribution_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/journal_distributions/destroy/#{journal_distribution_id}")
     api_request(uri, "POST", params)
   end
 
