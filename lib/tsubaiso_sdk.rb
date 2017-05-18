@@ -119,7 +119,7 @@ class TsubaisoSDK
                "start_created_at" => options[:start_created_at],
                "finish_created_at" => options[:finish_created_at],
                "timestamp_order" => options[:timestamp_order],
-               "account_code" => options[:account_code],
+               "account_codes" => options[:account_codes],
                "price" => options[:price],
                "memo" => options[:memo],
                "dept_code" => options[:dept_code],
