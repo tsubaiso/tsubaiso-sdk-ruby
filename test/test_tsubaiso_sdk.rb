@@ -1,9 +1,41 @@
 # encoding: utf-8
-require 'minitest/autorun'
+require 'test/unit'
 require 'time'
 require './lib/tsubaiso_sdk'
 
-class TsubaisoSDKTest < Minitest::Test
+class TsubaisoSDKTest < Test::Unit::TestCase
+
+  class <<self
+    def startup
+      @sdk = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
+
+      # Master data prepare
+
+      # Customer master
+      customer_101 = { name: "取引先１０１", name_kana: "イチマルイチ", code: "101",
+                     tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1}
+                      # ar_account_code: "135~999" , ap_account_code: "310~999" }
+
+      customer_102 = { name: "取引先１０２", name_kana: "トリヒキサキニ", code: "102",
+                      tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1}
+                      # ar_account_code: "135~999" , ap_account_code: "310~999" }
+
+      customer_105 = { name: "取引先１０５", name_kana: "トリヒキサキご", code: "105", 
+                      tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1} 
+                      # ar_account_code: "135~999" , ap_account_code: "310~999" }
+
+      @res_101 = @sdk.create_customer(customer_101)
+      @res_102 = @sdk.create_customer(customer_102)
+      @res_105 = @sdk.create_customer(customer_105)
+  
+    end
+
+    def shutdown
+      @sdk.destroy_customer(@res_101[:json][:id]) if @res_101 && @res_101[:status].to_i == 200
+      @sdk.destroy_customer(@res_102[:json][:id]) if @res_102 && @res_102[:status].to_i == 200
+      @sdk.destroy_customer(@res_105[:json][:id]) if @res_105 && @res_105[:status].to_i == 200
+    end
+  end
 
   def setup
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
@@ -18,13 +50,13 @@ class TsubaisoSDKTest < Minitest::Test
 
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2016-01-01", no_finish_timestamp: "1", memo: "First memo" }
-    @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
-    @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
-    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"SUPPLIES", brief:"everyting going well", memo:"easy", data_partner: { link_url: "www.example.com/5", id_code: "5"} }
-    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"SUPPLIES", brief:"not well", memo:"hard", data_partner: { link_url: "www.example.com/6", id_code: "6"} }
+    @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", memo: "aaaaaaaa" }
+    @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", memo: "aaaaaaaa" }
+    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"MEETING", brief:"everyting going well", memo:"easy", data_partner: { link_url: "www.example.com/5", id_code: "5"} }
+    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"MEETING", brief:"not well", memo:"hard", data_partner: { link_url: "www.example.com/6", id_code: "6"} }
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
-                         debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
-                         credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
+                         debit:  {account_code: 110, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
+                         credit: {account_code: 130, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
     @dept_1= {sort_no: 12345678, code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
     @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
     @journal_distribution_1 = { start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SETSURITSU", memo: "", 
@@ -35,7 +67,6 @@ class TsubaisoSDKTest < Minitest::Test
   def test_failed_request
     @api_fail = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: "fake token" })
     sale = @api_fail.create_sale(@sale_201608)
-
     assert_equal 401, sale[:status].to_i, sale.inspect
     assert_equal "Bad credentials", sale[:json][:error]
   end
@@ -140,6 +171,9 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_create_journal_distribution
+
+    sale = @api.create_sale(@sale_201609)
+    
     options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
 
     journals_list_before = @api.list_journals(options)
@@ -157,6 +191,7 @@ class TsubaisoSDKTest < Minitest::Test
 
   ensure
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if successful?(journal_distribution)
+    @api.destroy_sale("AR#{sale[:json][:id]}") if successful?(sale)
   end
 
   def test_update_sale
@@ -176,6 +211,7 @@ class TsubaisoSDKTest < Minitest::Test
   ensure
     @api.destroy_sale("AP#{sale[:json][:id]}") if successful?(sale)
   end
+
 
   def test_update_purchase
     purchase = @api.create_purchase(@purchase_201608)
@@ -247,7 +283,7 @@ class TsubaisoSDKTest < Minitest::Test
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id].to_i })
     reimbursement_transaction = @api.create_reimbursement_transaction(options)
-    updates = { :id => reimbursement_transaction[:json][:id], :price_value => 9999, :reason_code => "SUPPLIES", :data_partner => { :id_code => "500" } }
+    updates = { :id => reimbursement_transaction[:json][:id], :price_value => 9999, :reason_code => "RENTS", :data_partner => { :id_code => "500" } }
 
     updated_reimbursement_transaction = @api.update_reimbursement_transaction(updates)
     assert_equal 200, updated_reimbursement_transaction[:status].to_i, updated_reimbursement_transaction.inspect
@@ -491,7 +527,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_show_payroll
-    payrolls_list = @api.list_payrolls(2017, 2)
+    payrolls_list = @api.list_payrolls(2016, 2)
     first_payroll_id = payrolls_list[:json].first[:id]
 
     payroll = @api.show_payroll(first_payroll_id)
@@ -774,7 +810,7 @@ class TsubaisoSDKTest < Minitest::Test
     payrolls_list = @api.list_payrolls(2016, 2)
 
     assert_equal 200, payrolls_list[:status].to_i, payrolls_list.inspect
-    assert(payrolls_list.size > 0)
+    assert(payrolls_list[:json].size > 0)
   end
 
   def test_list_ar_reason_masters
