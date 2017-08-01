@@ -20,14 +20,14 @@ class TsubaisoSDKTest < Test::Unit::TestCase
                       tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1}
                       # ar_account_code: "135~999" , ap_account_code: "310~999" }
 
-      customer_105 = { name: "取引先１０５", name_kana: "トリヒキサキご", code: "105", 
-                      tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1} 
+      customer_105 = { name: "取引先１０５", name_kana: "トリヒキサキご", code: "105",
+                      tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1}
                       # ar_account_code: "135~999" , ap_account_code: "310~999" }
 
       @res_101 = @sdk.create_customer(customer_101)
       @res_102 = @sdk.create_customer(customer_102)
       @res_105 = @sdk.create_customer(customer_105)
-  
+
     end
 
     def shutdown
@@ -59,8 +59,8 @@ class TsubaisoSDKTest < Test::Unit::TestCase
                          credit: {account_code: 130, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
     @dept_1= {sort_no: 12345678, code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
     @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
-    @journal_distribution_1 = { start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SETSURITSU", memo: "", 
-                                title: "テスト表題" ,criteria: "dept", target_timestamp: "2017-02-01", 
+    @journal_distribution_1 = { start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SETSURITSU", memo: "",
+                                title: "テスト表題" ,criteria: "dept", target_timestamp: "2017-02-01",
                                 distribution_conditions: { "SETSURITSU" => "1", "SYSTEM" => "1" } }
   end
 
@@ -173,7 +173,7 @@ class TsubaisoSDKTest < Test::Unit::TestCase
   def test_create_journal_distribution
 
     sale = @api.create_sale(@sale_201609)
-    
+
     options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
 
     journals_list_before = @api.list_journals(options)
@@ -825,6 +825,125 @@ class TsubaisoSDKTest < Test::Unit::TestCase
     assert_equal 200, ap_reason_masters_list[:status].to_i, ap_reason_masters_list.inspect
     assert ap_reason_masters_list[:json]
     assert(ap_reason_masters_list[:json].size > 0)
+  end
+
+  def test_destroy_sale
+    sale = @api.create_sale(@sale_201608)
+
+    destroy_res = @api.destroy_sale("AR#{sale[:json][:id]}")
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_res("AR#{sale[:json][:id]}")
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_purchase
+    purchase = @api.create_purchase(@purchase_201608)
+
+    destroy_res = @api.destroy_purchase("AP#{purchase[:json][:id]}")
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_purchase("AP#{purchase[:json][:id]}")
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_customer
+    customer = @api.create_customer(@customer_1000)
+
+    destroy_res = @api.destroy_customer(customer[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_customer(customer[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_staff_data
+    staff_list = @api.list_staff
+    first_staff_id = staff_list[:json].first[:id]
+    @staff_data_1[:staff_id] = first_staff_id
+    staff_data = @api.create_staff_data(@staff_data_1)
+
+    destroy_res = @api.destroy_staff_data(staff_data[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_staff_data(staff_data[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_manual_journal
+    manual_journal = @api.create_manual_journal(@manual_journal_1)
+
+    destroy_res = @api.destroy_manual_journal(manual_journal[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_manual_journal(manual_journal[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_reimbursement
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+
+    destroy_res = @api.destroy_reimbursement(reimbursement[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_reimbursement(reimbursement[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_reimbursement_transaction
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id] })
+    reimbursement_transaction = @api.create_reimbursement_transaction(options)
+
+    destroy_res = @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_reimbursement_transaction(reimbursement_transaction[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+
+  ensure
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
+  end
+
+  def test_destroy_dept
+    dept = @api.create_dept(@dept_1)
+
+    destroy_res = @api.destroy_dept(dept[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_dept(dept[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_tag
+    tag = @api.create_tag(@tag_1)
+
+    destroy_res = @api.destroy_tag(tag[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_tag(tag[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_journal_distribution
+    sale = @api.create_sale(@sale_201609)
+    options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
+    journals_list_before = @api.list_journals(options)
+    records_before_count = journals_list_before[:json][:records].count
+    journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
+    journals_list_after = @api.list_journals(options)
+    records_after_count = journals_list_after[:json][:records].count
+    assert (records_before_count < records_after_count)
+
+    destroy_res = @api.destroy_journal_distribution(journal_distribution[:json][:id]) 
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    journals_list_after_destroy = @api.list_journals(options)
+    records_count_after_destroy = journals_list_after_destroy[:json][:records].count
+    assert (records_before_count == records_count_after_destroy)
+
+  ensure
+    @api.destroy_sale("AR#{sale[:json][:id]}") if successful?(sale)
   end
 
   private
