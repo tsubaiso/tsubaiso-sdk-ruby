@@ -1,9 +1,41 @@
 # encoding: utf-8
-require 'minitest/autorun'
+require 'test/unit'
 require 'time'
 require './lib/tsubaiso_sdk'
 
-class TsubaisoSDKTest < Minitest::Test
+class TsubaisoSDKTest < Test::Unit::TestCase
+
+  class <<self
+    def startup
+      @sdk = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
+
+      # Master data prepare
+
+      # Customer master
+      customer_101 = { name: "取引先１０１", name_kana: "イチマルイチ", code: "101",
+                     tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1}
+                      # ar_account_code: "135~999" , ap_account_code: "310~999" }
+
+      customer_102 = { name: "取引先１０２", name_kana: "トリヒキサキニ", code: "102",
+                      tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1}
+                      # ar_account_code: "135~999" , ap_account_code: "310~999" }
+
+      customer_105 = { name: "取引先１０５", name_kana: "トリヒキサキご", code: "105",
+                      tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1}
+                      # ar_account_code: "135~999" , ap_account_code: "310~999" }
+
+      @res_101 = @sdk.create_customer(customer_101)
+      @res_102 = @sdk.create_customer(customer_102)
+      @res_105 = @sdk.create_customer(customer_105)
+
+    end
+
+    def shutdown
+      @sdk.destroy_customer(@res_101[:json][:id]) if @res_101 && @res_101[:status].to_i == 200
+      @sdk.destroy_customer(@res_102[:json][:id]) if @res_102 && @res_102[:status].to_i == 200
+      @sdk.destroy_customer(@res_105[:json][:id]) if @res_105 && @res_105[:status].to_i == 200
+    end
+  end
 
   def setup
     @api = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: ENV["SDK_ACCESS_TOKEN"] })
@@ -18,23 +50,23 @@ class TsubaisoSDKTest < Minitest::Test
 
     @customer_1000 = { name: "テスト株式会社", name_kana: "テストカブシキガイシャ", code: "10000", tax_type_for_remittance_charge: "3", used_in_ar: 1, used_in_ap: 1, is_valid: 1 }
     @staff_data_1 = { code: "QUALIFICATION", value: "TOEIC", start_timestamp: "2016-01-01", no_finish_timestamp: "1", memo: "First memo" }
-    @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
-    @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", staff_code: "EP2000", memo: "aaaaaaaa" }
-    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"SUPPLIES", brief:"everyting going well", memo:"easy", data_partner: { link_url: "www.example.com/5", id_code: "5"} }
-    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"SUPPLIES", brief:"not well", memo:"hard", data_partner: { link_url: "www.example.com/6", id_code: "6"} }
+    @reimbursement_1 = { applicant: "Irfan", application_term: "2016-03-01", memo: "aaaaaaaa" }
+    @reimbursement_2 = { applicant: "Matsuno", application_term: "2016-03-01", memo: "aaaaaaaa" }
+    @reimbursement_tx_1 = { transaction_timestamp: "2016-03-01", price_value: 10000, dc:"c", reason_code:"MEETING", brief:"everyting going well", memo:"easy", data_partner: { link_url: "www.example.com/5", id_code: "5"} }
+    @reimbursement_tx_2 = { transaction_timestamp: "2016-03-01", price_value: 20000, dc:"c", reason_code:"MEETING", brief:"not well", memo:"hard", data_partner: { link_url: "www.example.com/6", id_code: "6"} }
     @manual_journal_1 = {journal_timestamp: "2016-04-01", journal_dcs: [
-                         debit:  {account_code: 100, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
-                         credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
+                         debit:  {account_code: 110, price_including_tax: 1000, tax_type: 1, sales_tax: 100},
+                         credit: {account_code: 130, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
     @dept_1= {sort_no: 12345678, code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
     @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
     @journal_distribution_1 = { start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SETSURITSU", memo: "",
-                                criteria: "dept", target_timestamp: "2017-02-01", distribution_conditions: { "SETSURITSU" => "1", "SYSTEM" => "1" } }
+                                title: "テスト表題" ,criteria: "dept", target_timestamp: "2017-02-01",
+                                distribution_conditions: { "SETSURITSU" => "1", "SYSTEM" => "1" } }
   end
 
   def test_failed_request
     @api_fail = TsubaisoSDK.new({ base_url: ENV["SDK_BASE_URL"], access_token: "fake token" })
     sale = @api_fail.create_sale(@sale_201608)
-
     assert_equal 401, sale[:status].to_i, sale.inspect
     assert_equal "Bad credentials", sale[:json][:error]
   end
@@ -46,7 +78,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @customer_1000[:name], customer[:json][:name]
 
   ensure
-    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
+    @api.destroy_customer(customer[:json][:id]) if successful?(customer)
   end
 
   def test_create_sale
@@ -57,7 +89,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @sale_201608[:data_partner][:id_code], sale[:json][:data_partner][:id_code]
 
   ensure
-    @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
+    @api.destroy_sale("AR#{sale[:json][:id]}") if successful?(sale)
   end
 
   def test_create_purchase
@@ -68,7 +100,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @purchase_201608[:data_partner][:id_code], purchase[:json][:data_partner][:id_code]
 
   ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
+    @api.destroy_purchase("AP#{purchase[:json][:id]}") if successful?(purchase)
   end
 
   def test_create_staff_data
@@ -82,7 +114,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @staff_data_1[:value], staff_data[:json][:value]
 
   ensure
-    @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
+    @api.destroy_staff_data(staff_data[:json][:id]) if successful?(staff_data)
   end
 
   def test_create_manual_journal
@@ -94,7 +126,7 @@ class TsubaisoSDKTest < Minitest::Test
       assert_equal @manual_journal_1[:data_partner][:id_code], manual_journal[:json][:data_partner][:id_code]
 
     ensure
-      @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+      @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal)
     end
   end
 
@@ -104,7 +136,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
 
     ensure
-    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
   end
 
   def test_create_reimbursement_transaction
@@ -116,8 +148,8 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @reimbursement_tx_1[:data_partner][:id_code], reimbursement_transaction[:json][:data_partner][:id_code]
 
     ensure
-    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
-    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if successful?(reimbursement_transaction)
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
   end
 
   def test_create_dept
@@ -126,7 +158,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @dept_1[:code], dept[:json][:code]
 
     ensure
-    @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
+    @api.destroy_dept(dept[:json][:id]) if successful?(dept)
   end
 
   def test_create_tag
@@ -135,10 +167,13 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @tag_1[:code], tag[:json][:code]
 
     ensure
-    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
+    @api.destroy_tag(tag[:json][:id]) if successful?(tag)
   end
 
   def test_create_journal_distribution
+
+    sale = @api.create_sale(@sale_201609)
+
     options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
 
     journals_list_before = @api.list_journals(options)
@@ -155,7 +190,8 @@ class TsubaisoSDKTest < Minitest::Test
     assert (records_before_count != records_after_count)
 
   ensure
-    @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
+    @api.destroy_journal_distribution(journal_distribution[:json][:id]) if successful?(journal_distribution)
+    @api.destroy_sale("AR#{sale[:json][:id]}") if successful?(sale)
   end
 
   def test_update_sale
@@ -173,8 +209,9 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:data_partner][:id_code], updated_sale[:json][:data_partner][:id_code]
 
   ensure
-    @api.destroy_sale("AP#{sale[:json][:id]}") if sale[:json][:id]
+    @api.destroy_sale("AP#{sale[:json][:id]}") if successful?(sale)
   end
+
 
   def test_update_purchase
     purchase = @api.create_purchase(@purchase_201608)
@@ -191,7 +228,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:data_partner][:id_code], updated_purchase[:json][:data_partner][:id_code]
 
   ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
+    @api.destroy_purchase("AP#{purchase[:json][:id]}") if successful?(purchase)
   end
 
   def test_update_customer
@@ -205,7 +242,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal "New Customer Name", updated_customer[:json][:name]
 
   ensure
-    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
+    @api.destroy_customer(customer[:json][:id]) if successful?(customer)
   end
 
   def test_update_staff_data
@@ -224,7 +261,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal "Programmer", updated_staff_data[:json][:value]
 
   ensure
-    @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
+    @api.destroy_staff_data(staff_data[:json][:id]) if successful?(staff_data)
   end
 
   def test_update_reimbursement
@@ -239,14 +276,14 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:dept_code], updated_reimbursement[:json][:dept_code]
 
   ensure
-    @api.destroy_reimbursement(updated_reimbursement[:json][:id] || reimbursement[:json][:id]) if updated_reimbursement[:json][:id] || reimbursement[:json][:id]
+    @api.destroy_reimbursement(updated_reimbursement[:json][:id] || reimbursement[:json][:id]) if successful?(updated_reimbursement) || successful?(reimbursement)
   end
 
   def test_update_reimbursement_transaction
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id].to_i })
     reimbursement_transaction = @api.create_reimbursement_transaction(options)
-    updates = { :id => reimbursement_transaction[:json][:id], :price_value => 9999, :reason_code => "SUPPLIES", :data_partner => { :id_code => "500" } }
+    updates = { :id => reimbursement_transaction[:json][:id], :price_value => 9999, :reason_code => "RENTS", :data_partner => { :id_code => "500" } }
 
     updated_reimbursement_transaction = @api.update_reimbursement_transaction(updates)
     assert_equal 200, updated_reimbursement_transaction[:status].to_i, updated_reimbursement_transaction.inspect
@@ -256,8 +293,8 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal updates[:data_partner][:id_code], updated_reimbursement_transaction[:json][:data_partner][:id_code]
 
   ensure
-    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
-    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if successful?(reimbursement_transaction)
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
   end
 
   def test_update_manual_journal
@@ -275,7 +312,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:data_partner][:id_code], updated_manual_journal[:json][:data_partner][:id_code]
 
   ensure
-    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal)
   end
 
   def test_update_dept
@@ -294,7 +331,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:name_abbr], updated_dept[:json][:name_abbr]
 
   ensure
-    @api.destroy_dept(updated_dept[:json][:id] || dept[:json][:id]) if updated_dept[:json][:id] || dept[:json][:id]
+    @api.destroy_dept(updated_dept[:json][:id] || dept[:json][:id]) if successful?(updated_dept) || successful?(dept)
   end
 
   def test_update_tag
@@ -309,7 +346,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:code], updated_tag[:json][:code]
 
   ensure
-    @api.destroy_tag(updated_tag[:json][:id] || tag[:json][:id]) if updated_tag[:json][:id] || tag[:json][:id]
+    @api.destroy_tag(updated_tag[:json][:id] || tag[:json][:id]) if successful?(updated_tag) || successful?(tag)
   end
 
   def test_show_sale
@@ -320,7 +357,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal sale[:json][:price_including_tax], get_sale[:json][:price_including_tax]
 
   ensure
-    @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
+    @api.destroy_sale("AR#{sale[:json][:id]}") if successful?(sale)
   end
 
   def test_show_purchase
@@ -331,7 +368,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal purchase[:json][:id], get_purchase[:json][:id]
 
   ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
+    @api.destroy_purchase("AP#{purchase[:json][:id]}") if successful?(purchase)
   end
 
   def test_show_customer
@@ -342,7 +379,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal customer[:json][:id], get_customer[:json][:id]
 
   ensure
-    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
+    @api.destroy_customer(customer[:json][:id]) if successful?(customer)
   end
 
   def test_show_staff
@@ -377,7 +414,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal staff_data[:json][:id], get_staff_data_2[:json][:id]
 
   ensure
-    @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
+    @api.destroy_staff_data(staff_data[:json][:id]) if successful?(staff_data)
   end
 
   def test_show_staff_datum_master
@@ -408,7 +445,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, reimbursement[:status].to_i, reimbursement.inspect
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
   ensure
-    @api.destroy_reimbursement(reimbursement[:json][:id])
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
   end
 
   def test_show_reimbursement_reason_master
@@ -430,8 +467,8 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:reimbursement_id], reimbursement_transaction[:json][:reimbursement_id]
 
   ensure
-    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if reimbursement_transaction[:json][:id]
-    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+    @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id]) if successful?(reimbursement_transaction)
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
   end
 
   def test_show_manual_journal
@@ -444,7 +481,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal first_manual_journal_id, manual_journal[:json][:id]
 
   ensure
-    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal)
   end
 
   def test_show_journal
@@ -457,7 +494,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal first_journal_id, journal[:json][:records][:id]
 
   ensure
-    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal)
   end
 
   def test_show_dept
@@ -467,7 +504,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, dept[:status].to_i, dept.inspect
     assert_equal @dept_1[:memo], dept[:json][:memo]
   ensure
-    @api.destroy_dept(dept[:json][:id])
+    @api.destroy_dept(dept[:json][:id]) if successful?(dept)
   end
 
   def test_show_tag
@@ -477,7 +514,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, tag[:status].to_i, tag.inspect
     assert_equal @tag_1[:name], tag[:json][:name]
   ensure
-    @api.destroy_tag(tag[:json][:id])
+    @api.destroy_tag(tag[:json][:id]) if successful?(tag)
   end
 
   def test_show_bonus
@@ -490,7 +527,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_show_payroll
-    payrolls_list = @api.list_payrolls(2017, 2)
+    payrolls_list = @api.list_payrolls(2016, 2)
     first_payroll_id = payrolls_list[:json].first[:id]
 
     payroll = @api.show_payroll(first_payroll_id)
@@ -532,9 +569,9 @@ class TsubaisoSDKTest < Minitest::Test
     assert !sales_list[:json].any?{ |x| x[:id] == september_sale_id }
 
   ensure
-    @api.destroy_sale("AR#{august_sale_a[:json][:id]}") if august_sale_a[:json][:id]
-    @api.destroy_sale("AR#{august_sale_b[:json][:id]}") if august_sale_b[:json][:id]
-    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
+    @api.destroy_sale("AR#{august_sale_a[:json][:id]}") if successful?(august_sale_a)
+    @api.destroy_sale("AR#{august_sale_b[:json][:id]}") if successful?(august_sale_b)
+    @api.destroy_sale("AR#{september_sale[:json][:id]}") if successful?(september_sale)
   end
 
   def test_list_sales_and_account_balances
@@ -564,7 +601,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert(balance_list[:json].count > 0)
     assert balance_list[:json].all?{ |x| x[:customer_master_code] == filtered_cm[:code] && x[:ar_segment] == filtered_cm[:used_in_ar] }
   ensure
-    @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
+    @api.destroy_sale("AR#{new_sale[:json][:id]}") if successful?(new_sale)
   end
 
   def test_list_purchases
@@ -583,9 +620,9 @@ class TsubaisoSDKTest < Minitest::Test
     assert !purchase_list[:json].any?{ |x| x[:id] == september_purchase_id }
 
   ensure
-    @api.destroy_purchase("AP#{august_purchase_a[:json][:id]}") if august_purchase_a[:json][:id]
-    @api.destroy_purchase("AP#{august_purchase_b[:json][:id]}") if august_purchase_b[:json][:id]
-    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
+    @api.destroy_purchase("AP#{august_purchase_a[:json][:id]}") if successful?(august_purchase_a)
+    @api.destroy_purchase("AP#{august_purchase_b[:json][:id]}") if successful?(august_purchase_b)
+    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if successful?(september_purchase)
   end
 
   def test_list_purchases_and_account_balances
@@ -617,7 +654,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert(balance_list[:json].count > 0)
     assert balance_list[:json].all?{ |x| x[:customer_master_id] == customer_master_id && x[:ap_segment] == ap_segment }
   ensure
-    @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
+    @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if successful?(new_purchase)
   end
 
   def test_list_customers
@@ -630,7 +667,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert customer_list[:json].any?{ |x| x[:id] == customer_1000_id }
 
   ensure
-    @api.destroy_customer(customer_1000[:json][:id]) if customer_1000[:json][:id]
+    @api.destroy_customer(customer_1000[:json][:id]) if successful?(customer_1000)
   end
 
   def test_list_staff
@@ -693,10 +730,10 @@ class TsubaisoSDKTest < Minitest::Test
     assert_includes record_depts, september_purchase[:json][:dept_code]
 
   ensure
-    @api.destroy_sale("AR#{august_sale[:json][:id]}") if august_sale[:json][:id]
-    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
-    @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
-    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
+    @api.destroy_sale("AR#{august_sale[:json][:id]}") if successful?(august_sale)
+    @api.destroy_sale("AR#{september_sale[:json][:id]}") if successful?(september_sale)
+    @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if successful?(august_purchase)
+    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if successful?(september_purchase)
   end
 
   def test_list_reimbursements
@@ -735,9 +772,9 @@ class TsubaisoSDKTest < Minitest::Test
     assert reimbursement_transactions[:json].any?{ |x| x[:id] == reimbursement_transaction_2[:json][:id] }
 
   ensure
-    @api.destroy_reimbursement_transaction(reimbursement_transaction_1[:json][:id]) if reimbursement_transaction_1[:json][:id]
-    @api.destroy_reimbursement_transaction(reimbursement_transaction_1[:json][:id]) if reimbursement_transaction_1[:json][:id]
-    @api.destroy_reimbursement(reimbursement[:json][:id]) if reimbursement[:json][:id]
+    @api.destroy_reimbursement_transaction(reimbursement_transaction_1[:json][:id]) if successful?(reimbursement_transaction_1)
+    @api.destroy_reimbursement_transaction(reimbursement_transaction_2[:json][:id]) if successful?(reimbursement_transaction_2)
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
   end
 
   def test_list_depts
@@ -748,7 +785,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert depts[:json].any?{ |x| x[:id] == dept[:json][:id] }
 
   ensure
-    @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
+    @api.destroy_dept(dept[:json][:id]) if successful?(dept)
   end
 
   def test_list_tags
@@ -759,7 +796,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert tags[:json][@tag_1[:tag_group_code].to_sym].any?{ |x| x[:id] == tag[:json][:id] }
 
   ensure
-    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
+    @api.destroy_tag(tag[:json][:id]) if successful?(tag)
   end
 
   def test_list_bonuses
@@ -773,7 +810,7 @@ class TsubaisoSDKTest < Minitest::Test
     payrolls_list = @api.list_payrolls(2016, 2)
 
     assert_equal 200, payrolls_list[:status].to_i, payrolls_list.inspect
-    assert(payrolls_list.size > 0)
+    assert(payrolls_list[:json].size > 0)
   end
 
   def test_list_ar_reason_masters
@@ -790,8 +827,127 @@ class TsubaisoSDKTest < Minitest::Test
     assert(ap_reason_masters_list[:json].size > 0)
   end
 
+  def test_destroy_sale
+    sale = @api.create_sale(@sale_201608)
+
+    destroy_res = @api.destroy_sale("AR#{sale[:json][:id]}")
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_res("AR#{sale[:json][:id]}")
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_purchase
+    purchase = @api.create_purchase(@purchase_201608)
+
+    destroy_res = @api.destroy_purchase("AP#{purchase[:json][:id]}")
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_purchase("AP#{purchase[:json][:id]}")
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_customer
+    customer = @api.create_customer(@customer_1000)
+
+    destroy_res = @api.destroy_customer(customer[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_customer(customer[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_staff_data
+    staff_list = @api.list_staff
+    first_staff_id = staff_list[:json].first[:id]
+    @staff_data_1[:staff_id] = first_staff_id
+    staff_data = @api.create_staff_data(@staff_data_1)
+
+    destroy_res = @api.destroy_staff_data(staff_data[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_staff_data(staff_data[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_manual_journal
+    manual_journal = @api.create_manual_journal(@manual_journal_1)
+
+    destroy_res = @api.destroy_manual_journal(manual_journal[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_manual_journal(manual_journal[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_reimbursement
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+
+    destroy_res = @api.destroy_reimbursement(reimbursement[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_reimbursement(reimbursement[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_reimbursement_transaction
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    options = @reimbursement_tx_1.merge({ :reimbursement_id => reimbursement[:json][:id] })
+    reimbursement_transaction = @api.create_reimbursement_transaction(options)
+
+    destroy_res = @api.destroy_reimbursement_transaction(reimbursement_transaction[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_reimbursement_transaction(reimbursement_transaction[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+
+  ensure
+    @api.destroy_reimbursement(reimbursement[:json][:id]) if successful?(reimbursement)
+  end
+
+  def test_destroy_dept
+    dept = @api.create_dept(@dept_1)
+
+    destroy_res = @api.destroy_dept(dept[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_dept(dept[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_tag
+    tag = @api.create_tag(@tag_1)
+
+    destroy_res = @api.destroy_tag(tag[:json][:id])
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    show_res = @api.show_tag(tag[:json][:id])
+    assert_equal 404, show_res[:status].to_i, show_res.inspect
+  end
+
+  def test_destroy_journal_distribution
+    sale = @api.create_sale(@sale_201609)
+    options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
+    journals_list_before = @api.list_journals(options)
+    records_before_count = journals_list_before[:json][:records].count
+    journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
+    journals_list_after = @api.list_journals(options)
+    records_after_count = journals_list_after[:json][:records].count
+    assert (records_before_count < records_after_count)
+
+    destroy_res = @api.destroy_journal_distribution(journal_distribution[:json][:id]) 
+    assert_equal 204, destroy_res[:status].to_i, destroy_res.inspect
+
+    journals_list_after_destroy = @api.list_journals(options)
+    records_count_after_destroy = journals_list_after_destroy[:json][:records].count
+    assert (records_before_count == records_count_after_destroy)
+
+  ensure
+    @api.destroy_sale("AR#{sale[:json][:id]}") if successful?(sale)
+  end
+
   private
-  def successful?(status)
-    status.to_i == 200
+  def successful?(response)
+    response && response[:status].to_i == 200
   end
 end

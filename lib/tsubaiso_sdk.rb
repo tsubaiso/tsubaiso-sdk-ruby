@@ -441,7 +441,8 @@ class TsubaisoSDK
                "target_timestamp" => options[:target_timestamp],
                "memo" => options[:memo],
                "criteria" => options[:criteria],
-               "distribution_conditions" => options[:distribution_conditions]
+               "distribution_conditions" => options[:distribution_conditions],
+               "title" => options[:title]
              }
     uri = URI.parse(@base_url + '/journal_distributions/create/')
     api_request(uri, "POST", params)
@@ -641,10 +642,10 @@ class TsubaisoSDK
       begin
         {:status => response.code, :json => recursive_symbolize_keys(JSON.load(response.body))}
       rescue
-        response.body
+        {:status => response.code, :body => response.body}
       end
     else
-      response.code
+      {:status => response.code}
     end
   end
 
