@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name           = "tsubaiso-sdk"
-  s.version        = "1.1.0"
-  s.date           = "2016-02-22"
+  s.version        = "1.2.0"
+  s.date           = "2017-08-01"
   s.summary        = "SDK for the Tsubaiso API"
   s.description    = "A library of methods that directly uses Tsubaiso API web endpoints."
   s.authors        = ["Tsubaiso, Inc."]
@@ -14,5 +14,5 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 1.9.3"
 
   s.add_runtime_dependency     "json",     "~> 1.8", ">= 1.8.3"
-  s.add_development_dependency "minitest", "~> 5.4", ">= 5.4.3"
+  s.add_development_dependency "test-unit", "~> 3.0",">= 3.0.8"
 end
