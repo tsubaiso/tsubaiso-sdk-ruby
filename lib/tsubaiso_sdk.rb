@@ -438,6 +438,7 @@ class TsubaisoSDK
                  "dept_code" => options[:dept_code],
                  "tag_list" => options[:tag_list]
                },
+               "title" => options[:title],
                "target_timestamp" => options[:target_timestamp],
                "memo" => options[:memo],
                "criteria" => options[:criteria],

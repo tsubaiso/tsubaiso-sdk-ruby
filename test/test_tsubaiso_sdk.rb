@@ -27,7 +27,7 @@ class TsubaisoSDKTest < Minitest::Test
                          credit: {account_code: 135, price_including_tax: 1000, tax_type: 1, sales_tax: 100} ], data_partner: { link_url: "www.example.com/7", id_code: "7"} }
     @dept_1= {sort_no: 12345678, code: 'test_code', name: 'テスト部門', name_abbr: 'テストブモン', color: '#ffffff', memo: 'テストメモ', start_date: '2016-01-01', finish_date: '2016-01-02'}
     @tag_1 = {code: 'test_code', name: 'テストタグ', sort_no: 10000, tag_group_code: "DEFAULT", start_ymd: '2016-01-01', finish_ymd: '2016-12-31'}
-    @journal_distribution_1 = { start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SETSURITSU", memo: "",
+    @journal_distribution_1 = { title: 'title', start_date: "2016-09-01", finish_date: "2016-09-30", account_codes: ["135~999","604"], dept_code: "SETSURITSU", memo: "",
                                 criteria: "dept", target_timestamp: "2017-02-01", distribution_conditions: { "SETSURITSU" => "1", "SYSTEM" => "1" } }
   end
 
