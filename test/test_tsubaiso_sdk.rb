@@ -178,6 +178,7 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_update_purchase
     purchase = @api.create_purchase(@purchase_201608)
+    assert purchase[:json][:id], purchase
     options = { id: purchase[:json][:id],
                 price_including_tax: 50000,
                 memo: "Updated memo",
@@ -299,6 +300,7 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_update_tag
     tag = @api.create_tag(@tag_1)
+    assert tag[:json][:id], tag
     options = { name: "更新タグ",
                 code: "updated_tag"
               }
@@ -307,9 +309,8 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, updated_tag[:status].to_i, updated_tag.inspect
     assert_equal options[:name], updated_tag[:json][:name]
     assert_equal options[:code], updated_tag[:json][:code]
-
   ensure
-    @api.destroy_tag(updated_tag[:json][:id] || tag[:json][:id]) if updated_tag[:json][:id] || tag[:json][:id]
+    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
   def test_show_sale
