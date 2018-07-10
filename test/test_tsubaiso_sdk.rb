@@ -743,6 +743,7 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_list_depts
     dept = @api.create_dept(@dept_1)
+    assert_equal 200, dept[:status].to_i, dept.inspect
 
     depts = @api.list_depts
     assert_equal 200, depts[:status].to_i, depts.inspect
@@ -791,7 +792,15 @@ class TsubaisoSDKTest < Minitest::Test
     assert(ap_reason_masters_list[:json].size > 0)
   end
 
+  def test_list_fixed_assets
+    list = @api.list_fixed_assets
+    assert_equal 200, list[:status].to_i, list.inspect
+    assert list[:json]
+    assert(list[:json].size > 0)
+  end
+
   private
+
   def successful?(status)
     status.to_i == 200
   end

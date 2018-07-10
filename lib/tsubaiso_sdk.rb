@@ -164,6 +164,13 @@ class TsubaisoSDK
     api_request(uri, "GET", params)
   end
 
+  # Alpha version now.
+  def list_fixed_assets
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/fixed_assets/list/")
+    api_request(uri, "GET", params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join("")
     params = { "format" => "json" }
@@ -621,6 +628,13 @@ class TsubaisoSDK
   def destroy_journal_distribution(journal_distribution_id)
     params = { "format" => "json" }
     uri = URI.parse(@base_url + "/journal_distributions/destroy/#{journal_distribution_id}")
+    api_request(uri, "POST", params)
+  end
+
+  # Alpha version now.
+  def destroy_fixed_asset(fixed_asset_id)
+    params = { "format" => "json" }
+    uri = URI.parse(@base_url + "/fixed_assets/destroy/#{fixed_asset_id}")
     api_request(uri, "POST", params)
   end
 
