@@ -1,4 +1,5 @@
-module TsubaisoAPI
+# ..
+class TsubaisoAPI
   require "net/http"
   require "json"
 
@@ -8,29 +9,30 @@ module TsubaisoAPI
   end
 
   def list(resource, params = {})
-    api_request(uri_parse(resource + '/list', "GET", params)
+    api_request(url_parse(resource + '/list'), "GET", params)
   end
 
   def show(resource, params = {})
-    api_request(uri_parse(resource + '/show', "GET", params)
+    api_request(url_parse(resource + "/show/#{params[:id]}"), "GET", params)
   end
 
   def create(resource, params = {})
-    api_request(uri_parse(resource + '/create', "POST", params)
+    api_request(url_parse(resource + '/create'), "POST", params)
   end
 
   def update(resource, params = {})
-    api_request(uri_parse(resource + '/update', "POST", params)
+    api_request(url_parse(resource + '/update'), "POST", params)
   end
 
   def destroy(resource, params = {})
-    api_request(uri_parse(resource + '/destroy', "POST", params)
+    api_request(url_parse(resource + '/destroy'), "POST", params)
   end
+
   private
 
   def api_request(uri, http_verb, params)
     http = Net::HTTP.new(uri.host, uri.port)
-    initheader = {'Content-Type' => 'application/json'}
+    initheader = {'Content-Type' => 'application/json', "Accept" => "application/json"}
     http.use_ssl = true if @base_url =~ /^https/
     if http_verb == "GET"
       request = Net::HTTP::Get.new(uri.path, initheader)
