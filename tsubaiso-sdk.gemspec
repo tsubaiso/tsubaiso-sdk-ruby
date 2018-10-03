@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
   s.name           = "tsubaiso-sdk"
-  s.version        = "1.2.1"
-  s.date           = "2018-07-10"
+  s.version        = "1.2.5"
+  s.date           = "2018-10-03"
   s.summary        = "SDK for the Tsubaiso API"
   s.description    = "A library of methods that directly uses Tsubaiso API web endpoints."
   s.authors        = ["Tsubaiso, Inc."]
   s.email          = "apisupport@tsubaiso.net"
-  s.files          = ["lib/tsubaiso_sdk.rb", "test/test_tsubaiso_sdk.rb", "Rakefile", "sample.rb", "README.md"]
+  s.files          = ["lib/tsubaiso_sdk.rb", "lib/tsubaiso_api.rb", "test/test_tsubaiso_sdk.rb", "test/test_tsubaiso_api.rb", "Rakefile", "sample.rb", "README.md"]
   s.homepage       = "https://github.com/tsubaiso/tsubaiso-sdk-ruby"
   s.license        = "MIT"
 
