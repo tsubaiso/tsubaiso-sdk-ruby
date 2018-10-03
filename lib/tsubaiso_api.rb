@@ -28,6 +28,14 @@ class TsubaisoAPI
     api_request(url_parse(resource + '/destroy'), "POST", params)
   end
 
+  def get(url, params = {})
+    api_request(url_parse(url), "GET", params)
+  end
+
+  def post(url, params = {})
+    api_request(url_parse(url), "POST", params)
+  end
+
   private
 
   def api_request(uri, http_verb, params)
