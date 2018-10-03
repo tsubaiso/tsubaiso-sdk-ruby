@@ -49,7 +49,7 @@ class TsubaisoAPI
         response.body
       end
     else
-      response.code
+      { status: response.code, json: {}.to_json }
     end
   end
 
