@@ -1,0 +1,11 @@
+Style/HashSyntax:
+  Enabled: false
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Metrics/MethodLength:
+  Max: 40
+
+Metrics/LineLength:
+  Max: 100

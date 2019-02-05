@@ -657,6 +657,8 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_list_manual_journals
     manual_journals_list = @api.list_manual_journals(2016, 4)
+    puts 'list'
+    puts manual_journals_list.inspect
     assert_equal 200, manual_journals_list[:status].to_i, manual_journals_list.inspect
     assert(manual_journals_list.size > 0)
   end
@@ -666,6 +668,10 @@ class TsubaisoSDKTest < Minitest::Test
     september_sale = @api.create_sale(@sale_201609)
     august_purchase = @api.create_purchase(@purchase_201608)
     september_purchase = @api.create_purchase(@purchase_201609)
+    assert_equal 200, august_sale[:status].to_i
+    assert_equal 200, september_sale[:status].to_i
+    assert_equal 200, august_purchase[:status].to_i
+    assert_equal 200, september_purchase[:status].to_i
 
     options = { start_date: "2016-08-01", finish_date: "2016-08-31" }
     journals_list = @api.list_journals(options)
