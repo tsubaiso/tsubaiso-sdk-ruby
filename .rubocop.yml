@@ -8,4 +8,4 @@ Metrics/MethodLength:
   Max: 40
 
 Metrics/LineLength:
-  Max: 100
+  Max: 160

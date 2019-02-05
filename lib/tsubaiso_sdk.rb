@@ -766,7 +766,7 @@ class TsubaisoSDK
     response = http.request(request)
     if response.body
       begin
-        { :status => response.code, :json => recursive_symbolize_keys(JSON.load(response.body)) }
+        { :status => response.code, :json => recursive_symbolize_keys(JSON.parse(response.body)) }
       rescue
         response.body
       end
