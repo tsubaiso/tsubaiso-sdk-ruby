@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.license        = 'MIT'
 
   s.rubygems_version      = '>= 1.8.25'
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 2.2'
 
   s.add_runtime_dependency     'json',     '~> 1.8', '>= 1.8.3'
   s.add_development_dependency 'minitest', '~> 5.4', '>= 5.4.3'
