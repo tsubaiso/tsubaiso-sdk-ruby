@@ -759,6 +759,14 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def next_customer_code
+    params = {
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + '/customer_masters/next_code')
+    api_request(uri, 'GET', params)
+  end
+
   private
 
   def api_request(uri, http_verb, params)
@@ -817,13 +825,5 @@ class TsubaisoSDK
       'price_including_tax' => side[:price_including_tax],
       'tax_type' => side[:tax_type],
       'sales_tax' => side[:sales_tax] }
-  end
-
-  def next_customer_code
-    params = {
-      'format' => 'json'
-    }
-    uri = URI.parse(@base_url + '/customer_masters/next_code')
-    api_request(uri, 'GET', params)
   end
 end
