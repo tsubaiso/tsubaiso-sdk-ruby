@@ -209,7 +209,7 @@ class TsubaisoSDK
       'code' => code,
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + "/customer_masters/show")
+    uri = URI.parse(@base_url + '/customer_masters/show')
     api_request(uri, 'GET', params)
   end
 

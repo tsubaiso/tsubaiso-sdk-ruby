@@ -506,6 +506,7 @@ class TsubaisoSDKTest < Minitest::Test
     get_customer = @api.show_customer_by_code(@customer_1000[:code])
     assert_equal 200, get_customer[:status].to_i, get_customer.inspect
     assert_equal customer[:json][:id], get_customer[:json][:id]
+    assert_equal customer[:json][:code], get_customer[:json][:code]
   ensure
     @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
