@@ -204,6 +204,15 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def show_customer_by_code(code)
+    params = {
+      'code' => code,
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + "/customer_masters/show")
+    api_request(uri, 'GET', params)
+  end
+
   def show_staff(staff_id)
     staff_id = staff_id.to_i
     params = { 'format' => 'json' }
