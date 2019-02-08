@@ -360,13 +360,17 @@ class TsubaisoSDKTest < Minitest::Test
     customer = @api.create_customer(@customer_1000)
     options = {
       id: customer[:json][:id],
-      name: 'New Customer Name'
+      name: 'New Customer Name',
+      pay_date_if_holiday: 0,
+      receive_date_if_holiday: 0
     }
 
     updated_customer = @api.update_customer(options)
     assert_equal 200, updated_customer[:status].to_i
     assert_equal customer[:json][:id], updated_customer[:json][:id]
-    assert_equal 'New Customer Name', updated_customer[:json][:name]
+    assert_equal options[:name], updated_customer[:json][:name]
+    assert_equal options[:pay_date_if_holiday], updated_customer[:json][:pay_date_if_holiday]
+    assert_equal options[:receive_date_if_holiday], updated_customer[:json][:receive_date_if_holiday]
   ensure
     @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
