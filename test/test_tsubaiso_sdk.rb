@@ -99,7 +99,9 @@ class TsubaisoSDKTest < Minitest::Test
       tax_type_for_remittance_charge: '3',
       used_in_ar: 1,
       used_in_ap: 1,
-      is_valid: 1
+      is_valid: 1,
+      pay_date_if_holiday: 1,
+      receive_date_if_holiday: 1
     }
 
     @staff_data_1 = {
@@ -209,6 +211,8 @@ class TsubaisoSDKTest < Minitest::Test
 
     assert_equal 200, customer[:status].to_i, customer.inspect
     assert_equal @customer_1000[:name], customer[:json][:name]
+    assert_equal @customer_1000[:pay_date_if_holiday], customer[:json][:pay_date_if_holiday]
+    assert_equal @customer_1000[:receive_date_if_holiday], customer[:json][:receive_date_if_holiday]
   ensure
     @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
