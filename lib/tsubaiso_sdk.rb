@@ -363,6 +363,8 @@ class TsubaisoSDK
       'withholding_tax_base',
       'withholding_tax_segment',
       'zip',
+      'pay_date_if_holiday',
+      'receive_date_if_holiday',
       'data_partner'
     ]
     params = {}
@@ -587,6 +589,8 @@ class TsubaisoSDK
       'withholding_tax_base',
       'withholding_tax_segment',
       'zip',
+      'pay_date_if_holiday',
+      'receive_date_if_holiday',
       'data_partner'
     ]
     params = {}
