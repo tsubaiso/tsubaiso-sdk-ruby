@@ -113,7 +113,7 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
-  def list_manual_journals(year = nil, month = nil)
+  def list_manual_journals(year, month)
     params = {
       'year' => year,
       'month' => month,
@@ -813,21 +813,28 @@ class TsubaisoSDK
 
   def make_journal_dcs(journal_dcs)
     return nil if journal_dcs.nil?
+
     journal_dcs.map { |journal_dc| make_journal_dc(journal_dc) }
   end
 
   def make_journal_dc(journal_dc)
-    { 'debit'  => make_journal_dc_oneside(journal_dc[:debit]),
+    {
+      'debit' => make_journal_dc_oneside(journal_dc[:debit]),
       'credit' => make_journal_dc_oneside(journal_dc[:credit]),
       'dept_code' => journal_dc[:dept_code],
-      'memo' => journal_dc[:memo] }
+      'memo' => journal_dc[:memo],
+      'tag_list' => journal_dc[:tag_list]
+    }
   end
 
   def make_journal_dc_oneside(side)
     return nil if side.nil?
-    { 'account_code' => side[:account_code].to_s,
+
+    {
+      'account_code' => side[:account_code].to_s,
       'price_including_tax' => side[:price_including_tax],
       'tax_type' => side[:tax_type],
-      'sales_tax' => side[:sales_tax] }
+      'sales_tax' => side[:sales_tax]
+    }
   end
 end

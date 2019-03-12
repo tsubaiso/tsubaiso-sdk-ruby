@@ -149,17 +149,33 @@ class TsubaisoSDKTest < Minitest::Test
     @manual_journal_1 = {
       journal_timestamp: '2016-04-01',
       journal_dcs: [
-        debit: {
-          account_code: 100,
-          price_including_tax: 1000,
-          tax_type: 1,
-          sales_tax: 100
+        {
+          debit: {
+            account_code: '110',
+            price_including_tax: 200_000,
+            tax_type: 0
+          },
+          credit: {
+            account_code: '100',
+            price_including_tax: 200_000,
+            tax_type: 0
+          },
+          tag_list: 'KIWI',
+          dept_code: 'SYSTEM'
         },
-        credit: {
-          account_code: 135,
-          price_including_tax: 1000,
-          tax_type: 1,
-          sales_tax: 100
+        {
+          debit: {
+            account_code: '1',
+            price_including_tax: 54_321,
+            tax_type: 0
+          },
+          credit: {
+            account_code: '110',
+            price_including_tax: 54_321,
+            tax_type: 0
+          },
+          memo: 'Created From API',
+          dept_code: 'R_AND_D'
         }
       ],
       data_partner: { link_url: 'www.example.com/7', id_code: '7' }
@@ -255,10 +271,10 @@ class TsubaisoSDKTest < Minitest::Test
 
     begin
       assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
-      assert_equal @manual_journal_1[:journal_dcs][0][:price_including_tax], manual_journal[:json][:journal_dcs][0]['price_including_tax']
-      assert_equal @manual_journal_1[:data_partner][:id_code], manual_journal[:json][:data_partner][:id_code]
+      assert_equal @manual_journal_1[:journal_dcs][0][:debit][:price_including_tax], manual_journal[:json].first[:journal_dcs][0][:debit][:price_including_tax]
+      assert_equal @manual_journal_1[:data_partner][:id_code], manual_journal[:json].first[:data_partner][:id_code]
     ensure
-      @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+      @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
     end
   end
 
@@ -428,19 +444,25 @@ class TsubaisoSDKTest < Minitest::Test
   def test_update_manual_journal
     manual_journal = @api.create_manual_journal(@manual_journal_1)
     options = {
-      id: manual_journal[:json][:id],
-      journal_dcs: manual_journal[:json][:journal_dcs],
+      id: manual_journal[:json].first[:id],
+      journal_dcs: manual_journal[:json].first[:journal_dcs],
       data_partner: { :id_code => '700' }
     }
     options[:journal_dcs][0][:debit][:price_including_tax]  = 2000
     options[:journal_dcs][0][:credit][:price_including_tax] = 2000
+    options[:journal_dcs][0][:memo] = 'Updated from API'
+    options[:journal_dcs][1][:dept_code] = 'SETSURITSU'
+    options[:journal_dcs][1][:tag_list] = 'GLOZE'
 
     updated_manual_journal = @api.update_manual_journal(options)
     assert_equal 200, updated_manual_journal[:status].to_i, updated_manual_journal.inspect
-    assert_equal options[:journal_dcs][0][:debit][:price_including_tax], updated_manual_journal[:json][:journal_dcs][0][:debit][:price_including_tax]
-    assert_equal options[:data_partner][:id_code], updated_manual_journal[:json][:data_partner][:id_code]
+    assert_equal options[:journal_dcs][0][:debit][:price_including_tax], updated_manual_journal[:json].first[:journal_dcs][0][:debit][:price_including_tax]
+    assert_equal options[:journal_dcs][0][:memo], updated_manual_journal[:json].first[:journal_dcs][0][:memo]
+    assert_equal options[:journal_dcs][1][:dept_code], updated_manual_journal[:json].first[:journal_dcs][1][:dept_code]
+    assert_equal [options[:journal_dcs][1][:tag_list]], updated_manual_journal[:json].first[:journal_dcs][1][:tag_list]
+    assert_equal options[:data_partner][:id_code], updated_manual_journal[:json].first[:data_partner][:id_code]
   ensure
-    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+    @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
   end
 
   def test_update_dept
@@ -608,15 +630,15 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_show_manual_journal
-    @api.create_manual_journal(@manual_journal_1)
+    manual_journal = @api.create_manual_journal(@manual_journal_1)
     manual_journals_list = @api.list_manual_journals(2016, 4)
-    first_manual_journal_id = manual_journals_list[:json].first[:id]
+    last_manual_journal_id = manual_journals_list[:json].last[:id]
 
-    manual_journal = @api.show_manual_journal(first_manual_journal_id)
+    manual_journal = @api.show_manual_journal(last_manual_journal_id)
     assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
-    assert_equal first_manual_journal_id, manual_journal[:json][:id]
+    assert_equal last_manual_journal_id, manual_journal[:json].first[:id]
   ensure
-    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+    @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
   end
 
   def test_show_journal
@@ -628,7 +650,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, journal[:status].to_i, journal.inspect
     assert_equal first_journal_id, journal[:json][:records][:id]
   ensure
-    @api.destroy_manual_journal(manual_journal[:json][:id]) if successful?(manual_journal[:status])
+    @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
   end
 
   def test_show_dept
@@ -832,8 +854,6 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_list_manual_journals
     manual_journals_list = @api.list_manual_journals(2016, 4)
-    puts 'list'
-    puts manual_journals_list.inspect
     assert_equal 200, manual_journals_list[:status].to_i, manual_journals_list.inspect
     assert !manual_journals_list.empty?
   end
