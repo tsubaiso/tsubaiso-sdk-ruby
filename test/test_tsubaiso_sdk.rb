@@ -691,6 +691,15 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal first_payroll_id, payroll[:json][:id]
   end
 
+  def test_show_ap_reason_master
+    ap_reason_masters = @api.list_ap_reason_masters
+    first_ap_reason_master = ap_reason_masters[:json].first
+    ap_reason_master = @api.show_ap_reason_master(first_ap_reason_master[:id])
+
+    assert_equal 200, ap_reason_master[:status].to_i, ap_reason_master.inspect
+    assert_equal first_ap_reason_master[:reason_code], ap_reason_master[:json][:reason_code]
+  end
+
   def test_show_ar_reason_master
     ar_reason_masters = @api.list_ar_reason_masters
     ar_reason_master_id = ar_reason_masters[:json].first[:id]
@@ -700,13 +709,13 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal ar_reason_master[:json][:id], ar_reason_master_id
   end
 
-  def test_show_ap_reason_master
-    ap_reason_masters = @api.list_ap_reason_masters
-    first_ap_reason_master = ap_reason_masters[:json].first
-    ap_reason_master = @api.show_ap_reason_master(first_ap_reason_master[:id])
+  def test_show_tax_master
+    tax_masters = @api.list_tax_masters
+    first_tax_master = tax_masters[:json].first
+    tax_master = @api.show_tax_master(first_tax_master[:id])
 
-    assert_equal 200, ap_reason_master[:status].to_i, ap_reason_master.inspect
-    assert_equal first_ap_reason_master[:reason_code], ap_reason_master[:json][:reason_code]
+    assert_equal 200, tax_master[:status].to_i, tax_master.inspect
+    assert_equal first_tax_master[:name], tax_master[:json][:name]
   end
 
   def test_list_sales
@@ -948,6 +957,12 @@ class TsubaisoSDKTest < Minitest::Test
     assert(depts[:json].any? { |x| x[:id] == dept[:json][:id] })
   ensure
     @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
+  end
+
+  def test_list_tax_masters
+    tax_masters = @api.list_tax_masters
+    assert_equal 200, tax_masters[:status].to_i, tax_masters.inspect
+    assert !tax_masters[:json].empty?
   end
 
   def test_list_tags

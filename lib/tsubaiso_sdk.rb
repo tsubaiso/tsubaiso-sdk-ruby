@@ -148,6 +148,12 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def list_tax_masters
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/tax_masters/list/')
+    api_request(uri, 'GET', params)
+  end
+
   def list_tags
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/tags/list/')
@@ -187,6 +193,12 @@ class TsubaisoSDK
     sale_id = voucher.scan(/\d/).join('')
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/ar/show/#{sale_id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def show_tax_master(tax_master_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/tax_masters/show/#{tax_master_id}")
     api_request(uri, 'GET', params)
   end
 
