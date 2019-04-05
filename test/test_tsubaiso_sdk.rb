@@ -709,6 +709,15 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal ar_reason_master[:json][:id], ar_reason_master_id
   end
 
+  def test_show_bank_reason_master
+    bank_reason_masters = @api.list_bank_reason_masters
+    bank_reason_master_id = bank_reason_masters[:json].first[:id]
+    bank_reason_master = @api.show_bank_reason_master(bank_reason_master_id)
+
+    assert_equal 200, bank_reason_master[:status].to_i, bank_reason_master.inspect
+    assert_equal bank_reason_master[:json][:id], bank_reason_master_id
+  end
+
   def test_show_tax_master
     tax_masters = @api.list_tax_masters
     first_tax_master = tax_masters[:json].first
@@ -1001,6 +1010,13 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, ap_reason_masters_list[:status].to_i, ap_reason_masters_list.inspect
     assert ap_reason_masters_list[:json]
     assert !ap_reason_masters_list[:json].empty?
+  end
+
+  def test_list_bank_reason_masters
+    bank_reason_masters_list = @api.list_bank_reason_masters
+    assert_equal 200, bank_reason_masters_list[:status].to_i, bank_reason_masters_list.inspect
+    assert bank_reason_masters_list[:json]
+    assert !bank_reason_masters_list[:json].empty?
   end
 
   def test_list_fixed_assets

@@ -182,6 +182,12 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def list_bank_reason_masters
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/bank_reason_masters/list/')
+    api_request(uri, 'GET', params)
+  end
+
   # Alpha version now.
   def list_fixed_assets
     params = { 'format' => 'json' }
@@ -327,6 +333,12 @@ class TsubaisoSDK
   def show_ap_reason_master(ap_reason_master_id)
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/ap_reason_masters/show/#{ap_reason_master_id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def show_bank_reason_master(bank_reason_master_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/bank_reason_masters/show/#{bank_reason_master_id}")
     api_request(uri, 'GET', params)
   end
 
