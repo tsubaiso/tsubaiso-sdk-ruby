@@ -787,6 +787,12 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def scheduled_date(target_date, sight, closing_day, shift = 'before')
+    params = { 'format' => 'json', target_date: target_date, sight: sight, closing_day: closing_day, shift: shift }
+    uri = URI.parse(@base_url + '/scheduled_dates/calc')
+    api_request(uri, 'GET', params)
+  end
+
   def next_customer_code
     params = {
       'format' => 'json'
