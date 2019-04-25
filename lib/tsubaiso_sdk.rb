@@ -25,6 +25,10 @@ class TsubaisoSDK
     api_request(uri, "GET",params)
   end
 
+  def update_bank_account_master(options)
+
+  end
+
   def destroy_bank_account_master(destroy_id)
     params = {'format' => 'json'}
     uri = URI.parse(@base_url + '/bank_account_masters/destroy/' + destroy_id.to_s)

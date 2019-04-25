@@ -265,8 +265,6 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_create_bank_account_master
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
-    puts create
-
   ensure
     result = @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
     puts result.inspect
@@ -276,6 +274,17 @@ class TsubaisoSDKTest < Minitest::Test
     list = @api.list_bank_account_master
     puts list.inspect
     #assert_equal 200, index[:status].to_i, index.inspect
+  end
+
+  def test_update_bank_account_master
+    created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
+    update_attributes = {
+      name = "NationalAustraliaBank"
+    }
+
+  ensure
+    result = @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
+    puts result.inspect
   end
 
 
