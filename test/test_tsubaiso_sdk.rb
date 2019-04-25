@@ -1026,6 +1026,22 @@ class TsubaisoSDKTest < Minitest::Test
     assert !list[:json].empty?
   end
 
+  def test_list_api_history
+    options = {
+      month: Date.today.month,
+      year: Date.today.year
+    }
+    list = @api.list_api_history(options)
+    assert_equal 200, list[:status].to_i, list.inspect
+    list_count = list[:json].count
+
+    list_again = @api.list_api_history(options)
+    assert_equal 200, list[:status].to_i, list.inspect
+    assert_equal list_again[:json].first[:controller], 'api_histories'
+    assert_equal list_again[:json].first[:method], 'list'
+    assert_equal list_count, list_again[:json].count - 1
+  end
+
   private
 
   def successful?(status)
