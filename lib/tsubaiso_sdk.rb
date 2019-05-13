@@ -831,6 +831,11 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def scheduled_date(target_date, sight, closing_day, shift = 'before')
+    params = { 'format' => 'json', target_date: target_date, sight: sight, closing_day: closing_day, shift: shift }
+    uri = URI.parse(@base_url + '/scheduled_dates/calc')
+    api_request(uri, 'GET', params)
+
   def destroy_petty_cash_reason_master(petty_cash_reason_master_id)
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/petty_cash_reason_masters/destroy/#{petty_cash_reason_master_id}")
