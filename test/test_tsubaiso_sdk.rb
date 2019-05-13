@@ -212,6 +212,17 @@ class TsubaisoSDKTest < Minitest::Test
       target_timestamp: '2017-02-01',
       distribution_conditions: { 'SETSURITSU' => '1', 'COMMON' => '1' }
     }
+
+    @petty_cash_reason_master_1 = {
+      reason_code: 'sdk_test_create',
+      reason_name: 'SDK before update',
+      dc: 'd',
+      account_code: '100',
+      is_valid: '0',
+      memo: 'this is test before update',
+      port_type: '0',
+      sort_number: '0'
+    }
   end
 
   def test_failed_request
@@ -331,6 +342,23 @@ class TsubaisoSDKTest < Minitest::Test
     assert(records_before_count != records_after_count)
   ensure
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
+  end
+
+  def test_create_petty_cash_reason_master
+    reason_master_list_before = @api.list_petty_cash_reason_masters
+    masters_before_count = reason_master_list_before[:json].count
+    assert_equal 200, reason_master_list_before[:status].to_i, reason_master_list_before.inspect
+
+    created_pcrm = @api.create_petty_cash_reason_master(@petty_cash_reason_master_1)
+    assert_equal 200, created_pcrm[:status].to_i, created_pcrm.inspect
+    assert_equal @petty_cash_reason_master_1[:reason_code], created_pcrm[:json][:reason_code]
+
+    reason_masters_list_after = @api.list_petty_cash_reason_masters
+    masters_after_count = reason_masters_list_after[:json].count
+    assert_equal 200, reason_masters_list_after[:status].to_i, reason_masters_list_after.inspect
+    assert(masters_before_count != masters_after_count)
+  ensure
+    @api.destroy_petty_cash_reason_master(created_pcrm[:json][:id]) if created_pcrm[:json][:id]
   end
 
   def test_update_sale
@@ -498,6 +526,22 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:code], updated_tag[:json][:code]
   ensure
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
+  end
+
+  def test_update_petty_cash_reason_master
+    old_petty_cash_reason_master = @api.create_petty_cash_reason_master(@petty_cash_reason_master_1)
+    options = {
+      reason_name: 'updating from API',
+      memo: 'updating memo from API'
+    }
+
+    updated_petty_cash_reason_master = @api.update_petty_cash_reason_master(old_petty_cash_reason_master[:json][:id], options)
+    assert_equal 200, updated_petty_cash_reason_master[:status].to_i, updated_petty_cash_reason_master.inspect
+    assert_equal options[:reason_name], updated_petty_cash_reason_master[:json][:reason_name]
+    assert_equal options[:memo], updated_petty_cash_reason_master[:json][:memo]
+    assert_equal old_petty_cash_reason_master[:json][:reason_code], updated_petty_cash_reason_master[:json][:reason_code]
+  ensure
+    @api.destroy_petty_cash_reason_master(updated_petty_cash_reason_master[:json][:id]) if updated_petty_cash_reason_master[:json][:id]
   end
 
   def test_show_sale
@@ -725,6 +769,15 @@ class TsubaisoSDKTest < Minitest::Test
 
     assert_equal 200, tax_master[:status].to_i, tax_master.inspect
     assert_equal first_tax_master[:name], tax_master[:json][:name]
+  end
+
+  def test_show_petty_cash_reason_master
+    petty_cash_reason_masters = @api.list_petty_cash_reason_masters
+    first_petty_cash_reason_master = petty_cash_reason_masters[:json].first
+    petty_cash_reason_master = @api.show_petty_cash_reason_master(first_petty_cash_reason_master[:id])
+
+    assert_equal 200, petty_cash_reason_master[:status].to_i, petty_cash_reason_master.inspect
+    assert_equal first_petty_cash_reason_master[:reason_name], petty_cash_reason_master[:json][:reason_name]
   end
 
   def test_list_sales
@@ -1017,6 +1070,13 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, bank_reason_masters_list[:status].to_i, bank_reason_masters_list.inspect
     assert bank_reason_masters_list[:json]
     assert !bank_reason_masters_list[:json].empty?
+  end
+
+  def test_list_petty_cash_reason_masters
+    petty_cash_reason_masters_list = @api.list_petty_cash_reason_masters
+    assert_equal 200, petty_cash_reason_masters_list[:status].to_i, petty_cash_reason_masters_list.inspect
+    assert petty_cash_reason_masters_list[:json]
+    assert !petty_cash_reason_masters_list[:json].empty?
   end
 
   def test_list_fixed_assets

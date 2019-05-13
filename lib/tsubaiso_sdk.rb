@@ -195,6 +195,12 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def list_petty_cash_reason_masters
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/petty_cash_reason_masters/list/')
+    api_request(uri, 'GET', params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join('')
     params = { 'format' => 'json' }
@@ -339,6 +345,12 @@ class TsubaisoSDK
   def show_bank_reason_master(bank_reason_master_id)
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/bank_reason_masters/show/#{bank_reason_master_id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def show_petty_cash_reason_master(petty_cash_reason_master_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/petty_cash_reason_masters/show/#{petty_cash_reason_master_id}")
     api_request(uri, 'GET', params)
   end
 
@@ -555,6 +567,22 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def create_petty_cash_reason_master(options)
+    params = {
+      'format' => 'json',
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'account_code' => options[:account_code],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'port_type' => options[:port_type],
+      'sort_number' => options[:sort_number]
+    }
+    uri = URI.parse(@base_url + '/petty_cash_reason_masters/create/')
+    api_request(uri, 'POST', params)
+  end
+
   def update_sale(options)
     params = options.merge({ 'format' => 'json' })
     uri = URI.parse(@base_url + "/ar/update/#{options[:id]}")
@@ -718,6 +746,22 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def update_petty_cash_reason_master(petty_cash_reason_master_id, options)
+    params = {
+      'format' => 'json',
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'account_code' => options[:account_code],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'port_type' => options[:port_type],
+      'sort_number' => options[:sort_number]
+    }
+    uri = URI.parse(@base_url + "/petty_cash_reason_masters/update/#{petty_cash_reason_master_id}")
+    api_request(uri, 'POST', params)
+  end
+
   def destroy_sale(voucher)
     sale_id = voucher.scan(/\d/).join('')
     params = { 'format' => 'json' }
@@ -791,6 +835,11 @@ class TsubaisoSDK
     params = { 'format' => 'json', target_date: target_date, sight: sight, closing_day: closing_day, shift: shift }
     uri = URI.parse(@base_url + '/scheduled_dates/calc')
     api_request(uri, 'GET', params)
+
+  def destroy_petty_cash_reason_master(petty_cash_reason_master_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/petty_cash_reason_masters/destroy/#{petty_cash_reason_master_id}")
+    api_request(uri, 'POST', params)
   end
 
   def next_customer_code
