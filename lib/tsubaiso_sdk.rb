@@ -188,6 +188,12 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def index_api_history
+    params = {'format' => 'json'}
+    uri = URI.parse(@base_url + 'api_histories/index')
+    api_request(uri, 'GET', params)
+  end
+
   # Alpha version now.
   def list_fixed_assets
     params = { 'format' => 'json' }

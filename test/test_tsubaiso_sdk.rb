@@ -1042,6 +1042,23 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal list_count, list_again[:json].count - 1
   end
 
+  def test_index_api_history
+    index = @api.index_api_history
+    assert_equal 200, index[:status].to_i, index.inspect
+    assert !index[:json].empty?
+
+    if index[:json].first[:ym] == "#{Time.now.year}#{'%02d' % Time.new.month}"
+      count_bofore = index[:json].first[:cnt]
+    else
+      count_bofore = 0
+    end
+
+    index = @api.index_api_history
+    assert_equal 200, index[:status].to_i, index.inspect
+    count_after = index[:json].first[:cnt]
+    assert_equal count_bofore + 1, count_after
+  end
+
   private
 
   def successful?(status)
