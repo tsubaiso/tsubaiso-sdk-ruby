@@ -93,9 +93,9 @@ class TsubaisoSDKTest < Minitest::Test
     }
 
     @customer_1000 = {
-      name: 'テスト株式会社',
+      name: 'newテスト株式会社',
       name_kana: 'テストカブシキガイシャ',
-      code: '10000',
+      code: '10001',
       tax_type_for_remittance_charge: '3',
       used_in_ar: 1,
       used_in_ap: 1,
@@ -147,7 +147,7 @@ class TsubaisoSDKTest < Minitest::Test
     }
 
     @manual_journal_1 = {
-      journal_timestamp: '2016-04-01',
+      journal_timestamp: '2018-10-31',
       journal_dcs: [
         {
           debit: {
@@ -160,8 +160,8 @@ class TsubaisoSDKTest < Minitest::Test
             price_including_tax: 200_000,
             tax_type: 0
           },
-          tag_list: 'KIWI',
-          dept_code: 'SYSTEM'
+          tag_list: 'GROUP2_2',
+          dept_code: 'HEAD'
         },
         {
           debit: {
@@ -175,7 +175,7 @@ class TsubaisoSDKTest < Minitest::Test
             tax_type: 0
           },
           memo: 'Created From API',
-          dept_code: 'R_AND_D'
+          dept_code: 'HEAD'
         }
       ],
       data_partner: { link_url: 'www.example.com/7', id_code: '7' }
@@ -195,7 +195,7 @@ class TsubaisoSDKTest < Minitest::Test
     @tag_1 = {
       code: 'test_code',
       name: 'テストタグ',
-      sort_no: 10_000,
+      sort_no: 145,
       tag_group_code: 'DEFAULT',
       start_ymd: '2016-01-01',
       finish_ymd: '2016-12-31'
@@ -214,7 +214,7 @@ class TsubaisoSDKTest < Minitest::Test
     }
 
     @petty_cash_reason_master_1 = {
-      reason_code: 'sdk_test_create',
+      reason_code: 'new_sdk_test_create',
       reason_name: 'SDK before update',
       dc: 'd',
       account_code: '100',
@@ -479,8 +479,8 @@ class TsubaisoSDKTest < Minitest::Test
     options[:journal_dcs][0][:debit][:price_including_tax]  = 2000
     options[:journal_dcs][0][:credit][:price_including_tax] = 2000
     options[:journal_dcs][0][:memo] = 'Updated from API'
-    options[:journal_dcs][1][:dept_code] = 'SETSURITSU'
-    options[:journal_dcs][1][:tag_list] = 'GLOZE'
+    options[:journal_dcs][1][:dept_code] = 'HEAD'
+    options[:journal_dcs][1][:tag_list] = 'GROUP2_1'
 
     updated_manual_journal = @api.update_manual_journal(options)
     assert_equal 200, updated_manual_journal[:status].to_i, updated_manual_journal.inspect
@@ -516,8 +516,8 @@ class TsubaisoSDKTest < Minitest::Test
     tag = @api.create_tag(@tag_1)
     assert tag[:json][:id], tag
     options = {
-      name: '更新タグ',
-      code: 'updated_tag'
+      name: 'new更新タグ',
+      code: 'new_updated_tag'
     }
 
     updated_tag = @api.update_tag(tag[:json][:id], options)
@@ -534,14 +534,13 @@ class TsubaisoSDKTest < Minitest::Test
       reason_name: 'updating from API',
       memo: 'updating memo from API'
     }
-
     updated_petty_cash_reason_master = @api.update_petty_cash_reason_master(old_petty_cash_reason_master[:json][:id], options)
     assert_equal 200, updated_petty_cash_reason_master[:status].to_i, updated_petty_cash_reason_master.inspect
     assert_equal options[:reason_name], updated_petty_cash_reason_master[:json][:reason_name]
     assert_equal options[:memo], updated_petty_cash_reason_master[:json][:memo]
     assert_equal old_petty_cash_reason_master[:json][:reason_code], updated_petty_cash_reason_master[:json][:reason_code]
   ensure
-    @api.destroy_petty_cash_reason_master(updated_petty_cash_reason_master[:json][:id]) if updated_petty_cash_reason_master[:json][:id]
+    @api.destroy_petty_cash_reason_master(old_petty_cash_reason_master[:json][:id]) if old_petty_cash_reason_master[:json][:id]
   end
 
   def test_show_sale
@@ -675,7 +674,7 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_show_manual_journal
     manual_journal = @api.create_manual_journal(@manual_journal_1)
-    manual_journals_list = @api.list_manual_journals(2016, 4)
+    manual_journals_list = @api.list_manual_journals(2018, 10)
     last_manual_journal_id = manual_journals_list[:json].last[:id]
 
     manual_journal = @api.show_manual_journal(last_manual_journal_id)

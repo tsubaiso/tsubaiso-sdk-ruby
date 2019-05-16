@@ -591,173 +591,140 @@ class TsubaisoSDK
 
   def update_purchase(options)
     params = options.merge({ 'format' => 'json' })
-
     uri = URI.parse(@base_url + "/ap_payments/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end
 
   def update_customer(options)
     available_keys = [
-      'accountant_email',
-      'address',
-      'administrator_name',
-      'ap_account_code',
-      'ap_reason_selections',
-      'ar_account_code',
-      'ar_reason_selections',
-      'bank_account_number',
-      'bank_branch_code',
-      'bank_branch_name',
-      'bank_code',
-      'bank_course',
-      'bank_name',
-      'bank_nominee',
-      'bill_detail_round_rule',
-      'code',
-      'dept_code',
-      'email',
-      'fax',
-      'finish_timestamp',
-      'foreign_currency',
-      'is_valid',
-      'locale',
-      'name',
-      'name_kana',
-      'need_tax_deductions',
-      'pay_closing_schedule',
-      'pay_interface_id',
-      'pay_sight',
-      'receive_closing_schedule',
-      'receive_interface_id',
-      'receive_sight',
-      'sender_name',
-      'sort_no',
-      'start_timestamp',
-      'tax_type_for_remittance_charge',
-      'tel',
-      'memo',
-      'used_in_ap',
-      'used_in_ar',
-      'withholding_tax_base',
-      'withholding_tax_segment',
-      'zip',
-      'pay_date_if_holiday',
-      'receive_date_if_holiday',
-      'data_partner'
+      :accountant_email,
+      :address,
+      :administrator_name,
+      :ap_account_code,
+      :ap_reason_selections,
+      :ar_account_code,
+      :ar_reason_selections,
+      :bank_account_number,
+      :bank_branch_code,
+      :bank_branch_name,
+      :bank_code,
+      :bank_course,
+      :bank_name,
+      :bank_nominee,
+      :bill_detail_round_rule,
+      :code,
+      :dept_code,
+      :email,
+      :fax,
+      :finish_timestamp,
+      :foreign_currency,
+      :is_valid,
+      :locale,
+      :name,
+      :name_kana,
+      :need_tax_deductions,
+      :pay_closing_schedule,
+      :pay_interface_id,
+      :pay_sight,
+      :receive_closing_schedule,
+      :receive_interface_id,
+      :receive_sight,
+      :sender_name,
+      :sort_no,
+      :start_timestamp,
+      :tel,
+      :memo,
+      :used_in_ap,
+      :used_in_ar,
+      :withholding_tax_base,
+      :withholding_tax_segment,
+      :zip,
+      :pay_date_if_holiday,
+      :receive_date_if_holiday,
+      :data_partner
     ]
+   params = checking_keys_and_values(available_keys,options)
+   uri = URI.parse(@base_url + "/customer_masters/update/#{options[:id]}")
+   api_request(uri, 'POST', params)
+  end
+
+  def checking_keys_and_values(keys,options)
+    # Add new keys and value if options has keys, even if value in options is nil.
+    # This code avoid updateing attributes witch is not specified by the users.
     params = {}
-    available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym]
+    keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
     end
     params['format'] = 'json'
-
-    uri = URI.parse(@base_url + "/customer_masters/update/#{options[:id]}")
-    api_request(uri, 'POST', params)
+    return params
   end
 
   def update_staff_data(options)
-    params = {
-      'memo' => options[:memo],
-      'value' => options[:value],
-      'start_timestamp' => options[:start_timestamp],
-      'format' => 'json'
-    }
-
-    if options[:finish_timestamp]
-      params[:finish_timestamp] = options[:finish_timestamp]
-    elsif options[:no_finish_timestamp]
-      params[:no_finish_timestamp] = options[:no_finish_timestamp]
-    end
-
+    candidate_keys = [:memo,:value,:start_timestamp,:finish_timestamp,:no_finish_timestamp]
+    params = checking_keys_and_values(candidate_keys,options)
     uri = URI.parse(@base_url + "/staff_data/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end
 
   def update_manual_journal(options)
-    params = {
-      'journal_timestamp' => options[:journal_timestamp],
-      'journal_dcs' => make_journal_dcs(options[:journal_dcs]),
-      'data_partner' => options[:data_partner],
-      'format' => 'json'
-    }
-
+    candidate_keys = [:journal_timestamp,:journal_dcs,:data_partner]
+    params = checking_keys_and_values(candidate_keys,options)
     uri = URI.parse(@base_url + "/manual_journals/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end
 
   def update_reimbursement(reimbursement_id, options)
-    params = {
-      'format' => 'json',
-      'applicant' => options[:applicant],
-      'application_term' => options[:application_term],
-      'staff_code' => options[:staff_code],
-      'dept_code' => options[:dept_code],
-      'memo' => options[:memo]
-    }
+    candidate_keys = [:applicant, :application_term, :staff_code, :dept_code, :memo]
+    params = checking_keys_and_values(candidate_keys, options)
     uri = URI.parse(@base_url + "/reimbursements/update/#{reimbursement_id}")
     api_request(uri, 'POST', params)
   end
 
   def update_reimbursement_transaction(options)
-    params = {
-      'format' => 'json',
-      'port_type' => options[:port_type],
-      'transaction_timestamp' => options[:transaction_timestamp],
-      'price_value' => options[:price_value],
-      'dc' => options[:dc],
-      'reason_code' => options[:reason_code],
-      'brief' => options[:brief],
-      'memo'  => options[:memo],
-      'tag_list' => options[:tag_list],
-      'tax_type' => options[:tax_type],
-      'data_partner' => options[:data_partner]
-    }
+    candidate_keys = [
+      :format,
+      :port_type,
+      :transaction_timestamp,
+      :price_value,
+      :dc,
+      :reason_code,
+      :brief,
+      :memo,
+      :tag_list,
+      :tax_type,
+      :data_partner
+    ]
+    params = checking_keys_and_values(candidate_keys,options)
     uri = URI.parse(@base_url + "/reimbursement_transactions/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end
 
   def update_dept(dept_id, options)
-    params = {
-      'format' => 'json',
-      'sort_no' => options[:sort_no],
-      'code' => options[:code],
-      'name' => options[:name],
-      'name_abbr' => options[:name_abbr],
-      'color' => options[:color],
-      'memo' => options[:memo],
-      'start_date' => options[:start_date],
-      'finish_date' => options[:finish_date]
-    }
+    candidate_keys = [
+      :sort_no,
+      :code,
+      :name,
+      :name_abbr,
+      :color,
+      :memo,
+      :start_date,
+      :finish_date
+    ]
+    params = checking_keys_and_values(candidate_keys, options)
     uri = URI.parse(@base_url + "/depts/update/#{dept_id}")
     api_request(uri, 'POST', params)
   end
 
   def update_tag(tag_id, options)
-    params = {
-      'format' => 'json',
-      'code' => options[:code],
-      'name' => options[:name],
-      'sort_no' => options[:sort_no],
-      'tag_group_code' => options[:tag_group_code],
-      'start_ymd' => options[:start_ymd],
-      'finish_ymd' => options[:finish_ymd]
-    }
+    candidate_keys = [:code, :name, :sort_no,:tag_group_code,:start_ymd,:finish_ymd]
+    params = checking_keys_and_values(candidate_keys,options)
     uri = URI.parse(@base_url + "/tags/update/#{tag_id}")
     api_request(uri, 'POST', params)
   end
 
   def update_petty_cash_reason_master(petty_cash_reason_master_id, options)
-    params = {
-      'format' => 'json',
-      'reason_code' => options[:reason_code],
-      'reason_name' => options[:reason_name],
-      'dc' => options[:dc],
-      'account_code' => options[:account_code],
-      'is_valid' => options[:is_valid],
-      'memo' => options[:memo],
-      'port_type' => options[:port_type],
-      'sort_number' => options[:sort_number]
-    }
+     candidate_keys = [:reason_code,:reason_name,:dc,:account_code,:is_valid,:memo,:port_type,:sort_number]
+     params = checking_keys_and_values(candidate_keys,options)
     uri = URI.parse(@base_url + "/petty_cash_reason_masters/update/#{petty_cash_reason_master_id}")
     api_request(uri, 'POST', params)
   end
