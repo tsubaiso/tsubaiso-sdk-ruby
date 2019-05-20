@@ -201,6 +201,16 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def list_api_history(options)
+    params = {
+      'format' => 'json',
+      'month' => options[:month],
+      'year' => options[:year]
+    }
+    uri = URI.parse(@base_url + '/api_histories/list/')
+    api_request(uri, 'GET', params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join('')
     params = { 'format' => 'json' }
