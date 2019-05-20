@@ -201,6 +201,16 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def list_api_history(options)
+    params = {
+      'format' => 'json',
+      'month' => options[:month],
+      'year' => options[:year]
+    }
+    uri = URI.parse(@base_url + '/api_histories/list/')
+    api_request(uri, 'GET', params)
+  end
+
   def show_sale(voucher)
     sale_id = voucher.scan(/\d/).join('')
     params = { 'format' => 'json' }
@@ -835,6 +845,7 @@ class TsubaisoSDK
     params = { 'format' => 'json', target_date: target_date, sight: sight, closing_day: closing_day, shift: shift }
     uri = URI.parse(@base_url + '/scheduled_dates/calc')
     api_request(uri, 'GET', params)
+  end
 
   def destroy_petty_cash_reason_master(petty_cash_reason_master_id)
     params = { 'format' => 'json' }
