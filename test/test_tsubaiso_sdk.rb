@@ -254,6 +254,23 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
+  def test_index_api_history
+    index = @api.index_api_history
+    assert_equal 200, index[:status].to_i, index.inspect
+    assert !index[:json].empty?
+
+    initial_api_count = if index[:json].first[:ym] == "#{Time.now.year}#{format('%02d', Time.new.month)}"
+                          index[:json].first[:cnt]
+                        else
+                          0
+                        end
+
+    index = @api.index_api_history
+    assert_equal 200, index[:status].to_i, index.inspect
+    new_api_count = index[:json].first[:cnt]
+    assert_equal initial_api_count + 1, new_api_count
+  end
+
   def test_create_physical_inventory_masters
     physical_inventory_master = @api.create_physical_inventory_masters(@pim_201901)
 
