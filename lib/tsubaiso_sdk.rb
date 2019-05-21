@@ -182,6 +182,12 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def list_physical_inventory_masters
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/physical_inventory_masters/index')
+    api_request(uri, 'GET', params)
+  end
+
   def list_bank_reason_masters
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/bank_reason_masters/list/')
@@ -349,6 +355,12 @@ class TsubaisoSDK
   def show_ap_reason_master(ap_reason_master_id)
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/ap_reason_masters/show/#{ap_reason_master_id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def show_physical_inventory_master(physical_inventory_master_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/physical_inventory_masters/show/#{physical_inventory_master_id}")
     api_request(uri, 'GET', params)
   end
 
@@ -593,6 +605,18 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def create_physical_inventory_masters(options)
+    params = {
+      'format' => 'json',
+      'name' => options[:name],
+      'memo' => options[:memo],
+      'start_ymd' => options[:start_ymd],
+      'finish_ymd' => options[:finish_ymd]
+    }
+    uri = URI.parse(@base_url + '/physical_inventory_masters/create/')
+    api_request(uri, 'POST', params)
+  end
+
   def update_sale(options)
     params = options.merge({ 'format' => 'json' })
     uri = URI.parse(@base_url + "/ar/update/#{options[:id]}")
@@ -772,6 +796,12 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def update_physical_inventory_masters(options)
+    params = options.merge({ 'format' => 'json' })
+    uri = URI.parse(@base_url + "/physical_inventory_masters/update/#{options[:id]}")
+    api_request(uri, 'POST', params)
+  end
+
   def destroy_sale(voucher)
     sale_id = voucher.scan(/\d/).join('')
     params = { 'format' => 'json' }
@@ -850,6 +880,12 @@ class TsubaisoSDK
   def destroy_petty_cash_reason_master(petty_cash_reason_master_id)
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/petty_cash_reason_masters/destroy/#{petty_cash_reason_master_id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def destroy_physical_inventory_masters(physical_inventory_masters_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/physical_inventory_masters/destroy/#{physical_inventory_masters_id}")
     api_request(uri, 'POST', params)
   end
 

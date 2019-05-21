@@ -6,6 +6,27 @@ class TsubaisoSDKTest < Minitest::Test
   def setup
     @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
 
+    @pim_201901 = {
+      name: 'sasaduka',
+      memo: 'this inventory is registered from SDK test',
+      start_ymd: '2019/01/01',
+      finish_ymd: '2020/12/01'
+    }
+
+    @pim_201902 = {
+      name: 'osaka',
+      memo: 'this inventory is registered from SDK test #2',
+      start_ymd: '2019/02/01',
+      finish_ymd: '2020/12/02'
+    }
+
+    @pim_201903 = {
+      name: 'nagoya',
+      memo: 'this inventory is registered from SDK test #3',
+      start_ymd: '2019/03/01',
+      finish_ymd: '2020/12/03'
+    }
+
     # data
     @sale_201608 = {
       price_including_tax: 10_800,
@@ -233,6 +254,18 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
+  def test_create_physical_inventory_masters
+    physical_inventory_master = @api.create_physical_inventory_masters(@pim_201901)
+
+    assert_equal 200, physical_inventory_master[:status].to_i, physical_inventory_master.inspect
+    assert_equal @pim_201901[:name], physical_inventory_master[:json][:name]
+    assert_equal @pim_201901[:memo], physical_inventory_master[:json][:memo]
+    assert_equal @pim_201901[:start_ymd], physical_inventory_master[:json][:start_ymd]
+    assert_equal @pim_201901[:finish_ymd], physical_inventory_master[:json][:finish_ymd]
+  ensure
+    @api.destroy_physical_inventory_masters(physical_inventory_master[:json][:id]) if physical_inventory_master[:json][:id]
+  end
+
   def test_create_customer
     customer = @api.create_customer(@customer_1000)
 
@@ -378,6 +411,26 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:data_partner][:id_code], updated_sale[:json][:data_partner][:id_code]
   ensure
     @api.destroy_sale("AP#{sale[:json][:id]}") if sale[:json][:id]
+  end
+
+  def test_update_physical_inventory_masters
+    physical_inventory_master = @api.create_physical_inventory_masters(@pim_201901)
+    assert physical_inventory_master[:json][:id], physical_inventory_master
+    options = {
+      id: physical_inventory_master[:json][:id],
+      memo: 'Updated memo',
+      name: 'test name'
+    }
+
+    updated_physical_inventory_master = @api.update_physical_inventory_masters(options)
+    assert_equal 200, updated_physical_inventory_master[:status].to_i, updated_physical_inventory_master.inspect
+    assert_equal options[:id], updated_physical_inventory_master[:json][:id]
+    assert_equal options[:memo], updated_physical_inventory_master[:json][:memo]
+    assert_equal options[:name], updated_physical_inventory_master[:json][:name]
+    assert_equal physical_inventory_master[:json][:start_ymd], updated_physical_inventory_master[:json][:start_ymd]
+    assert_equal physical_inventory_master[:json][:finish_ymd], updated_physical_inventory_master[:json][:finish_ymd]
+  ensure
+    @api.destroy_physical_inventory_masters(physical_inventory_master[:json][:id]) if physical_inventory_master[:json][:id]
   end
 
   def test_update_purchase
@@ -778,6 +831,36 @@ class TsubaisoSDKTest < Minitest::Test
 
     assert_equal 200, petty_cash_reason_master[:status].to_i, petty_cash_reason_master.inspect
     assert_equal first_petty_cash_reason_master[:reason_name], petty_cash_reason_master[:json][:reason_name]
+  end
+
+  def test_show_physical_inventory_masters
+    physical_inventory_masters = @api.list_physical_inventory_masters
+    first_physical_inventory_master = physical_inventory_masters[:json].first
+    physical_inventory_master = @api.show_physical_inventory_master(first_physical_inventory_master[:id])
+
+    assert_equal 200, physical_inventory_master[:status].to_i, physical_inventory_master.inspect
+    assert_equal first_physical_inventory_master[:name], physical_inventory_master[:json][:name]
+  end
+
+  def test_list_physical_inventory_masters
+    pim_201901 = @api.create_physical_inventory_masters(@pim_201901)
+    pim_201902 = @api.create_physical_inventory_masters(@pim_201902)
+    pim_201903 = @api.create_physical_inventory_masters(@pim_201903)
+
+    pim_201901_id = pim_201901[:json][:id]
+    pim_201902_id = pim_201902[:json][:id]
+    pim_201903_id = pim_201903[:json][:id]
+
+    list_physical_inventory_masters = @api.list_physical_inventory_masters
+    assert_equal 200, list_physical_inventory_masters[:status].to_i, list_physical_inventory_masters.inspect
+
+    assert(list_physical_inventory_masters[:json].any? { |x| x[:id] == pim_201901_id })
+    assert(list_physical_inventory_masters[:json].any? { |x| x[:id] == pim_201902_id })
+    assert(list_physical_inventory_masters[:json].any? { |x| x[:id] == pim_201903_id })
+  ensure
+    @api.destroy_physical_inventory_masters(pim_201901[:json][:id]) if pim_201901[:json][:id]
+    @api.destroy_physical_inventory_masters(pim_201902[:json][:id]) if pim_201902[:json][:id]
+    @api.destroy_physical_inventory_masters(pim_201903[:json][:id]) if pim_201903[:json][:id]
   end
 
   def test_list_sales
