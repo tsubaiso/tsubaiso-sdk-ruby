@@ -7,10 +7,11 @@ class TsubaisoSDKTest < Minitest::Test
     @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
 
     @pim_201901 = {
-      name: 'sasaduka',
+      name: 'sendai',
       memo: 'this inventory is registered from SDK test',
       start_ymd: '2019/01/01',
-      finish_ymd: '2020/12/01'
+      tag_list: 'GROUP2_1,GROUP3_2',
+      dept_code: 'NEVER_ENDING'
     }
 
     @pim_201902 = {
@@ -279,6 +280,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @pim_201901[:memo], physical_inventory_master[:json][:memo]
     assert_equal @pim_201901[:start_ymd], physical_inventory_master[:json][:start_ymd]
     assert_equal @pim_201901[:finish_ymd], physical_inventory_master[:json][:finish_ymd]
+    assert_equal @pim_201901[:tag_list], physical_inventory_master[:json][:tag_list].join(",")
   ensure
     @api.destroy_physical_inventory_masters(physical_inventory_master[:json][:id]) if physical_inventory_master[:json][:id]
   end
@@ -436,7 +438,8 @@ class TsubaisoSDKTest < Minitest::Test
     options = {
       id: physical_inventory_master[:json][:id],
       memo: 'Updated memo',
-      name: 'test name'
+      name: 'kanazawa',
+      tag_list: "GROUP2_2"
     }
 
     updated_physical_inventory_master = @api.update_physical_inventory_masters(options)
@@ -446,6 +449,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:name], updated_physical_inventory_master[:json][:name]
     assert_equal physical_inventory_master[:json][:start_ymd], updated_physical_inventory_master[:json][:start_ymd]
     assert_equal physical_inventory_master[:json][:finish_ymd], updated_physical_inventory_master[:json][:finish_ymd]
+    assert_equal options[:tag_list], updated_physical_inventory_master[:json][:tag_list].join(",")
   ensure
     @api.destroy_physical_inventory_masters(physical_inventory_master[:json][:id]) if physical_inventory_master[:json][:id]
   end
