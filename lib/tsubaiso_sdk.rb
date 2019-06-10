@@ -190,7 +190,7 @@ class TsubaisoSDK
 
   def list_physical_inventory_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/physical_inventory_masters/index')
+    uri = URI.parse(@base_url + '/physical_inventory_masters/list')
     api_request(uri, 'GET', params)
   end
 
@@ -617,7 +617,9 @@ class TsubaisoSDK
       'name' => options[:name],
       'memo' => options[:memo],
       'start_ymd' => options[:start_ymd],
-      'finish_ymd' => options[:finish_ymd]
+      'finish_ymd' => options[:finish_ymd],
+      'tag_list' => options[:tag_list],
+      'dept_code' => options[:dept_code]
     }
     uri = URI.parse(@base_url + '/physical_inventory_masters/create/')
     api_request(uri, 'POST', params)
