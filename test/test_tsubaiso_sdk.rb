@@ -245,7 +245,39 @@ class TsubaisoSDKTest < Minitest::Test
       port_type: '0',
       sort_number: '0'
     }
+
+    @bank_account_master_1 = {
+      name: "ANZ Bank",
+      account_type: "1",
+      account_number: "66667777",
+      nominee: "tsubaiso taro",
+      memo: "",
+      start_ymd: "2019-06-01",
+      finish_ymd: nil,
+      zengin_bank_code: "7777",
+      zengin_branch_code: "777",
+      zengin_client_code_sogo: "9999999999",
+      zengin_client_code_kyuyo: nil,
+      currency_code: "",
+      currency_rate_master_id: nil
+    }
   end
+
+  def test_create_bank_account_master
+    created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
+    puts create
+
+  ensure
+    result = @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
+    puts result.inspect
+  end
+
+  def test_list_bank_account_master
+    list = @api.list_bank_account_master
+    puts list.inspect
+    #assert_equal 200, index[:status].to_i, index.inspect
+  end
+
 
   def test_failed_request
     @api_fail = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: 'fake token' })
