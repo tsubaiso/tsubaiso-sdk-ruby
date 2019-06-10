@@ -213,15 +213,12 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
-<<<<<<< HEAD
   def list_petty_cash_reason_masters
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/petty_cash_reason_masters/list/')
     api_request(uri, 'GET', params)
   end
 
-=======
->>>>>>> 0a32b64b1754f69b74dd09c8933c21d74274c5d8
   def list_api_history(options)
     params = {'format' => 'json'}
     uri = URI.parse(@base_url + "/api_histories/list/#{options[:year]}/#{options[:month]}")

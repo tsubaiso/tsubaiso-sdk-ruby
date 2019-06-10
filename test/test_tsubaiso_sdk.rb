@@ -245,6 +245,7 @@ class TsubaisoSDKTest < Minitest::Test
       port_type: '0',
       sort_number: '0'
     }
+  end
 
   def test_failed_request
     @api_fail = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: 'fake token' })
