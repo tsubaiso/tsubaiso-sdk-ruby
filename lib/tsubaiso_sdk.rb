@@ -214,12 +214,8 @@ class TsubaisoSDK
   end
 
   def list_api_history(options)
-    params = {
-      'format' => 'json',
-      'month' => options[:month],
-      'year' => options[:year]
-    }
-    uri = URI.parse(@base_url + '/api_histories/list/')
+    params = {'format' => 'json'}
+    uri = URI.parse(@base_url + "/api_histories/list/#{options[:year]}/#{options[:month]}")
     api_request(uri, 'GET', params)
   end
 
