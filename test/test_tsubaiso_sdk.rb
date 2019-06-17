@@ -302,6 +302,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @bank_account_master_1[:name], created_bank_account_master[:json][:name]
     assert_equal @bank_account_master_1[:account_number], created_bank_account_master[:json][:account_number]
     assert_equal @bank_account_master_1[:zengin_bank_code], created_bank_account_master[:json][:zengin_bank_code]
+    assert_equal @bank_account_master_1[:zengin_branch_code], created_bank_account_master[:json][:zengin_branch_code]
   ensure
     @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
   end
@@ -345,25 +346,26 @@ class TsubaisoSDKTest < Minitest::Test
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
     assert_equal 200, created_bank_account_master[:status].to_i
 
-    updatating_options = {
+    updating_options = {
       id: created_bank_account_master[:json][:id],
-      name: "Westpack",
+      name: "Westpac",
       account_type: "3",
-      nominee: "Hatagaya Taro"
+      nominee: "Hatagaya Taro",
+      memo: "This is updatting test"
     }
 
-    updated_bank_account_master = @api.update_bank_account_master(options)
-    assert_equal 200, updated_bank_account_master[:status].to_i, updated_purchase.inspect
-    puts updated_bank_account_master
-    assert_equal updatating_options[:name], updated_bank_account_master[:json][:name]
-    assert_equal updatating_options[:memo], updated_bank_account_master[:json][:memo]
-    assert_equal updatating_options[:nominee], updated_bank_account_master[:json][:nominee]
+    updated_bank_account_master = @api.update_bank_account_master(updating_options)
+    assert_equal 200, updated_bank_account_master[:status].to_i
+    assert_equal updating_options[:name], updated_bank_account_master[:json][:name]
+    assert_equal updating_options[:memo], updated_bank_account_master[:json][:memo]
+    assert_equal updating_options[:nominee], updated_bank_account_master[:json][:nominee]
+    assert_equal updating_options[:account_type], updated_bank_account_master[:json][:account_type]
 
     assert_equal @bank_account_master_1[:account_number], updated_bank_account_master[:json][:account_number]
     assert_equal @bank_account_master_1[:zengin_bank_code], updated_bank_account_master[:json][:zengin_bank_code]
     assert_equal @bank_account_master_1[:zengin_branch_code], updated_bank_account_master[:json][:zengin_branch_code]
   ensure
-    @api.destroy_bank_account_master(updated_bank_account_master[:json][:id]) if updated_bank_account_master[:json][:id]
+     @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
   end
 
   def test_failed_request
