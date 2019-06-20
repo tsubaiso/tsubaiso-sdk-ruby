@@ -441,6 +441,48 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def create_bank_reason_masters
+    params = {
+      'sort_number' => options[:sort_number],
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'account_code' => options[:account_code]
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + '/bank_reason_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def update_bank_reason_masters
+    params = {}
+    candidate_keys = [
+      :sort_number,
+      :reason_code,
+      :reason_name,
+      :dc,
+      :is_valid,
+      :memo,
+      :account_code
+    ]
+
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + '/bank_reason_masters/update/' + options[:id].to_s)
+    result = api_request(uri, "POST",params)
+  end
+
+  def destroy_bank_reason_masters(destroy_id)
+    params = {'format' => 'json'}
+    uri = URI.parse(@base_url + '/bank_reason_masters/destroy/' + destroy_id.to_s)
+    api_request(uri,"POST",params)
+  end
+
+
   def create_sale(options)
     params = {
       'price_including_tax' => options[:price_including_tax],

@@ -413,6 +413,17 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_petty_cash_reason_master(created_pcrm[:json][:id]) if created_pcrm[:json][:id]
   end
 
+  def test_show_bank_account_master
+    created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
+    shown_bank_account_master = @api.show_bank_account_master(created_bank_account_master[:json][:id])
+
+    assert_equal @bank_account_master_1[:nominee], shown_bank_account_master[:json][:nominee]
+    assert_equal @bank_account_master_1[:name], shown_bank_account_master[:json][:name]
+    assert_equal @bank_account_master_1[:account_number], shown_bank_account_master[:json][:account_number]
+  ensure
+    @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
+  end
+
   def test_update_sale
     sale = @api.create_sale(@sale_201608)
     options = {
