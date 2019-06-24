@@ -441,7 +441,7 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
-  def create_bank_reason_masters
+  def create_bank_reason_masters(options)
     params = {
       'sort_number' => options[:sort_number],
       'reason_code' => options[:reason_code],
@@ -449,14 +449,14 @@ class TsubaisoSDK
       'dc' => options[:dc],
       'is_valid' => options[:is_valid],
       'memo' => options[:memo],
-      'account_code' => options[:account_code]
+      'account_code' => options[:account_code],
       'format' => 'json'
     }
     uri = URI.parse(@base_url + '/bank_reason_masters/create')
     api_request(uri, 'POST', params)
   end
 
-  def update_bank_reason_masters
+  def update_bank_reason_masters(options)
     params = {}
     candidate_keys = [
       :sort_number,
