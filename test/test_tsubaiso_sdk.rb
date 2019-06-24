@@ -443,17 +443,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_petty_cash_reason_master(created_pcrm[:json][:id]) if created_pcrm[:json][:id]
   end
 
-  def test_show_bank_account_master
-    created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
-    shown_bank_account_master = @api.show_bank_account_master(created_bank_account_master[:json][:id])
-
-    assert_equal @bank_account_master_1[:nominee], shown_bank_account_master[:json][:nominee]
-    assert_equal @bank_account_master_1[:name], shown_bank_account_master[:json][:name]
-    assert_equal @bank_account_master_1[:account_number], shown_bank_account_master[:json][:account_number]
-  ensure
-    @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
-  end
-
   def test_update_sale
     sale = @api.create_sale(@sale_201608)
     options = {
@@ -888,27 +877,6 @@ class TsubaisoSDKTest < Minitest::Test
 
     assert_equal 200, ar_reason_master[:status].to_i, ar_reason_master.inspect
     assert_equal ar_reason_master[:json][:id], ar_reason_master_id
-  end
-
-  def create_bank_account_master(options)
-    params = {
-      'format' => 'json',
-      'sort_number' => options[:name],
-      'reason_code' => options[:account_type],
-      'account_number' => options[:account_number],
-      'nominee' => options[:nominee],
-      'memo' => options[:memo],
-      'start_ymd' => options[:start_ymd],
-      'finish_ymd' => options[:finish_ymd],
-      'zengin_bank_code' => options[:zengin_bank_code],
-      'zengin_branch_code' => options[:zengin_branch_code],
-      'zengin_client_code_soge' => options[:zengin_client_code_sogo],
-      'zengin_client_code_kyuyo' => options[:zengin_client_code_kyuyo],
-      'currency_code' => options[:currency_code],
-      'currency_rate_master_id' => options[:currency_rate_master_id]
-    }
-    uri = URI.parse(@base_url + '/bank_account_masters/create/')
-    api_request(uri,"POST",params)
   end
 
   def test_show_tax_master
