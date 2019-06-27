@@ -295,6 +295,30 @@ class TsubaisoSDKTest < Minitest::Test
    }
   end
 
+  def test_create_bank_account
+    #bank_account_masterを新設
+    created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
+    assert_equal 200, created_bank_account_master[:status].to_i, created_bank_account_master.inspect
+    #今月のbank_accountを新設
+    options = {
+      bank_account_master_id: created_bank_account_master[:json][:id],
+      start_timestamp: "2019-06-30",
+      finish_timestamp: "2019-07-30",
+    }
+    new_bank_account = @api.create_bank_account(options)
+    assert_equal 200, new_bank_account[:status].to_i, new_bank_account.inspect
+    #listで存在を再確認
+    options = {
+      year: 2019,
+      month: 7
+    }
+    bank_accounts = @api.list_bank_account(options)
+    assert_equal 200, bank_accounts[:status].to_i, bank_accounts.inspect
+    assert(bank_accounts[:json].any? { |x| x[:bank_account_master_id] == created_bank_account_master[:json][:id]})
+  ensure
+    @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
+  end
+
   def test_create_bank_account_master
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
 

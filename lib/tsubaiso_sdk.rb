@@ -39,6 +39,29 @@ class TsubaisoSDK
     result = api_request(uri, "POST",params)
   end
 
+  def list_bank_account(options)
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + "/bank_accounts/list/#{options[:year]}/#{options[:month]}")
+    api_request(uri,'GET',params)
+  end
+
+  def create_bank_account(options)
+    params = {
+      'bank_account_master_id' => options[:bank_account_master_id],
+      'start_balance' => options[:start_balance],
+      'finish_balance' => options[:finish_balance],
+      'start_timestamp' => options[:start_timestamp],
+      'finish_timestamp' => options[:finish_timestamp],
+      'start_balance_fixed' => options[:start_balance_fixed],
+      'format' => 'json'
+    }
+
+    uri = URI.parse(@base_url + '/bank_accounts/create')
+    api_request(uri, 'POST', params)
+  end
+
   def show_bank_account_master(master_id)
     params = {'format' => 'json'}
     uri = URI.parse(@base_url + '/bank_account_masters/show/' + master_id.to_s)
