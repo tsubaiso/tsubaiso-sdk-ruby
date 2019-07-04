@@ -50,11 +50,8 @@ class TsubaisoSDK
   def create_bank_account(options)
     params = {
       'bank_account_master_id' => options[:bank_account_master_id],
-      'start_balance' => options[:start_balance],
-      'finish_balance' => options[:finish_balance],
       'start_timestamp' => options[:start_timestamp],
       'finish_timestamp' => options[:finish_timestamp],
-      'start_balance_fixed' => options[:start_balance_fixed],
       'format' => 'json'
     }
 
