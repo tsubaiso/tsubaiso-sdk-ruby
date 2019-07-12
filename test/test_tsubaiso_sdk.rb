@@ -58,7 +58,7 @@ class TsubaisoSDKTest < Minitest::Test
       reason_master_code: 'BUYING_IN',
       dc: 'c',
       memo: '',
-      tax_code: 1007,
+      tax_code: 18,
       port_type: 1,
       data_partner: { link_url: 'www.example.com/3', id_code: '3' }
     }
@@ -73,7 +73,7 @@ class TsubaisoSDKTest < Minitest::Test
       reason_master_code: 'BUYING_IN',
       dc: 'c',
       memo: '',
-      tax_code: 1007,
+      tax_code: 18,
       port_type: 1,
       data_partner: { link_url: 'www.example.com/4', id_code: '4' }
     }
@@ -182,8 +182,8 @@ class TsubaisoSDKTest < Minitest::Test
     }
 
     @dept_1 = {
-      sort_no: 12_345_678,
-      code: 'test_code',
+      sort_no: 12_345_67891,
+      code: 'test_code_12',
       name: 'テスト部門',
       name_abbr: 'テストブモン',
       color: '#ffffff',
@@ -201,17 +201,17 @@ class TsubaisoSDKTest < Minitest::Test
       finish_ymd: '2016-12-31'
     }
 
-    @journal_distribution_1 = {
-      title: 'title',
-      start_date: '2012-07-01',
-      finish_date: '2012-07-31',
-      account_codes: ['135~999','604'],
-      dept_code: 'SETSURITSU',
-      memo: '',
-      criteria: 'dept',
-      target_timestamp: '2017-02-01',
-      distribution_conditions: { 'SETSURITSU' => '1', 'COMMON' => '1' }
-    }
+     @journal_distribution_1 = {
+       title: 'title',
+       start_date: '2018-10-1',
+       finish_date: '2018-10-31',
+       account_codes: ['110'],
+       dept_code: 'HEAD',
+       memo: '',
+       criteria: 'dept',
+       target_timestamp: '2018-10-01',
+       distribution_conditions: { 'SETSURITSU' => '1', 'COMMON' => '1' }
+     }
 
     @petty_cash_reason_master_1 = {
       reason_code: 'new_sdk_test_create',
@@ -326,22 +326,29 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_create_journal_distribution
-    options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
+    # マニュアル仕分け管理で配賦元の仕分けを作成しておく
+    manual_journal = @api.create_manual_journal(@manual_journal_1)
+    assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
 
+    options = { account_codes: ['110'], start_date: "2018-10-01", finish_date: "2018-10-31" }
     journals_list_before = @api.list_journals(options)
+    puts journals_list_before.count
     records_before_count = journals_list_before[:json][:records].count
     assert_equal 200, journals_list_before[:status].to_i, journals_list_before.inspect
 
     journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
+    puts journal_distribution
     assert_equal 200, journal_distribution[:status].to_i, journal_distribution.inspect
     assert_equal Time.parse(@journal_distribution_1[:target_timestamp]), Time.parse(journal_distribution[:json][:target_ym])
 
     journals_list_after = @api.list_journals(options)
+    puts journals_list_after.count
     records_after_count = journals_list_after[:json][:records].count
     assert_equal 200, journals_list_after[:status].to_i, journals_list_after.inspect
     assert(records_before_count != records_after_count)
   ensure
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
+    @api.destroy_manual_journal(manual_journal[:json].first[:id]) if manual_journal[:json].first[:id]
   end
 
   def test_create_petty_cash_reason_master
@@ -686,7 +693,7 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_show_journal
     manual_journal = @api.create_manual_journal(@manual_journal_1)
-    journals_list = @api.list_journals({ start_date: '2016-04-01', finish_date: '2016-04-30' })
+    journals_list = @api.list_journals({ start_date: '2018-10-31', finish_date: '2018-10-31' })
     first_journal_id = journals_list[:json][:records].first[:id]
 
     journal = @api.show_journal(first_journal_id)
@@ -891,9 +898,7 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_list_customers
     customer_1000 = @api.create_customer(@customer_1000)
-
     customer_1000_id = customer_1000[:json][:id]
-
     customer_list = @api.list_customers
     assert_equal 200, customer_list[:status].to_i, customer_list.inspect
     assert(customer_list[:json].any? { |x| x[:id] == customer_1000_id })
