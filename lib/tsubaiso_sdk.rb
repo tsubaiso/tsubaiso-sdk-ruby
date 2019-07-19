@@ -26,7 +26,6 @@ class TsubaisoSDK
       :zengin_bank_code,
       :zengin_branch_code,
       :zengin_client_code_sogo,
-      :zengin_client_code_kyuyo,
       :currency_code,
       :currency_rate_master_id
     ]

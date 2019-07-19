@@ -257,7 +257,6 @@ class TsubaisoSDKTest < Minitest::Test
     zengin_bank_code: "7777",
     zengin_branch_code: "777",
     zengin_client_code_sogo: "9999999999",
-    zengin_client_code_kyuyo: nil,
     currency_code: "",
     currency_rate_master_id: nil
    }
@@ -273,7 +272,6 @@ class TsubaisoSDKTest < Minitest::Test
     zengin_bank_code: "8888",
     zengin_branch_code: "777",
     zengin_client_code_sogo: "8888888888",
-    zengin_client_code_kyuyo: nil,
     currency_code: "",
     currency_rate_master_id: nil
    }
@@ -289,7 +287,6 @@ class TsubaisoSDKTest < Minitest::Test
     zengin_bank_code: "9999",
     zengin_branch_code: "999",
     zengin_client_code_sogo: "7777777777",
-    zengin_client_code_kyuyo: nil,
     currency_code: "",
     currency_rate_master_id: nil
    }
