@@ -332,17 +332,14 @@ class TsubaisoSDKTest < Minitest::Test
 
     options = { account_codes: ['110'], start_date: "2018-10-01", finish_date: "2018-10-31" }
     journals_list_before = @api.list_journals(options)
-    puts journals_list_before.count
     records_before_count = journals_list_before[:json][:records].count
     assert_equal 200, journals_list_before[:status].to_i, journals_list_before.inspect
 
     journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
-    puts journal_distribution
     assert_equal 200, journal_distribution[:status].to_i, journal_distribution.inspect
     assert_equal Time.parse(@journal_distribution_1[:target_timestamp]), Time.parse(journal_distribution[:json][:target_ym])
 
     journals_list_after = @api.list_journals(options)
-    puts journals_list_after.count
     records_after_count = journals_list_after[:json][:records].count
     assert_equal 200, journals_list_after[:status].to_i, journals_list_after.inspect
     assert(records_before_count != records_after_count)
