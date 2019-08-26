@@ -258,7 +258,7 @@ class TsubaisoSDKTest < Minitest::Test
     zengin_branch_code: "777",
     zengin_client_code_sogo: "9999999999",
     currency_code: "",
-    currency_rate_master_id: nil
+    currency_rate_master_code: nil
    }
 
    @bank_account_master_2 = {
@@ -273,7 +273,7 @@ class TsubaisoSDKTest < Minitest::Test
     zengin_branch_code: "777",
     zengin_client_code_sogo: "8888888888",
     currency_code: "",
-    currency_rate_master_id: nil
+    currency_rate_master_code: nil
    }
 
    @bank_account_master_3 = {
@@ -288,7 +288,7 @@ class TsubaisoSDKTest < Minitest::Test
     zengin_branch_code: "999",
     zengin_client_code_sogo: "7777777777",
     currency_code: "",
-    currency_rate_master_id: nil
+    currency_rate_master_code: nil
    }
   end
 
