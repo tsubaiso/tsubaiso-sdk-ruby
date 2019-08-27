@@ -462,6 +462,28 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def find_or_create_sale(options)
+    params = {
+      'price_including_tax' => options[:price_including_tax],
+      'realization_timestamp' => options[:realization_timestamp],
+      'customer_master_code' => options[:customer_master_code],
+      'dept_code' => options[:dept_code],
+      'reason_master_code' => options[:reason_master_code],
+      'dc' => options[:dc],
+      'memo' => options[:memo],
+      'tax_code' => options[:tax_code],
+      'sales_tax' => options[:sales_tax],
+      'scheduled_memo' => options[:scheduled_memo],
+      'scheduled_receive_timestamp' => options[:scheduled_receive_timestamp],
+      'tag_list' => options[:tag_list],
+      'data_partner' => options[:data_partner],
+      'key' => options[:key],
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + '/ar/find_or_create')
+    api_request(uri, 'POST', params)
+  end
+
   def create_purchase(options)
     params = {
       'price_including_tax' => options[:price_including_tax],
@@ -478,6 +500,26 @@ class TsubaisoSDK
       'format' => 'json'
     }
     uri = URI.parse(@base_url + '/ap_payments/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def find_or_create_purchase(options)
+    params = {
+      'price_including_tax' => options[:price_including_tax],
+      'accrual_timestamp' => options[:accrual_timestamp],
+      'customer_master_code' => options[:customer_master_code],
+      'dept_code' => options[:dept_code],
+      'reason_master_code' => options[:reason_master_code],
+      'dc' => options[:dc],
+      'memo' => options[:memo],
+      'tax_code' => options[:tax_code],
+      'port_type' => options[:port_type],
+      'tag_list' => options[:tag_list],
+      'data_partner' => options[:data_partner],
+      'key' => options[:key],
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + '/ap_payments/find_or_create')
     api_request(uri, 'POST', params)
   end
 

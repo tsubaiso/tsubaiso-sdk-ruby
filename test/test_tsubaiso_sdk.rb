@@ -40,7 +40,7 @@ class TsubaisoSDKTest < Minitest::Test
       tax_code: 1007,
       scheduled_memo: 'This is a scheduled memo.',
       scheduled_receive_timestamp: '2016-09-25',
-      data_partner: { link_url: 'www.example.com/1', id_code: '1' }
+      data_partner: { link_url: 'www.example.com/1', id_code: '1', partner_code: 'Example' }
     }
 
     @sale_201609 = {
@@ -82,7 +82,7 @@ class TsubaisoSDKTest < Minitest::Test
       memo: '',
       tax_code: 1007,
       port_type: 1,
-      data_partner: { link_url: 'www.example.com/3', id_code: '3' }
+      data_partner: { link_url: 'www.example.com/3', id_code: '3', partner_code: 'Example' }
     }
 
     @purchase_201609 = {
@@ -306,14 +306,49 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
   end
 
-  def test_create_purchase
-    purchase = @api.create_purchase(@purchase_201608)
+  def test_find_or_create_sale
+    sale1 = @api.find_or_create_sale(@sale_201608)
 
+    assert_equal 200, sale1[:status].to_i, sale1.inspect
+    assert_equal @sale_201608[:dept_code], sale1[:json][:dept_code]
+    assert_equal @sale_201608[:data_partner][:id_code], sale1[:json][:data_partner][:id_code]
+    assert_equal @sale_201608[:data_partner][:partner_code], sale1[:json][:data_partner][:partner_code]
+
+    key_options = { key: { id_code: sale1[:json][:data_partner][:id_code], partner_code: sale1[:json][:data_partner][:partner_code] } }
+    sale2 = @api.find_or_create_sale(@sale_201608.merge(key_options))
+    assert_equal sale2[:json][:id], sale1[:json][:id]
+    assert_equal sale2[:json][:data_partner][:id_code], sale1[:json][:data_partner][:id_code]
+  ensure
+    @api.destroy_sale("AR#{sale1[:json][:id]}") if sale1[:json][:id]
+  end
+
+  def test_create_purchase
+    purchase = @api.create(@purchase_201608)
     assert_equal 200, purchase[:status].to_i, purchase.inspect
     assert_equal @purchase_201608[:dept_code], purchase[:json][:dept_code]
     assert_equal @purchase_201608[:data_partner][:id_code], purchase[:json][:data_partner][:id_code]
+    assert_equal @purchase_201608[:data_partner][:partner_code], purchase[:json][:data_partner][:partner_code]
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
+  end
+
+  def test_find_or_create_purchase
+    purchase1 = @api.find_or_create_purchase(@purchase_201608)
+
+    assert_equal 200, purchase1[:status].to_i, purchase1.inspect
+    assert_equal @purchase_201608[:dept_code], purchase1[:json][:dept_code]
+    assert_equal @purchase_201608[:data_partner][:id_code], purchase1[:json][:data_partner][:id_code]
+    assert_equal @purchase_201608[:data_partner][:partner_code], purchase1[:json][:data_partner][:partner_code]
+
+    key_options = { key:
+                      { id_code: @purchase_201608[:data_partner][:id_code],
+                        partner_code: @purchase_201608[:data_partner][:partner_code] } }
+    purchase2 = @api.find_or_create_purchase(@purchase_201608.merge(key_options))
+    assert_equal 200, purchase2[:status].to_i, purchase2.inspect
+    assert_equal purchase2[:json][:id], purchase1[:json][:id]
+    assert_equal purchase2[:json][:data_partner][:id_code], purchase1[:json][:data_partner][:id_code]
+  ensure
+    @api.destroy_purchase("AP#{purchase1[:json][:id]}") if purchase1[:json][:id]
   end
 
   def test_create_staff_data
