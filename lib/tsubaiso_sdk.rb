@@ -7,6 +7,70 @@ class TsubaisoSDK
     @access_token = options[:access_token]
   end
 
+  def list_bank_account_masters
+    params = {'format' => 'json'}
+    uri = URI.parse(@base_url + '/bank_account_masters/index/')
+    api_request(uri,"GET",params)
+  end
+
+  def update_bank_account_master(options)
+    params = {}
+    candidate_keys = [
+      :name,
+      :account_type,
+      :account_number,
+      :nominee,
+      :memo,
+      :start_ymd,
+      :finish_ymd,
+      :zengin_bank_code,
+      :zengin_branch_code,
+      :zengin_client_code_sogo,
+      :currency_code,
+      :currency_rate_master_id
+    ]
+
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + '/bank_account_masters/update/' + options[:id].to_s)
+    result = api_request(uri, 'POST', params)
+  end
+
+  def show_bank_account_master(master_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/bank_account_masters/show/' + master_id.to_s)
+    api_request(uri, 'GET', params)
+  end
+
+  def destroy_bank_account_master(destroy_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/bank_account_masters/destroy/' + destroy_id.to_s)
+    api_request(uri, 'POST', params)
+  end
+
+  def create_bank_account_master(options)
+    params = {
+      'format' => 'json',
+      'name' => options[:name],
+      'account_type' => options[:account_type],
+      'account_number' => options[:account_number],
+      'nominee' => options[:nominee],
+      'memo' => options[:memo],
+      'start_ymd' => options[:start_ymd],
+      'finish_ymd' => options[:finish_ymd],
+      'zengin_bank_code' => options[:zengin_bank_code],
+      'zengin_branch_code' => options[:zengin_branch_code],
+      'zengin_client_code_sogo' => options[:zengin_client_code_sogo],
+      'zengin_client_code_kyuyo' => options[:zengin_client_code_kyuyo],
+      'currency_code' => options[:currency_code],
+      'currency_rate_master_id' => options[:currency_rate_master_id]
+    }
+    uri = URI.parse(@base_url + '/bank_account_masters/create/')
+    api_request(uri, 'POST', params)
+  end
+
   def index_api_history
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/api_histories/index')
