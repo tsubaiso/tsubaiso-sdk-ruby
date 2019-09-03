@@ -315,7 +315,7 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
   end
 
-  def test_list_bank_account_master
+  def test_list_bank_account_masters
     created_bank_account_master_1 = @api.create_bank_account_master(@bank_account_master_1)
     created_bank_account_master_2 = @api.create_bank_account_master(@bank_account_master_2)
     created_bank_account_master_3 = @api.create_bank_account_master(@bank_account_master_3)
@@ -328,7 +328,7 @@ class TsubaisoSDKTest < Minitest::Test
     created_master_id_2 = created_bank_account_master_2[:json][:id]
     created_master_id_3 = created_bank_account_master_3[:json][:id]
 
-    bank_account_master_list = @api.list_bank_account_master
+    bank_account_master_list = @api.list_bank_account_masters
     assert_equal 200, bank_account_master_list[:status].to_i, bank_account_master_list.inspect
     assert(bank_account_master_list[:json].any? { |x| x[:id] == created_master_id_1 })
     assert(bank_account_master_list[:json].any? { |x| x[:id] == created_master_id_2 })
