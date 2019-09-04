@@ -35,7 +35,76 @@ class TsubaisoSDK
     end
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_account_masters/update/' + options[:id].to_s)
-    result = api_request(uri, 'POST', params)
+    api_request(uri, 'POST', params)
+  end
+
+  def list_bank_account_transactions(bank_account_id)
+    params = {
+      'format' => 'json',
+      'bank_account_id' => bank_account_id.to_s
+    }
+    uri = URI.parse(@base_url + "/bank_account_transactions/list")
+    api_request(uri, 'GET', params)
+  end
+
+  def show_bank_account_transaction(id)
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + "bank_account_transactions/show/#{id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_bank_account_transaction(options)
+    params = {
+      'bank_account_id' => options[:bank_account_id],
+      'journal_timestamp' => options[:journal_timestamp],
+      'price_value' => options[:price_value],
+      'price_value_fc' => options[:price_value_fc],
+      'exchange_rate' => options[:exchange_rate],
+      'reason_code' => options[:reason_code],
+      'dc' => options[:dc],
+      'brief' => options[:brief],
+      'memo' => options[:memo],
+      'tag_list' => options[:tag_list],
+      'dept_code' => options[:dept_code],
+      'format' => 'json'
+    }
+
+    uri = URI.parse(@base_url + '/bank_account_transactions/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def destroy_bank_account_transaction(id)
+    params = {
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + "/bank_account_transactions/destroy/#{id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_bank_account_transaction(options)
+    params = {}
+    candidate_keys = [
+      :bank_account_id,
+      :journal_timestamp,
+      :price_value,
+      :price_value_fc,
+      :exchange_rate,
+      :reason_code,
+      :dc,
+      :brief,
+      :memo,
+      :tag_list,
+      :dept_code,
+    ]
+
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + "/bank_account_transactions/update/#{options[:id]}")
+    result = api_request(uri, "POST",params)
   end
 
   def list_bank_account(options)

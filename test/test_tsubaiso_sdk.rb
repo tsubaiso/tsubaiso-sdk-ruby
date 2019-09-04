@@ -290,6 +290,86 @@ class TsubaisoSDKTest < Minitest::Test
     currency_code: "",
     currency_rate_master_code: nil
    }
+
+   @bank_account_transaction_1 = {
+    journal_timestamp: "2019-07-25",
+    price_value: 1000,
+    reason_code: "xxxx_123",
+    dc: "d",
+    brief: "this is sample transactions",
+    memo: "this is created from API.",
+    dept_code: "HEAD",
+   }
+  end
+
+  def test_create_bank_account_transaction
+    #create bank_account_master
+    created_bank_account_master = @api.create_bank_account_master(@bank_account_master_2)
+    assert_equal 200, created_bank_account_master[:status].to_i, created_bank_account_master.inspect
+    options = {
+      bank_account_master_id: created_bank_account_master[:json][:id],
+      start_timestamp: "2019-06-30",
+      finish_timestamp: "2019-07-30",
+    }
+    #create bank_account
+    new_bank_account = @api.create_bank_account(options)
+    assert_equal 200, new_bank_account[:status].to_i, new_bank_account.inspect
+    #insert bank_account_transaction
+    @bank_account_transaction_1[:bank_account_id] = new_bank_account[:json][:id]
+    created_bank_account_transaction = @api.create_bank_account_transaction(@bank_account_transaction_1)
+    assert_equal 200, created_bank_account_transaction[:status].to_i, created_bank_account_transaction.inspect
+
+    shown_bank_account_transaction = @api.show_bank_account_transaction(created_bank_account_transaction[:json][:id])
+    assert_equal 200, shown_bank_account_transaction[:status].to_i, shown_bank_account_transaction.inspect
+    assert_equal shown_bank_account_transaction[:json][:id], created_bank_account_transaction[:json][:id]
+
+    listed_bank_account_transactions = @api.list_bank_account_transaction(new_bank_account[:json][:id])
+    assert(listed_bank_account_transactions[:json].any? { |x| x[:id] == created_bank_account_transaction[:json][:id]})
+  ensure
+    @api.destroy_bank_account_transaction(created_bank_account_transaction[:json][:id]) if created_bank_account_transaction[:json][:id]
+    @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
+  end
+
+  def test_update_bank_account_transaction
+     #create bank_account_master
+     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_2)
+     assert_equal 200, created_bank_account_master[:status].to_i, created_bank_account_master.inspect
+     #create bank_account
+     options = {
+       bank_account_master_id: created_bank_account_master[:json][:id],
+       start_timestamp: "2019-06-30",
+       finish_timestamp: "2019-07-30",
+     }
+     new_bank_account = @api.create_bank_account(options)
+     assert_equal 200, new_bank_account[:status].to_i, new_bank_account.inspect
+     #insert bank_account_transaction
+     @bank_account_transaction_1[:bank_account_id] = new_bank_account[:json][:id]
+     created_bank_account_transaction = @api.create_bank_account_transaction(@bank_account_transaction_1)
+     assert_equal 200, created_bank_account_transaction[:status].to_i, created_bank_account_transaction.inspect
+
+     assert_equal @bank_account_transaction_1[:price_value], created_bank_account_transaction[:json][:price_value]
+     assert_equal @bank_account_transaction_1[:reason_code], created_bank_account_transaction[:json][:reason_code]
+     assert_equal @bank_account_transaction_1[:brief], created_bank_account_transaction[:json][:brief]
+
+     update_options = {
+      price_value: 500,
+      reason_code: "TEST_CASH_HATAGAYA",
+      brief: "this is sample updated transactions",
+      dc: 'd'
+     }
+     update_options[:id] = created_bank_account_transaction[:json][:id]
+     updated_bank_account_transaction = @api.update_bank_account_transaction(update_options)
+     assert_equal 200, updated_bank_account_transaction[:status].to_i, updated_bank_account_transaction.inspect
+
+     assert_equal update_options[:price_value], updated_bank_account_transaction[:json][:price_value]
+     assert_equal update_options[:reason_code], updated_bank_account_transaction[:json][:reason_code]
+     assert_equal update_options[:brief], updated_bank_account_transaction[:json][:brief]
+     assert_equal @bank_account_transaction_1[:dc], updated_bank_account_transaction[:json][:dc]
+     assert_equal @bank_account_transaction_1[:memo], updated_bank_account_transaction[:json][:memo]
+     assert_equal @bank_account_transaction_1[:dept_code], updated_bank_account_transaction[:json][:dept_code]
+   ensure
+     @api.destroy_bank_account_transaction(created_bank_account_transaction[:json][:id]) if created_bank_account_transaction[:json][:id]
+     @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
   end
 
   def test_create_bank_account
