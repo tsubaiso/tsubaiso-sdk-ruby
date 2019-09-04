@@ -357,7 +357,7 @@ class TsubaisoSDKTest < Minitest::Test
       brief: "this is sample updated transactions",
       dc: 'd'
      }
-     update_options[:bank_account_transaction_id] = created_bank_account_transaction[:json][:id]
+     update_options[:id] = created_bank_account_transaction[:json][:id]
      updated_bank_account_transaction = @api.update_bank_account_transaction(update_options)
      assert_equal 200, updated_bank_account_transaction[:status].to_i, updated_bank_account_transaction.inspect
 

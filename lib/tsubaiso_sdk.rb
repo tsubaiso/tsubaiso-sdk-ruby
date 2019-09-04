@@ -35,16 +35,16 @@ class TsubaisoSDK
     end
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_account_masters/update/' + options[:id].to_s)
-    result = api_request(uri, 'POST', params)
+    api_request(uri, 'POST', params)
   end
 
-  def list_bank_account_transaction(id)
+  def list_bank_account_transactions(bank_account_id)
     params = {
       'format' => 'json',
-      'id' => id.to_s
+      'bank_account_id' => bank_account_id.to_s
     }
     uri = URI.parse(@base_url + "/bank_account_transactions/list")
-    api_request(uri,"GET",params)
+    api_request(uri, 'GET', params)
   end
 
   def show_bank_account_transaction(id)
@@ -52,7 +52,7 @@ class TsubaisoSDK
       'format' => 'json',
     }
     uri = URI.parse(@base_url + "bank_account_transactions/show/#{id}")
-    api_request(uri,"GET",params)
+    api_request(uri, 'GET', params)
   end
 
   def create_bank_account_transaction(options)
@@ -77,10 +77,10 @@ class TsubaisoSDK
 
   def destroy_bank_account_transaction(id)
     params = {
-      'format' => 'json',
+      'format' => 'json'
     }
-    uri = URI.parse(@base_url + "/bank_account_transactions/destroy/#{id.to_i}")
-    api_request(uri,"POST",params)
+    uri = URI.parse(@base_url + "/bank_account_transactions/destroy/#{id}")
+    api_request(uri, 'POST', params)
   end
 
   def update_bank_account_transaction(options)
@@ -103,7 +103,7 @@ class TsubaisoSDK
       params[key.to_s] = options[key] if options.has_key?(key)
     end
     params['format'] = 'json'
-    uri = URI.parse(@base_url + "/bank_account_transactions/update/#{options[:bank_account_transaction_id]}")
+    uri = URI.parse(@base_url + "/bank_account_transactions/update/#{options[:id]}")
     result = api_request(uri, "POST",params)
   end
 
