@@ -246,60 +246,90 @@ class TsubaisoSDKTest < Minitest::Test
       sort_number: '0'
     }
 
+    @bank_reason_master_1 = {
+      sort_number: 1,
+      reason_code: "create_from_API",
+      reason_name: "New Bank Reason Created From API",
+      dc: "d",
+      is_valid: 0,
+      memo: "This reason has been created form API",
+      account_code: 1
+    }
+
+    @bank_reason_master_2 = {
+      sort_number: 1,
+      reason_code: "create_from_API2",
+      reason_name: "New Bank Reason Created From API2",
+      dc: "c",
+      is_valid: 0,
+      memo: "This reason has been created form API2",
+      account_code: 1
+    }
+
+    @bank_reason_master_3 = {
+      sort_number: 1,
+      reason_code: "create_from_API3",
+      reason_name: "New Bank Reason Created From API3",
+      dc: "d",
+      is_valid: 0,
+      memo: "This reason has been created form API3",
+      account_code: 1
+    }
+
     @bank_account_master_1 = {
-    name: "ANZ Bank",
-    account_type: "1",
-    account_number: "66667777",
-    nominee: "tsubaiso taro",
-    memo: "",
-    start_ymd: "2019-06-01",
-    finish_ymd: nil,
-    zengin_bank_code: "7777",
-    zengin_branch_code: "777",
-    zengin_client_code_sogo: "9999999999",
-    currency_code: "",
-    currency_rate_master_code: nil
-   }
+      name: "ANZ Bank",
+      account_type: "1",
+      account_number: "66667777",
+      nominee: "tsubaiso taro",
+      memo: "",
+      start_ymd: "2019-06-01",
+      finish_ymd: nil,
+      zengin_bank_code: "7777",
+      zengin_branch_code: "777",
+      zengin_client_code_sogo: "9999999999",
+      currency_code: "",
+      currency_rate_master_code: nil
+    }
 
-   @bank_account_master_2 = {
-    name: "NSW Bank",
-    account_type: "1",
-    account_number: "66665555",
-    nominee: "tsubaiso jiro",
-    memo: "",
-    start_ymd: "2019-06-02",
-    finish_ymd: nil,
-    zengin_bank_code: "8888",
-    zengin_branch_code: "777",
-    zengin_client_code_sogo: "8888888888",
-    currency_code: "",
-    currency_rate_master_code: nil
-   }
+    @bank_account_master_2 = {
+      name: "NSW Bank",
+      account_type: "1",
+      account_number: "66665555",
+      nominee: "tsubaiso jiro",
+      memo: "",
+      start_ymd: "2019-06-02",
+      finish_ymd: nil,
+      zengin_bank_code: "8888",
+      zengin_branch_code: "777",
+      zengin_client_code_sogo: "8888888888",
+      currency_code: "",
+      currency_rate_master_code: nil
+    }
 
-   @bank_account_master_3 = {
-    name: "Bank of Melbourne",
-    account_type: "1",
-    account_number: "66664444",
-    nominee: "tsubaiso saburo",
-    memo: "",
-    start_ymd: "2019-06-03",
-    finish_ymd: nil,
-    zengin_bank_code: "9999",
-    zengin_branch_code: "999",
-    zengin_client_code_sogo: "7777777777",
-    currency_code: "",
-    currency_rate_master_code: nil
-   }
+    @bank_account_master_3 = {
+      name: "Bank of Melbourne",
+      account_type: "1",
+      account_number: "66664444",
+      nominee: "tsubaiso saburo",
+      memo: "",
+      start_ymd: "2019-06-03",
+      finish_ymd: nil,
+      zengin_bank_code: "9999",
+      zengin_branch_code: "999",
+      zengin_client_code_sogo: "7777777777",
+      currency_code: "",
+      currency_rate_master_code: nil
+    }
 
-   @bank_account_transaction_1 = {
-    journal_timestamp: "2019-07-25",
-    price_value: 1000,
-    reason_code: "xxxx_123",
-    dc: "d",
-    brief: "this is sample transactions",
-    memo: "this is created from API.",
-    dept_code: "HEAD",
-   }
+    @bank_account_transaction_1 = {
+      journal_timestamp: "2019-07-25",
+      price_value: 1000,
+      reason_code: "xxxx_123",
+      dc: "d",
+      brief: "this is sample transactions",
+      memo: "this is created from API.",
+      dept_code: "HEAD",
+    }
   end
 
   def test_create_bank_account_transaction
@@ -323,7 +353,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, shown_bank_account_transaction[:status].to_i, shown_bank_account_transaction.inspect
     assert_equal shown_bank_account_transaction[:json][:id], created_bank_account_transaction[:json][:id]
 
-    listed_bank_account_transactions = @api.list_bank_account_transaction(new_bank_account[:json][:id])
+    listed_bank_account_transactions = @api.list_bank_account_transactions(new_bank_account[:json][:id])
     assert(listed_bank_account_transactions[:json].any? { |x| x[:id] == created_bank_account_transaction[:json][:id]})
   ensure
     @api.destroy_bank_account_transaction(created_bank_account_transaction[:json][:id]) if created_bank_account_transaction[:json][:id]
@@ -859,6 +889,29 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
+  def test_update_bank_reason_masters
+    created_bank_reason_master = @api.create_bank_reason_masters(@bank_reason_master_1)
+    assert_equal 200, created_bank_reason_master[:status].to_i
+
+    updating_options = {
+      id: created_bank_reason_master[:json][:id],
+      sort_number: 2,
+      reason_name: "updated reason name",
+      memo: "This reason has been updated from API."
+    }
+
+    updated_bank_reason_master = @api.update_bank_reason_masters(updating_options)
+    assert_equal 200, updated_bank_reason_master[:status].to_i
+    assert_equal updating_options[:sort_number], updated_bank_reason_master[:json][:sort_number]
+    assert_equal updating_options[:reason_name], updated_bank_reason_master[:json][:reason_name]
+    assert_equal updating_options[:memo], updated_bank_reason_master[:json][:memo]
+
+    assert_equal @bank_reason_master_1[:reason_code], updated_bank_reason_master[:json][:reason_code]
+    assert_equal @bank_reason_master_1[:dc], updated_bank_reason_master[:json][:dc]
+  ensure
+     @api.destroy_bank_reason_masters(created_bank_reason_master[:json][:id]) if created_bank_reason_master[:json][:id]
+  end
+
   def test_update_petty_cash_reason_master
     old_petty_cash_reason_master = @api.create_petty_cash_reason_master(@petty_cash_reason_master_1)
     options = {
@@ -897,7 +950,6 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_show_customer
     customer = @api.create_customer(@customer_1000)
-
     get_customer = @api.show_customer(customer[:json][:id])
     assert_equal 200, get_customer[:status].to_i, get_customer.inspect
     assert_equal customer[:json][:id], get_customer[:json][:id]
@@ -1084,15 +1136,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal ar_reason_master[:json][:id], ar_reason_master_id
   end
 
-  def test_show_bank_reason_master
-    bank_reason_masters = @api.list_bank_reason_masters
-    bank_reason_master_id = bank_reason_masters[:json].first[:id]
-    bank_reason_master = @api.show_bank_reason_master(bank_reason_master_id)
-
-    assert_equal 200, bank_reason_master[:status].to_i, bank_reason_master.inspect
-    assert_equal bank_reason_master[:json][:id], bank_reason_master_id
-  end
-
   def test_show_tax_master
     tax_masters = @api.list_tax_masters
     first_tax_master = tax_masters[:json].first
@@ -1118,6 +1161,16 @@ class TsubaisoSDKTest < Minitest::Test
 
     assert_equal 200, physical_inventory_master[:status].to_i, physical_inventory_master.inspect
     assert_equal first_physical_inventory_master[:name], physical_inventory_master[:json][:name]
+  end
+
+  def test_show_bank_reason_master
+    created_bank_reason_master = @api.create_bank_reason_masters(@bank_reason_master_1)
+    shown_bank_reason_master = @api.show_bank_reason_master(created_bank_reason_master[:json][:id])
+    assert_equal @bank_reason_master_1[:sort_number], shown_bank_reason_master[:json][:sort_number]
+    assert_equal @bank_reason_master_1[:reason_code], shown_bank_reason_master[:json][:reason_code]
+    assert_equal @bank_reason_master_1[:reason_name], shown_bank_reason_master[:json][:reason_name]
+  ensure
+    @api.destroy_bank_reason_masters(created_bank_reason_master[:json][:id]) if created_bank_reason_master[:json][:id]
   end
 
   def test_list_physical_inventory_masters
@@ -1160,6 +1213,31 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_sale("AR#{august_sale_b[:json][:id]}") if august_sale_b[:json][:id]
     @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
   end
+
+  def test_list_bank_reason_masters
+    created_bank_reason_master_1 = @api.create_bank_reason_masters(@bank_reason_master_1)
+    created_bank_reason_master_2 = @api.create_bank_reason_masters(@bank_reason_master_2)
+    created_bank_reason_master_3 = @api.create_bank_reason_masters(@bank_reason_master_3)
+
+    assert_equal 200, created_bank_reason_master_1[:status].to_i
+    assert_equal 200, created_bank_reason_master_2[:status].to_i
+    assert_equal 200, created_bank_reason_master_3[:status].to_i
+
+    created_master_id_1 = created_bank_reason_master_1[:json][:id]
+    created_master_id_2 = created_bank_reason_master_2[:json][:id]
+    created_master_id_3 = created_bank_reason_master_3[:json][:id]
+
+    bank_reason_master_list = @api.list_bank_reason_masters
+    assert_equal 200, bank_reason_master_list[:status].to_i, bank_reason_master_list.inspect
+    assert(bank_reason_master_list[:json].any? { |x| x[:id] == created_master_id_1 })
+    assert(bank_reason_master_list[:json].any? { |x| x[:id] == created_master_id_2 })
+    assert(bank_reason_master_list[:json].any? { |x| x[:id] == created_master_id_3 })
+  ensure
+    @api.destroy_bank_reason_masters(created_bank_reason_master_1[:json][:id]) if created_bank_reason_master_1[:json][:id]
+    @api.destroy_bank_reason_masters(created_bank_reason_master_2[:json][:id]) if created_bank_reason_master_2[:json][:id]
+    @api.destroy_bank_reason_masters(created_bank_reason_master_3[:json][:id]) if created_bank_reason_master_3[:json][:id]
+  end
+
 
   def test_list_sales_and_account_balances
     realization_timestamp = Time.parse(@sale_201702[:realization_timestamp])
@@ -1424,13 +1502,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, ap_reason_masters_list[:status].to_i, ap_reason_masters_list.inspect
     assert ap_reason_masters_list[:json]
     assert !ap_reason_masters_list[:json].empty?
-  end
-
-  def test_list_bank_reason_masters
-    bank_reason_masters_list = @api.list_bank_reason_masters
-    assert_equal 200, bank_reason_masters_list[:status].to_i, bank_reason_masters_list.inspect
-    assert bank_reason_masters_list[:json]
-    assert !bank_reason_masters_list[:json].empty?
   end
 
   def test_list_petty_cash_reason_masters
