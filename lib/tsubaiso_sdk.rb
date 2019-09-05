@@ -7,6 +7,159 @@ class TsubaisoSDK
     @access_token = options[:access_token]
   end
 
+  def list_bank_account_masters
+    params = {'format' => 'json'}
+    uri = URI.parse(@base_url + '/bank_account_masters/index/')
+    api_request(uri,"GET",params)
+  end
+
+  def update_bank_account_master(options)
+    params = {}
+    candidate_keys = [
+      :name,
+      :account_type,
+      :account_number,
+      :nominee,
+      :memo,
+      :start_ymd,
+      :finish_ymd,
+      :zengin_bank_code,
+      :zengin_branch_code,
+      :zengin_client_code_sogo,
+      :currency_code,
+      :currency_rate_master_id
+    ]
+
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + '/bank_account_masters/update/' + options[:id].to_s)
+    api_request(uri, 'POST', params)
+  end
+
+  def list_bank_account_transactions(bank_account_id)
+    params = {
+      'format' => 'json',
+      'bank_account_id' => bank_account_id.to_s
+    }
+    uri = URI.parse(@base_url + "/bank_account_transactions/list")
+    api_request(uri, 'GET', params)
+  end
+
+  def show_bank_account_transaction(id)
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + "bank_account_transactions/show/#{id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_bank_account_transaction(options)
+    params = {
+      'bank_account_id' => options[:bank_account_id],
+      'journal_timestamp' => options[:journal_timestamp],
+      'price_value' => options[:price_value],
+      'price_value_fc' => options[:price_value_fc],
+      'exchange_rate' => options[:exchange_rate],
+      'reason_code' => options[:reason_code],
+      'dc' => options[:dc],
+      'brief' => options[:brief],
+      'memo' => options[:memo],
+      'tag_list' => options[:tag_list],
+      'dept_code' => options[:dept_code],
+      'format' => 'json'
+    }
+
+    uri = URI.parse(@base_url + '/bank_account_transactions/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def destroy_bank_account_transaction(id)
+    params = {
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + "/bank_account_transactions/destroy/#{id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_bank_account_transaction(options)
+    params = {}
+    candidate_keys = [
+      :bank_account_id,
+      :journal_timestamp,
+      :price_value,
+      :price_value_fc,
+      :exchange_rate,
+      :reason_code,
+      :dc,
+      :brief,
+      :memo,
+      :tag_list,
+      :dept_code,
+    ]
+
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + "/bank_account_transactions/update/#{options[:id]}")
+    result = api_request(uri, "POST",params)
+  end
+
+  def list_bank_account(options)
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + "/bank_accounts/list/#{options[:year]}/#{options[:month]}")
+    api_request(uri,'GET',params)
+  end
+
+  def create_bank_account(options)
+    params = {
+      'bank_account_master_id' => options[:bank_account_master_id],
+      'start_timestamp' => options[:start_timestamp],
+      'finish_timestamp' => options[:finish_timestamp],
+      'format' => 'json'
+    }
+
+    uri = URI.parse(@base_url + '/bank_accounts/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def show_bank_account_master(master_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/bank_account_masters/show/' + master_id.to_s)
+    api_request(uri, 'GET', params)
+  end
+
+  def destroy_bank_account_master(destroy_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/bank_account_masters/destroy/' + destroy_id.to_s)
+    api_request(uri, 'POST', params)
+  end
+
+  def create_bank_account_master(options)
+    params = {
+      'format' => 'json',
+      'name' => options[:name],
+      'account_type' => options[:account_type],
+      'account_number' => options[:account_number],
+      'nominee' => options[:nominee],
+      'memo' => options[:memo],
+      'start_ymd' => options[:start_ymd],
+      'finish_ymd' => options[:finish_ymd],
+      'zengin_bank_code' => options[:zengin_bank_code],
+      'zengin_branch_code' => options[:zengin_branch_code],
+      'zengin_client_code_sogo' => options[:zengin_client_code_sogo],
+      'zengin_client_code_kyuyo' => options[:zengin_client_code_kyuyo],
+      'currency_code' => options[:currency_code],
+      'currency_rate_master_id' => options[:currency_rate_master_id]
+    }
+    uri = URI.parse(@base_url + '/bank_account_masters/create/')
+    api_request(uri, 'POST', params)
+  end
+
   def index_api_history
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/api_histories/index')
@@ -477,6 +630,28 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def find_or_create_sale(options)
+    params = {
+      'price_including_tax' => options[:price_including_tax],
+      'realization_timestamp' => options[:realization_timestamp],
+      'customer_master_code' => options[:customer_master_code],
+      'dept_code' => options[:dept_code],
+      'reason_master_code' => options[:reason_master_code],
+      'dc' => options[:dc],
+      'memo' => options[:memo],
+      'tax_code' => options[:tax_code],
+      'sales_tax' => options[:sales_tax],
+      'scheduled_memo' => options[:scheduled_memo],
+      'scheduled_receive_timestamp' => options[:scheduled_receive_timestamp],
+      'tag_list' => options[:tag_list],
+      'data_partner' => options[:data_partner],
+      'key' => options[:key],
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + '/ar/find_or_create')
+    api_request(uri, 'POST', params)
+  end
+
   def create_purchase(options)
     params = {
       'price_including_tax' => options[:price_including_tax],
@@ -493,6 +668,26 @@ class TsubaisoSDK
       'format' => 'json'
     }
     uri = URI.parse(@base_url + '/ap_payments/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def find_or_create_purchase(options)
+    params = {
+      'price_including_tax' => options[:price_including_tax],
+      'accrual_timestamp' => options[:accrual_timestamp],
+      'customer_master_code' => options[:customer_master_code],
+      'dept_code' => options[:dept_code],
+      'reason_master_code' => options[:reason_master_code],
+      'dc' => options[:dc],
+      'memo' => options[:memo],
+      'tax_code' => options[:tax_code],
+      'port_type' => options[:port_type],
+      'tag_list' => options[:tag_list],
+      'data_partner' => options[:data_partner],
+      'key' => options[:key],
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + '/ap_payments/find_or_create')
     api_request(uri, 'POST', params)
   end
 
