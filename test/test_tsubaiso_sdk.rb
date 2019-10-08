@@ -1173,6 +1173,23 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_bank_reason_masters(created_bank_reason_master[:json][:id]) if created_bank_reason_master[:json][:id]
   end
 
+  def test_show_corporate_master
+    # With HatagayaTest CorporateMaster ID Only
+    shown_corporate_master = @api.show_corporate_master(2099)
+    assert_equal 90020, shown_corporate_master[:json][:corporate_code]
+    assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
+
+    # With HatagayaTest Corporate Code Only
+    shown_corporate_master = @api.show_corporate_master(nil, { ccode: 90020 })
+    assert_equal 90020, shown_corporate_master[:json][:corporate_code]
+    assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
+
+    # With HatagayaTest Both CorporateMaster ID and Corporate Code
+    shown_corporate_master = @api.show_corporate_master(2099, { ccode: 90020 })
+    assert_equal 90020, shown_corporate_master[:json][:corporate_code]
+    assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
+  end
+
   def test_list_physical_inventory_masters
     pim_201901 = @api.create_physical_inventory_masters(@pim_201901)
     pim_201902 = @api.create_physical_inventory_masters(@pim_201902)

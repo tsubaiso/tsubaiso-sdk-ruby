@@ -8,9 +8,9 @@ class TsubaisoSDK
   end
 
   def list_bank_account_masters
-    params = {'format' => 'json'}
+    params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/bank_account_masters/index/')
-    api_request(uri,"GET",params)
+    api_request(uri, 'GET', params)
   end
 
   def update_bank_account_master(options)
@@ -532,6 +532,16 @@ class TsubaisoSDK
   def show_petty_cash_reason_master(petty_cash_reason_master_id)
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/petty_cash_reason_masters/show/#{petty_cash_reason_master_id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def show_corporate_master(corporate_master_id, options = {})
+    params = {
+      'ccode' => options[:ccode],
+      'format' => 'json'
+    }
+
+    uri = URI.parse(@base_url + "/corporate_masters/show/#{corporate_master_id}")
     api_request(uri, 'GET', params)
   end
 
