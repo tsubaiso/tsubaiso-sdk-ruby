@@ -6,6 +6,7 @@ class TsubaisoAPI
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
     @access_token = options[:access_token]
+    @client_auth_token = options[:client_auth_token]
   end
 
   def list(resource, params = {})
@@ -48,6 +49,7 @@ class TsubaisoAPI
       request = Net::HTTP::Post.new(uri.path, initheader)
     end
     request['Access-Token'] = @access_token
+    request['Client-Auth-Token'] = @client_auth_token if @client_auth_token
     request.body = params.to_json
     response = http.request(request)
     if response.body

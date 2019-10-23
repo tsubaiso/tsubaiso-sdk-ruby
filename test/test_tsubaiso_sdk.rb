@@ -4,7 +4,11 @@ require './lib/tsubaiso_sdk'
 
 class TsubaisoSDKTest < Minitest::Test
   def setup
-    @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
+    @api = TsubaisoSDK.new(
+      base_url: ENV['SDK_BASE_URL'],
+      access_token: ENV['SDK_ACCESS_TOKEN'],
+      client_auth_token: ENV['SDK_CLIENT_AUTH_TOKEN']
+    )
 
     @pim_201901 = {
       name: 'sendai',

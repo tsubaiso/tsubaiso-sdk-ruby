@@ -4,7 +4,11 @@ require './lib/tsubaiso_api'
 
 class TsubaisoAPITest < Minitest::Test
   def setup
-    @api = TsubaisoAPI.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
+    @api = TsubaisoAPI.new(
+      base_url: ENV['SDK_BASE_URL'],
+      access_token: ENV['SDK_ACCESS_TOKEN'],
+      client_auth_token: ENV['SDK_CLIENT_AUTH_TOKEN']
+    )
 
     @customer_1000 = {
       name: 'テスト株式会社',
