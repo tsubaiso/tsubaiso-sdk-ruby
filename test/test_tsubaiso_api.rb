@@ -1,13 +1,15 @@
 require 'minitest/autorun'
 require 'time'
 require './lib/tsubaiso_api'
+require 'webmock'
+
+include WebMock::API
 
 class TsubaisoAPITest < Minitest::Test
   def setup
     @api = TsubaisoAPI.new(
-      base_url: ENV['SDK_BASE_URL'],
-      access_token: ENV['SDK_ACCESS_TOKEN'],
-      client_auth_token: ENV['SDK_CLIENT_AUTH_TOKEN']
+      access_token:      'test_access_token',
+      client_auth_token: 'test_client_auth_token'
     )
 
     @customer_1000 = {
@@ -66,16 +68,15 @@ class TsubaisoAPITest < Minitest::Test
   end
 
   def test_list
-    cm = @api.create('customer_masters', @customer_1000)
-    assert_equal 200, cm[:status].to_i
-    assert @customer_1000[:code], cm[:json]['code']
+    stub_request(:any, "https://tsubaiso.net/customer_masters/list").to_return(
+      status: 200,
+      body:   'test_ok: "true"'
+    )
 
     list_customers = @api.list('customer_masters')
-    assert_equal 200, list_customers[:status].to_i
 
-    assert(list_customers[:json]&.any? { |x| x['code'] == @customer_1000[:code] })
-  ensure
-    @api.destroy('customer_masters', id: cm[:json]['id']) if cm[:json]['id']
+    assert_equal 200, list_customers[:status].to_i
+    assert list_customers[:json][:test_ok]
   end
 
   def test_show

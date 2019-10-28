@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency     'json',     '~> 1.8', '>= 1.8.3'
   s.add_development_dependency 'minitest', '~> 5.4', '>= 5.4.3'
+  s.add_development_dependency 'webmock', '~> 2.1'
 end
