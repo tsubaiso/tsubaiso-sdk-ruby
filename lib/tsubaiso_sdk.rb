@@ -2,6 +2,11 @@ class TsubaisoSDK
   require 'net/http'
   require 'json'
 
+  require './lib/tsubaiso_api'
+  require 'webmock'
+
+  include WebMock::API
+
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
     @access_token = options[:access_token]

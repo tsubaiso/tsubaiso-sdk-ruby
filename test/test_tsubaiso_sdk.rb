@@ -1,6 +1,10 @@
 require 'minitest/autorun'
 require 'time'
 require './lib/tsubaiso_sdk'
+require 'webmock'
+require 'stubbings.rb'
+
+include WebMock::API
 
 class TsubaisoSDKTest < Minitest::Test
   def setup
@@ -285,14 +289,11 @@ class TsubaisoSDKTest < Minitest::Test
       account_type: "1",
       account_number: "66667777",
       nominee: "tsubaiso taro",
-      memo: "",
+      memo: "create memo",
       start_ymd: "2019-06-01",
-      finish_ymd: nil,
       zengin_bank_code: "7777",
       zengin_branch_code: "777",
-      zengin_client_code_sogo: "9999999999",
-      currency_code: "",
-      currency_rate_master_code: nil
+      zengin_client_code_sogo: "9999999999"
     }
 
     @bank_account_master_2 = {
@@ -431,6 +432,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_create_bank_account_master
+    Stubbings.new
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
 
     assert_equal 200, created_bank_account_master[:status].to_i, created_bank_account_master.inspect
@@ -438,11 +440,12 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @bank_account_master_1[:account_number], created_bank_account_master[:json][:account_number]
     assert_equal @bank_account_master_1[:zengin_bank_code], created_bank_account_master[:json][:zengin_bank_code]
     assert_equal @bank_account_master_1[:zengin_branch_code], created_bank_account_master[:json][:zengin_branch_code]
-  ensure
-    @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
+  #ensure
+   # @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
   end
 
   def test_show_bank_account_master
+
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
     shown_bank_account_master = @api.show_bank_account_master(created_bank_account_master[:json][:id])
 
