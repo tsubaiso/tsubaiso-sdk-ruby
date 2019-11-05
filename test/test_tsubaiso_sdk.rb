@@ -301,13 +301,11 @@ class TsubaisoSDKTest < Minitest::Test
       account_type: "1",
       account_number: "66665555",
       nominee: "tsubaiso jiro",
-      memo: "",
       start_ymd: "2019-06-02",
       finish_ymd: nil,
       zengin_bank_code: "8888",
       zengin_branch_code: "777",
       zengin_client_code_sogo: "8888888888",
-      currency_code: "",
       currency_rate_master_code: nil
     }
 

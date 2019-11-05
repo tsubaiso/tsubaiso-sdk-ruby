@@ -95,29 +95,85 @@ end
   end
 
   def bank_account_master_create
+    request_body_1 = {
+      "format" => "json",
+      "name" => "ANZ Bank",
+      "account_type" => "1",
+      "account_number" => "66667777",
+      "nominee" => "tsubaiso taro",
+      "memo" => "create memo",
+      "start_ymd" => "2019-06-01",
+      "finish_ymd" => nil,
+      "zengin_bank_code" => "7777",
+      "zengin_branch_code" => "777",
+      "zengin_client_code_sogo" => "9999999999",
+      "zengin_client_code_kyuyo" => nil,
+      "currency_code" => nil,
+      "currency_rate_master_id" => nil
+    }
+
+    request_body_2 = {
+      "format" => "json",
+      "name" => "NSW Bank",
+      "account_type" => "1",
+      "account_number" => "66665555",
+      "nominee" => "tsubaiso jiro",
+      "memo" => nil,
+      "start_ymd" => "2019-06-02",
+      "finish_ymd" => nil,
+      "zengin_bank_code" => "7777",
+      "zengin_branch_code" => "777",
+      "zengin_client_code_sogo" => "9999999999",
+      "zengin_client_code_kyuyo" => nil,
+      "currency_code" => nil,
+      "currency_rate_master_id" => nil
+    }
+
+    request_body_3 = {
+      "format" => "json",
+      "name" => "NSW Bank",
+      "account_type" => "1",
+      "account_number" => "66665555",
+      "nominee" => "tsubaiso jiro",
+      "memo" => nil,
+      "start_ymd" => "2019-06-02",
+      "finish_ymd" => nil,
+      "zengin_bank_code" => "7777",
+      "zengin_branch_code" => "777",
+      "zengin_client_code_sogo" => "9999999999",
+      "zengin_client_code_kyuyo" => nil,
+      "currency_code" => nil,
+      "currency_rate_master_id" => nil
+    }
+
+
     stub_request(:post, "https://tsubaiso.net/bank_account_masters/create/").
     with(
       headers: @common_request_headers,
-      body: {
-        "format" => "json",
-        "name" => "ANZ Bank",
-        "account_type" => "1",
-        "account_number" => "66667777",
-        "nominee" => "tsubaiso taro",
-        "memo" => "create memo",
-        "start_ymd" => "2019-06-01",
-        "finish_ymd" => nil,
-        "zengin_bank_code" => "7777",
-        "zengin_branch_code" => "777",
-        "zengin_client_code_sogo" => "9999999999",
-        "zengin_client_code_kyuyo" => nil,
-        "currency_code" => nil,
-        "currency_rate_master_id" => nil
-      }
+      body: request_body
     ).
     to_return(
       status: 200,
-      body: {"hello" => "from stubbings."}.to_json,
+      body: request_body.merge(
+        :id => "285",
+        :created_at => "2019/11/05 18:51:21 +0900",
+        :updated_at => "2019/11/05 18:51:21 +0900")
+      },
+      headers: {}
+    )
+
+    stub_request(:post, "https://tsubaiso.net/bank_account_masters/create/").
+    with(
+      headers: @common_request_headers,
+      body: request_body.update()
+    ).
+    to_return(
+      status: 200,
+      body: request_body.merge(
+        :id => "285",
+        :created_at => "2019/11/05 18:51:21 +0900",
+        :updated_at => "2019/11/05 18:51:21 +0900")
+      },
       headers: {}
     )
   end
