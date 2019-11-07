@@ -1,8 +1,6 @@
 require 'minitest/autorun'
 require 'time'
 require './lib/tsubaiso_sdk'
-require 'webmock'
-
 require 'stubbing/bank_account_master.rb'
 require 'stubbing/bank_account.rb'
 
