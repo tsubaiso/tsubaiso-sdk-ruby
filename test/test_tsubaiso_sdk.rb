@@ -306,7 +306,6 @@ class TsubaisoSDKTest < Minitest::Test
       zengin_bank_code: "8888",
       zengin_branch_code: "777",
       zengin_client_code_sogo: "8888888888",
-      currency_rate_master_code: nil
     }
 
     @bank_account_master_3 = {
@@ -438,23 +437,24 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @bank_account_master_1[:account_number], created_bank_account_master[:json][:account_number]
     assert_equal @bank_account_master_1[:zengin_bank_code], created_bank_account_master[:json][:zengin_bank_code]
     assert_equal @bank_account_master_1[:zengin_branch_code], created_bank_account_master[:json][:zengin_branch_code]
-  #ensure
-   # @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
+  ensure
+    @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
   end
 
   def test_show_bank_account_master
-
+    Stubbings.new
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
     shown_bank_account_master = @api.show_bank_account_master(created_bank_account_master[:json][:id])
 
     assert_equal @bank_account_master_1[:nominee], shown_bank_account_master[:json][:nominee]
     assert_equal @bank_account_master_1[:name], shown_bank_account_master[:json][:name]
     assert_equal @bank_account_master_1[:account_number], shown_bank_account_master[:json][:account_number]
-  ensure
+   ensure
     @api.destroy_bank_account_master(created_bank_account_master[:json][:id]) if created_bank_account_master[:json][:id]
   end
 
   def test_list_bank_account_masters
+    Stubbings.new
     created_bank_account_master_1 = @api.create_bank_account_master(@bank_account_master_1)
     created_bank_account_master_2 = @api.create_bank_account_master(@bank_account_master_2)
     created_bank_account_master_3 = @api.create_bank_account_master(@bank_account_master_3)
@@ -479,6 +479,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_update_bank_account_master
+    Stubbings.new
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
     assert_equal 200, created_bank_account_master[:status].to_i
 
