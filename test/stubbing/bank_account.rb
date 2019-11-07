@@ -1,5 +1,5 @@
-require "bank_account_master.rb"
-require 'stubbing.rb'
+require_relative "./bank_account_master.rb"
+require_relative './stubbing.rb'
 
 class BankAccount < Stubbing
     def initialize

@@ -2,8 +2,9 @@ require 'minitest/autorun'
 require 'time'
 require './lib/tsubaiso_sdk'
 require 'webmock'
-require 'bank_account_master.rb'
-require 'bank_account.rb'
+
+require 'stubbing/bank_account_master.rb'
+require 'stubbing/bank_account.rb'
 
 include WebMock::API
 
@@ -409,7 +410,6 @@ class TsubaisoSDKTest < Minitest::Test
     #bank_account_masterを新設
     BankAccount.new
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
-    p created_bank_account_master
     assert_equal 200, created_bank_account_master[:status].to_i, created_bank_account_master.inspect
     #今月のbank_accountを新設
     options = {

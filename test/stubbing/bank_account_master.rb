@@ -1,5 +1,5 @@
 require 'webmock'
-require 'stubbing.rb'
+require_relative './stubbing.rb'
 
 class BankAccountMaster < Stubbing
   def initialize
