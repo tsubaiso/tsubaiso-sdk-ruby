@@ -1,32 +1,9 @@
 require 'webmock'
-include WebMock::API
+require 'stubbing.rb'
 
-WebMock.enable!
-WebMock.disable_net_connect!
-
-class Hash
-  def add_date_and_id(index)
-    self.merge({
-        :id => (990 + index).to_s,
-        :created_at => Time.now.to_s,
-        :updated_at => Time.now.to_s
-     })
-  end
-end
-
-class Stubbings
+class BankAccountMaster < Stubbing
   def initialize
-    @common_request_headers = {
-    'Accept'=>'*/*',
-    'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-    'Access-Token'=>'6stryskt2i2fmm7j8qyv429zf-2sllzoej9ila018ryf2gllcl2',
-    'Content-Type'=>'application/json',
-    'User-Agent'=>'Ruby'
-    }
-    @created_bams = []
-    ["create","destroy","show","list","update"].each do |method|
-      self.send(method)
-    end
+    super("bank_account_masters/")
   end
 
   def create
@@ -82,7 +59,7 @@ class Stubbings
     }
 
     [request_body_1,request_body_2, request_body_3].each_with_index do |request_body, index|
-      stub_request(:post, "https://tsubaiso.net/bank_account_masters/create/").
+      stub_request(:post, @root_url + "create/").
       with(
         headers: @common_request_headers,
         body: request_body
@@ -92,7 +69,7 @@ class Stubbings
         body: request_body.add_date_and_id(index).to_json,
         headers: {}
       )
-      @created_bams << request_body.add_date_and_id(index)
+      @created_records << request_body.add_date_and_id(index)
     end
   end
 
@@ -104,57 +81,14 @@ class Stubbings
       :memo => "This is updatting test"
     }
 
-    stub_request(:post, "https://tsubaiso.net/bank_account_masters/update/#{@created_bams[0][:id]}")
+    stub_request(:post, @root_url + "update/#{@created_records[0][:id]}")
     .with(
       headers: @common_request_headers,
       body: bam_1_update.merge({"format" => "json"})
     )
     .to_return(
       status: 200,
-      body: @created_bams[0].merge(bam_1_update).to_json
-    )
-  end
-
-  def destroy
-    @created_bams.each do |bam|
-      uri_template = Addressable::Template.new "https://tsubaiso.net/bank_account_masters/destroy/#{bam[:id]}"
-      stub_request(:post, uri_template)
-      .with(
-        headers: @common_request_headers,
-        body: {'format' => 'json'}
-      )
-      .to_return(
-        status: 422
-      )
-    end
-  end
-
-  def show
-    @created_bams.each do |bam|
-      uri_template = Addressable::Template.new "https://tsubaiso.net/bank_account_masters/show/#{bam[:id]}"
-      stub_request(:get, uri_template)
-      .with(
-        headers: @common_request_headers,
-        body: {'format' => 'json'}
-      )
-      .to_return(
-        status: 200,
-        body: bam.to_json
-      )
-    end
-  end
-
-  def list
-    uri_template = Addressable::Template.new "https://tsubaiso.net/bank_account_masters/index/"
-
-    stub_request(:get, uri_template)
-    .with(
-      headers: @common_request_headers,
-      body: {'format' => 'json'}
-    )
-    .to_return(
-    status: 200,
-    body: @created_bams.to_json
+      body: @created_records[0].merge(bam_1_update).to_json
     )
   end
 end

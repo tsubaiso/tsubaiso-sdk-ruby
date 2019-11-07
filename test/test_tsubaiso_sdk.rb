@@ -2,7 +2,7 @@ require 'minitest/autorun'
 require 'time'
 require './lib/tsubaiso_sdk'
 require 'webmock'
-require 'stubbings.rb'
+require 'bank_account_master.rb'
 
 include WebMock::API
 
@@ -405,6 +405,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_create_bank_account
+    BankAccountMaster.new
     #bank_account_masterを新設
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
     assert_equal 200, created_bank_account_master[:status].to_i, created_bank_account_master.inspect
@@ -429,7 +430,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_create_bank_account_master
-    Stubbings.new
+    BankAccountMaster.new
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
 
     assert_equal 200, created_bank_account_master[:status].to_i, created_bank_account_master.inspect
@@ -442,7 +443,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_show_bank_account_master
-    Stubbings.new
+    BankAccountMaster.new
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
     shown_bank_account_master = @api.show_bank_account_master(created_bank_account_master[:json][:id])
 
@@ -454,7 +455,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_list_bank_account_masters
-    Stubbings.new
+    BankAccountMaster.new
     created_bank_account_master_1 = @api.create_bank_account_master(@bank_account_master_1)
     created_bank_account_master_2 = @api.create_bank_account_master(@bank_account_master_2)
     created_bank_account_master_3 = @api.create_bank_account_master(@bank_account_master_3)
@@ -479,7 +480,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_update_bank_account_master
-    Stubbings.new
+    BankAccountMaster.new
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
     assert_equal 200, created_bank_account_master[:status].to_i
 
