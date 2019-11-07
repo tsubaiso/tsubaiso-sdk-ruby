@@ -5,7 +5,7 @@ WebMock.enable!
 WebMock.disable_net_connect!
 
 class Hash
-  def add_date_and_id(index)
+  def add_date_and_id(index = 0)
     self.merge({
       :id => (990 + index).to_s,
       :created_at => Time.now.to_s,
@@ -58,7 +58,7 @@ class Stubbing
   end
 
   def list
-    stub_request(:get, @root_url + "index/")
+    stub_request(:get, /#{@root_url}(index|list)/)
     .with(
       headers: @common_request_headers,
       body: {'format' => 'json'}

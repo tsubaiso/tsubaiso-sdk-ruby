@@ -129,7 +129,7 @@ class TsubaisoSDK
       'format' => 'json'
     }
 
-    uri = URI.parse(@base_url + '/bank_accounts/create')
+    uri = URI.parse(@base_url + '/bank_accounts/create/')
     api_request(uri, 'POST', params)
   end
 
