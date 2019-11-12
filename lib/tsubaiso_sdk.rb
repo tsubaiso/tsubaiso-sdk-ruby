@@ -27,7 +27,7 @@ class TsubaisoSDK
       :zengin_branch_code,
       :zengin_client_code_sogo,
       :currency_code,
-      :currency_rate_master_id
+      :currency_rate_master_code
     ]
 
     candidate_keys.each do |key|
@@ -152,10 +152,10 @@ class TsubaisoSDK
       'zengin_bank_code' => options[:zengin_bank_code],
       'zengin_branch_code' => options[:zengin_branch_code],
       'zengin_client_code_sogo' => options[:zengin_client_code_sogo],
-      'zengin_client_code_kyuyo' => options[:zengin_client_code_kyuyo],
       'currency_code' => options[:currency_code],
-      'currency_rate_master_id' => options[:currency_rate_master_id]
+      'currency_rate_master_code' => options[:currency_rate_master_code]
     }
+
     uri = URI.parse(@base_url + '/bank_account_masters/create/')
     api_request(uri, 'POST', params)
   end

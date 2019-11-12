@@ -1,9 +1,15 @@
 require 'minitest/autorun'
 require 'time'
 require './lib/tsubaiso_sdk'
+require_relative '../test/stubbings/stub_register.rb'
+
+include WebMock::API
+WebMock.disable_net_connect!
 
 class TsubaisoSDKTest < Minitest::Test
   def setup
+    Stubbing.new
+
     @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
 
     @pim_201901 = {
