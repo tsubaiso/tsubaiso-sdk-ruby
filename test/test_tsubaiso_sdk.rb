@@ -481,7 +481,6 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_update_bank_account_master
     created_bank_account_master = @api.create_bank_account_master(@bank_account_master_1)
-    puts created_bank_account_master
     assert_equal 200, created_bank_account_master[:status].to_i
 
     updating_options = {
@@ -493,7 +492,6 @@ class TsubaisoSDKTest < Minitest::Test
     }
 
     updated_bank_account_master = @api.update_bank_account_master(updating_options)
-    puts updated_bank_account_master
     assert_equal 200, updated_bank_account_master[:status].to_i
     assert_equal updating_options[:name], updated_bank_account_master[:json][:name]
     assert_equal updating_options[:memo], updated_bank_account_master[:json][:memo]

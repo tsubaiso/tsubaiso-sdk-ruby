@@ -16,12 +16,23 @@ class Stubbing
     'User-Agent'=>'Ruby'
   }
 
-  def add_id_and_dates(record, index)
-    record.merge({
+  def add_id_and_dates(record, index, domain)
+
+    new_attributs = {}
+    if File.exist?("./test/stubbings/fixtures/#{domain}_create_response.json")
+      File.open("./test/stubbings/fixtures/#{domain}_create_response.json") do |hash|
+        params = JSON.load(hash)
+        new_attributs.merge!(params[index])
+      end
+    end
+
+    new_attributs.merge!({
       :id => index.to_s,
       :created_at => Time.now.to_s,
       :updated_at => Time.now.to_s
     })
+
+    record.merge(new_attributs)
   end
 
   def stub_update(expected_params,domain)
@@ -32,7 +43,7 @@ class Stubbing
     )
     .to_return(
       status: 200,
-      body: @created_records[0].update(expected_params).update({:updated_at => Time.now.to_s}).to_json
+      body: @created_records[0].merge(expected_params).update({:updated_at => Time.now.to_s}).to_json
     )
   end
 
@@ -50,14 +61,25 @@ class Stubbing
   end
 
   def stub_list(domain)
-    stub_request(:get, ROOT_URL+ domain + "/index/")
-    .with(
-      headers: COMMON_REQUEST_HEADERS
-    )
-    .to_return(
-      status: 200,
-      body: @created_records.to_json
-    )
+    if domain == "bank_accounts"
+      stub_request(:get, ROOT_URL + domain + "/list/2019/7")
+      .with(
+        headers: COMMON_REQUEST_HEADERS
+      )
+      .to_return(
+        status: 200,
+        body: @created_records.to_json
+      )
+    else
+      stub_request(:get, ROOT_URL + domain + "/index/")
+      .with(
+        headers: COMMON_REQUEST_HEADERS
+      )
+      .to_return(
+        status: 200,
+        body: @created_records.to_json
+      )
+    end
   end
 
   def stub_destroy(domain)
@@ -72,7 +94,7 @@ class Stubbing
     end
   end
 
-  def stub_create(*expected_params,domain)
+  def stub_create(*expected_params, domain)
     expected_params.each_with_index do |record, index|
       stub_request(:post, ROOT_URL + domain + "/create/")
       .with(
@@ -81,9 +103,9 @@ class Stubbing
       )
       .to_return(
         status: 200,
-        body: add_id_and_dates(record, index).to_json,
+        body: add_id_and_dates(record, index, domain).to_json,
       )
-    @created_records << add_id_and_dates(record, index)
+    @created_records << add_id_and_dates(record, index, domain)
     end
   end
 
@@ -99,9 +121,7 @@ class Stubbing
 
     group_by_domain = Dir.glob("*.json", base: "./test/stubbings/fixtures").group_by{|file| file.split("_")[0..-3].join("_")}
 
-    group_by_domain.each_key do |domain|
-      # req_or_resp =  File.basename(json).delete(".json").split("_")[-1] # require or response
-      # method =  File.basename(json).split("_")[-2]  # CURD methods
+    group_by_domain.each_pair do |domain,json_files|
 
       File.open("./test/stubbings/fixtures/#{domain}_create_require.json") do |hash|
         params = JSON.load(hash)
@@ -111,10 +131,14 @@ class Stubbing
         stub_show(domain)
       end
 
-      File.open("./test/stubbings/fixtures/#{domain}_update_require.json") do |hash|
-        params = JSON.load(hash)
-        stub_update(params, domain)
+      if json_files.any?{|file_name| File.basename(file_name).split("_")[-2] == "update"}
+        File.open("./test/stubbings/fixtures/#{domain}_update_require.json") do |hash|
+          params = JSON.load(hash)
+          stub_update(params, domain)
+        end
       end
+    @created_records = []
     end
   end
-end
+
+  end
