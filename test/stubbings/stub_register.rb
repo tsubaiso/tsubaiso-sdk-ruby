@@ -24,21 +24,33 @@ class Stubbing
     })
   end
 
-  def stub_show
+  def stub_update(expected_params,domain)
+    stub_request(:post, ROOT_URL + domain + "/update/#{@created_records[0][:id]}")
+    .with(
+      headers: COMMON_REQUEST_HEADERS,
+      body: expected_params.merge({"format" => "json"})
+    )
+    .to_return(
+      status: 200,
+      body: @created_records[0].update(expected_params).update({:updated_at => Time.now.to_s}).to_json
+    )
+  end
+
+  def stub_show(domain)
     @created_records.each_with_index do |record, index|
-      stub_request(:get, ROOT_URL+ "bank_account_masters/" + "destroy/" + record[:id])
+      stub_request(:get, ROOT_URL+ domain + "/show/" + record[:id])
       .with(
         headers: COMMON_REQUEST_HEADERS
       )
       .to_return(
         status: 422,
-        body: record.json
+        body: record.to_json
       )
     end
   end
 
-  def stub_list
-    stub_request(:get, ROOT_URL+ "bank_account_masters/" + "list/")
+  def stub_list(domain)
+    stub_request(:get, ROOT_URL+ domain + "/index/")
     .with(
       headers: COMMON_REQUEST_HEADERS
     )
@@ -48,9 +60,9 @@ class Stubbing
     )
   end
 
-  def stub_destroy
+  def stub_destroy(domain)
     @created_records.each_with_index do |record, index|
-      stub_request(:post, ROOT_URL+ "bank_account_masters/" + "destroy/" + record[:id])
+      stub_request(:post, ROOT_URL+ domain + "/destroy/" + record[:id])
       .with(
         headers: COMMON_REQUEST_HEADERS
       )
@@ -60,9 +72,9 @@ class Stubbing
     end
   end
 
-  def stub_create(*expected_params)
+  def stub_create(*expected_params,domain)
     expected_params.each_with_index do |record, index|
-      stub_request(:post, ROOT_URL + "bank_account_masters/" + "create/")
+      stub_request(:post, ROOT_URL + domain + "/create/")
       .with(
         headers: COMMON_REQUEST_HEADERS,
         body: record
@@ -85,13 +97,23 @@ class Stubbing
       "finish_timestamp" => "2019-07-30"
     }
 
-    Dir.glob("*.json", base: "./test/stubbings/fixtures").each do |fixtures|
-      File.open("./test/stubbings/fixtures/#{fixtures}") do |hash|
+    group_by_domain = Dir.glob("*.json", base: "./test/stubbings/fixtures").group_by{|file| file.split("_")[0..-3].join("_")}
+
+    group_by_domain.each_key do |domain|
+      # req_or_resp =  File.basename(json).delete(".json").split("_")[-1] # require or response
+      # method =  File.basename(json).split("_")[-2]  # CURD methods
+
+      File.open("./test/stubbings/fixtures/#{domain}_create_require.json") do |hash|
         params = JSON.load(hash)
-        stub_create(*params)
-        stub_destroy
-        stub_list
-        stub_show
+        stub_create(*params, domain)
+        stub_destroy(domain)
+        stub_list(domain)
+        stub_show(domain)
+      end
+
+      File.open("./test/stubbings/fixtures/#{domain}_update_require.json") do |hash|
+        params = JSON.load(hash)
+        stub_update(params, domain)
       end
     end
   end
