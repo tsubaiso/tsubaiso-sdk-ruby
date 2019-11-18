@@ -26,7 +26,7 @@ class Stubbing
     return nil
   end
 
-  def add_id_and_dates(record, index, domain)
+  def add_attributes_to_response(record, index, domain)
     new_attributs = {}
     new_params = find_and_load_json(domain, "create" ,"response")
     new_attributs.merge!(new_params) if new_params
@@ -71,7 +71,7 @@ class Stubbing
 
   def stub_list(domain)
     if domain == "bank_accounts"
-      # bank_accountsのlistはこのpathに直接指定する方法しかない？
+      # bank_accountsのlistの年月はpathに直接指定する方法しかない？
       # もし、jsonでも年月指定が可能なら .with(body{"month" => "7", "year" => "2019"})で対応したい。
       stub_request(:get, ROOT_URL + domain + "/list/2019/7")
       .with(
@@ -105,7 +105,8 @@ class Stubbing
     end
   end
 
-  def stub_create(*expected_params, domain)
+  def stub_create(domain)
+    expected_params = *find_and_load_json(domain, "create")
     expected_params.each_with_index do |record, index|
     stub_request(:post, ROOT_URL + domain + "/create/")
       .with(
@@ -114,16 +115,15 @@ class Stubbing
       )
       .to_return(
         status: 200,
-        body: add_id_and_dates(record, index, domain).to_json,
+        body: add_attributes_to_response(record, index, domain).to_json,
       )
-    @created_records << add_id_and_dates(record, index, domain)
+    @created_records << add_attributes_to_response(record, index, domain)
     end
   end
 
   def initialize(domain)
     @created_records = []
-    params = find_and_load_json(domain, "create")
-    stub_create(*params, domain)
+    stub_create(domain)
     stub_destroy(domain)
     stub_list(domain)
     stub_show(domain)
