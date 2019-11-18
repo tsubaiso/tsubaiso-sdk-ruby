@@ -1,4 +1,3 @@
-[
   {
     "bank_account_master_id" : "1",
     "start_timestamp" : "2019/06/30 00:00:00 +0900",
@@ -18,4 +17,3 @@
     "finish_balance_fc" : null,
     "exchange_gl_journal_id" : null
   }
-]

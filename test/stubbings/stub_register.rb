@@ -16,14 +16,20 @@ class Stubbing
     'User-Agent'=>'Ruby'
   }
 
-  def add_id_and_dates(record, index, domain)
-    new_attributs = {}
-    if File.exist?("../stubbings/fixtures/#{domain}_create_response.json")
-      File.open("../stubbings/fixtures/#{domain}_create_response.json") do |hash|
-        params = JSON.load(hash)
-        new_attributs.merge!(params[index])
+  def find_and_load_json(domain, method, req_or_res = "require")
+    path = "../stubbings/fixtures/#{domain}_#{method}_#{req_or_res}.json"
+    if File.exist?(File.expand_path(path,"."))
+      File.open(File.expand_path(path,".")) do |hash|
+        return JSON.load(hash)
       end
     end
+    return nil
+  end
+
+  def add_id_and_dates(record, index, domain)
+    new_attributs = {}
+    new_params = find_and_load_json(domain, "create" ,"response")
+    new_attributs.merge!(new_params) if new_params
 
     new_attributs.merge!({
       :id => index.to_s,
@@ -34,16 +40,19 @@ class Stubbing
     record.merge(new_attributs)
   end
 
-  def stub_update(expected_params,domain)
-    stub_request(:post, ROOT_URL + domain + "/update/#{@created_records[0][:id]}")
-    .with(
-      headers: COMMON_REQUEST_HEADERS,
-      body: expected_params.merge({"format" => "json"})
-    )
-    .to_return(
-      status: 200,
-      body: @created_records[0].merge(expected_params).to_json
-    )
+  def stub_update(domain)
+    if find_and_load_json(domain, "update")
+      expected_params = find_and_load_json(domain, "update")
+      stub_request(:post, ROOT_URL + domain + "/update/#{@created_records[0][:id]}")
+      .with(
+        headers: COMMON_REQUEST_HEADERS,
+        body: expected_params.merge({"format" => "json"})
+      )
+      .to_return(
+        status: 200,
+        body: @created_records[0].merge(expected_params).to_json
+      )
+    end
   end
 
   def stub_show(domain)
@@ -98,7 +107,7 @@ class Stubbing
 
   def stub_create(*expected_params, domain)
     expected_params.each_with_index do |record, index|
-      stub_request(:post, ROOT_URL + domain + "/create/")
+    stub_request(:post, ROOT_URL + domain + "/create/")
       .with(
         headers: COMMON_REQUEST_HEADERS,
         body: record.merge({"format" => "json"})
@@ -113,20 +122,12 @@ class Stubbing
 
   def initialize(domain)
     @created_records = []
-    File.open(File.expand_path("../stubbings/fixtures/#{domain}_create_require.json", ".")) do |hash|
-      params = JSON.load(hash)
-      stub_create(*params, domain)
-      stub_destroy(domain)
-      stub_list(domain)
-      stub_show(domain)
-    end
-
-    if File.exist?(File.expand_path("../stubbings/fixtures/#{domain}_update_require.json", "."))
-      File.open(File.expand_path("../stubbings/fixtures/#{domain}_update_require.json",".")) do |hash|
-        params = JSON.load(hash)
-        stub_update(params, domain)
-      end
-    end
+    params = find_and_load_json(domain, "create")
+    stub_create(*params, domain)
+    stub_destroy(domain)
+    stub_list(domain)
+    stub_show(domain)
+    stub_update(domain)
   end
 
 end
