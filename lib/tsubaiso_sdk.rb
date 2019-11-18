@@ -43,7 +43,7 @@ class TsubaisoSDK
       'format' => 'json',
       'bank_account_id' => bank_account_id.to_s
     }
-    uri = URI.parse(@base_url + "/bank_account_transactions/list")
+    uri = URI.parse(@base_url + "/bank_account_transactions/list/")
     api_request(uri, 'GET', params)
   end
 
@@ -51,7 +51,7 @@ class TsubaisoSDK
     params = {
       'format' => 'json',
     }
-    uri = URI.parse(@base_url + "bank_account_transactions/show/#{id}")
+    uri = URI.parse(@base_url + "/bank_account_transactions/show/#{id}")
     api_request(uri, 'GET', params)
   end
 
@@ -70,8 +70,7 @@ class TsubaisoSDK
       'dept_code' => options[:dept_code],
       'format' => 'json'
     }
-
-    uri = URI.parse(@base_url + '/bank_account_transactions/create')
+    uri = URI.parse(@base_url + '/bank_account_transactions/create/')
     api_request(uri, 'POST', params)
   end
 

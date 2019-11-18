@@ -17,10 +17,9 @@ class Stubbing
   }
 
   def add_id_and_dates(record, index, domain)
-
     new_attributs = {}
-    if File.exist?("./test/stubbings/fixtures/#{domain}_create_response.json")
-      File.open("./test/stubbings/fixtures/#{domain}_create_response.json") do |hash|
+    if File.exist?("../stubbings/fixtures/#{domain}_create_response.json")
+      File.open("../stubbings/fixtures/#{domain}_create_response.json") do |hash|
         params = JSON.load(hash)
         new_attributs.merge!(params[index])
       end
@@ -43,7 +42,7 @@ class Stubbing
     )
     .to_return(
       status: 200,
-      body: @created_records[0].merge(expected_params).update({:updated_at => Time.now.to_s}).to_json
+      body: @created_records[0].merge(expected_params).to_json
     )
   end
 
@@ -51,10 +50,11 @@ class Stubbing
     @created_records.each_with_index do |record, index|
       stub_request(:get, ROOT_URL+ domain + "/show/" + record[:id])
       .with(
-        headers: COMMON_REQUEST_HEADERS
+        headers: COMMON_REQUEST_HEADERS,
+        body: {"format" => "json"}
       )
       .to_return(
-        status: 422,
+        status: 200,
         body: record.to_json
       )
     end
@@ -62,6 +62,8 @@ class Stubbing
 
   def stub_list(domain)
     if domain == "bank_accounts"
+      # bank_accountsのlistはこのpathに直接指定する方法しかない？
+      # もし、jsonでも年月指定が可能なら .with(body{"month" => "7", "year" => "2019"})で対応したい。
       stub_request(:get, ROOT_URL + domain + "/list/2019/7")
       .with(
         headers: COMMON_REQUEST_HEADERS
@@ -71,7 +73,7 @@ class Stubbing
         body: @created_records.to_json
       )
     else
-      stub_request(:get, ROOT_URL + domain + "/index/")
+      stub_request(:get, ROOT_URL + domain + "/list/")
       .with(
         headers: COMMON_REQUEST_HEADERS
       )
@@ -99,7 +101,7 @@ class Stubbing
       stub_request(:post, ROOT_URL + domain + "/create/")
       .with(
         headers: COMMON_REQUEST_HEADERS,
-        body: record
+        body: record.merge({"format" => "json"})
       )
       .to_return(
         status: 200,
@@ -109,36 +111,23 @@ class Stubbing
     end
   end
 
-  def initialize
+  def initialize(domain)
     @created_records = []
+    File.open(File.expand_path("../stubbings/fixtures/#{domain}_create_require.json", ".")) do |hash|
+      params = JSON.load(hash)
+      stub_create(*params, domain)
+      stub_destroy(domain)
+      stub_list(domain)
+      stub_show(domain)
+    end
 
-    request_body_1 = {
-      "format" => "json",
-      "bank_account_master_id" => 990,
-      "start_timestamp" => "2019-06-30",
-      "finish_timestamp" => "2019-07-30"
-    }
-
-    group_by_domain = Dir.glob("*.json", base: "./test/stubbings/fixtures").group_by{|file| file.split("_")[0..-3].join("_")}
-
-    group_by_domain.each_pair do |domain,json_files|
-
-      File.open("./test/stubbings/fixtures/#{domain}_create_require.json") do |hash|
+    if File.exist?(File.expand_path("../stubbings/fixtures/#{domain}_update_require.json", "."))
+      File.open(File.expand_path("../stubbings/fixtures/#{domain}_update_require.json",".")) do |hash|
         params = JSON.load(hash)
-        stub_create(*params, domain)
-        stub_destroy(domain)
-        stub_list(domain)
-        stub_show(domain)
+        stub_update(params, domain)
       end
-
-      if json_files.any?{|file_name| File.basename(file_name).split("_")[-2] == "update"}
-        File.open("./test/stubbings/fixtures/#{domain}_update_require.json") do |hash|
-          params = JSON.load(hash)
-          stub_update(params, domain)
-        end
-      end
-    @created_records = []
     end
   end
 
-  end
+end
+

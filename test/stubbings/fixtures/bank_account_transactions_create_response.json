@@ -1,0 +1,22 @@
+[
+  {
+    "personal_id":3,
+    "serial_no":278,
+    "bank_account_id":0,
+    "bank_reason_master_id": 0,
+    "dc":"d",
+    "brief" : "this is sample transactions",
+    "memo" : "this is created from API.",
+    "regist_user_code":"yamakawa",
+    "update_user_code":null,
+    "reason_code" : "xxxx_123",
+    "journal_timestamp":"2019/7/25 00:00:00 +0900",
+    "tag_list": [],
+    "dept_code": "HEAD",
+    "price_value" : 1000,
+    "price_value_fc":null,
+    "exchange_rate":null,
+    "reconciliation_id":25140,
+    "data_partner": {}
+  }
+]

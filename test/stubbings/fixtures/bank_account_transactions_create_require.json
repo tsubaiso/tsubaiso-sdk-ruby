@@ -1,0 +1,15 @@
+[
+  {
+    "bank_account_id" : 0,
+    "journal_timestamp" : "2019-07-25",
+    "price_value" : 1000,
+    "reason_code": "xxxx_123",
+    "dc" : "d",
+    "brief" : "this is sample transactions",
+    "memo" : "this is created from API.",
+    "dept_code" : "HEAD",
+    "price_value_fc" : null,
+    "exchange_rate" : null,
+    "tag_list" : null
+  }
+]
