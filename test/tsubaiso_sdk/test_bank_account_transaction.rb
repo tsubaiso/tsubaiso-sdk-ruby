@@ -4,13 +4,18 @@ require_relative '../../lib/tsubaiso_sdk'
 require_relative '../stubbings/stub_register.rb'
 
 include WebMock::API
-WebMock.disable_net_connect!
 
-class TsubaisoSDKTest < Minitest::Test
+class BankAccountTransactionTest < Minitest::Test
 
   def setup
+    WebMock.enable!
+    WebMock.disable_net_connect!
     @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
-    Stubbing.new("bank_account_transactions")
+    StubRegister.new(
+      "bank_account_transactions",
+      @api.instance_variable_get(:@base_url),
+      @api.instance_variable_get(:@access_token)
+    )
 
     @bank_account_transaction_1 = {
       bank_account_id: 0,
@@ -65,4 +70,7 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal @bank_account_transaction_1[:memo], updated_bat[:memo]
   end
 
+  def teardown
+    WebMock.disable!
+  end
 end

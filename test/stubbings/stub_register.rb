@@ -5,30 +5,37 @@ include WebMock::API
 WebMock.enable!
 WebMock.disable_net_connect!
 
-class Stubbing
-  ROOT_URL = "https://tsubaiso.net/"
+class StubRegister
 
-  COMMON_REQUEST_HEADERS = {
-    'Accept'=>'*/*',
-    'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-    'Access-Token'=>'6stryskt2i2fmm7j8qyv429zf-2sllzoej9ila018ryf2gllcl2',
-    'Content-Type'=>'application/json',
-    'User-Agent'=>'Ruby'
-  }
+  def initialize(resource, root_url, token)
+    @common_request_headers = {
+      'Accept'=>'*/*',
+      'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+      'Content-Type'=>'application/json',
+      'User-Agent'=>'Ruby'
+    }
+    @root_url = root_url
+    @common_request_headers.merge!({"Access-Token" => token})
+    @created_records = []
 
-  def find_and_load_json(domain, method, req_or_res = "require")
-    path = "../stubbings/fixtures/#{domain}_#{method}_#{req_or_res}.json"
-    if File.exist?(File.expand_path(path,"."))
-      File.open(File.expand_path(path,".")) do |hash|
-        return JSON.load(hash)
-      end
-    end
-    return nil
+    stub_create(resource)
+    stub_destroy(resource)
+    stub_list(resource)
+    stub_show(resource)
+    stub_update(resource)
   end
 
-  def add_attributes_to_response(record, index, domain)
+  private
+
+  def find_and_load_json(resource, method, req_or_res = "require")
+    path = "test/stubbings/fixtures/#{resource}_#{method}_#{req_or_res}.json"
+    return nil unless File.exist?(path)
+    JSON.load(File.read(path))
+  end
+
+  def add_attributes_to_response(record, index, resource)
     new_attributs = {}
-    new_params = find_and_load_json(domain, "create" ,"response")
+    new_params = find_and_load_json(resource, "create" ,"response")
     new_attributs.merge!(new_params) if new_params
 
     new_attributs.merge!({
@@ -40,12 +47,12 @@ class Stubbing
     record.merge(new_attributs)
   end
 
-  def stub_update(domain)
-    if find_and_load_json(domain, "update")
-      expected_params = find_and_load_json(domain, "update")
-      stub_request(:post, ROOT_URL + domain + "/update/#{@created_records[0][:id]}")
+  def stub_update(resource)
+    if find_and_load_json(resource, "update")
+      expected_params = find_and_load_json(resource, "update")
+      stub_request(:post, @root_url+ "/" + resource + "/update/#{@created_records[0][:id]}")
       .with(
-        headers: COMMON_REQUEST_HEADERS,
+        headers: @common_request_headers,
         body: expected_params.merge({"format" => "json"})
       )
       .to_return(
@@ -55,11 +62,11 @@ class Stubbing
     end
   end
 
-  def stub_show(domain)
+  def stub_show(resource)
     @created_records.each_with_index do |record, index|
-      stub_request(:get, ROOT_URL+ domain + "/show/" + record[:id])
+      stub_request(:get, @root_url + "/" + resource + "/show/" + record[:id])
       .with(
-        headers: COMMON_REQUEST_HEADERS,
+        headers: @common_request_headers,
         body: {"format" => "json"}
       )
       .to_return(
@@ -69,22 +76,22 @@ class Stubbing
     end
   end
 
-  def stub_list(domain)
-    if domain == "bank_accounts"
-      # bank_accountsのlistの年月はpathに直接指定する方法しかない？
-      # もし、jsonでも年月指定が可能なら .with(body{"month" => "7", "year" => "2019"})で対応したい。
-      stub_request(:get, ROOT_URL + domain + "/list/2019/7")
+  def stub_list(resource)
+    if resource == "bank_accounts"
+      # TODO: URL Builderという別のモジュールを作って、各モジュール、アクションごとにURLを生成できるようにする。
+      # これでrecouses/:Month/:YearのURLに対応させる。
+      stub_request(:get, @root_url + "/" + resource + "/list/2019/7")
       .with(
-        headers: COMMON_REQUEST_HEADERS
+        headers: @common_request_headers
       )
       .to_return(
         status: 200,
         body: @created_records.to_json
       )
     else
-      stub_request(:get, ROOT_URL + domain + "/list/")
+      stub_request(:get, @root_url + "/" + resource + "/list/")
       .with(
-        headers: COMMON_REQUEST_HEADERS
+        headers: @common_request_headers
       )
       .to_return(
         status: 200,
@@ -93,11 +100,11 @@ class Stubbing
     end
   end
 
-  def stub_destroy(domain)
+  def stub_destroy(resource)
     @created_records.each_with_index do |record, index|
-      stub_request(:post, ROOT_URL+ domain + "/destroy/" + record[:id])
+      stub_request(:post, @root_url + "/" + resource + "/destroy/" + record[:id])
       .with(
-        headers: COMMON_REQUEST_HEADERS
+        headers: @common_request_headers
       )
       .to_return(
         status: 422
@@ -105,29 +112,20 @@ class Stubbing
     end
   end
 
-  def stub_create(domain)
-    expected_params = *find_and_load_json(domain, "create")
+  def stub_create(resource)
+    expected_params = *find_and_load_json(resource, "create")
     expected_params.each_with_index do |record, index|
-    stub_request(:post, ROOT_URL + domain + "/create/")
+      stub_request(:post, @root_url + "/" + resource + "/create/")
       .with(
-        headers: COMMON_REQUEST_HEADERS,
+        headers: @common_request_headers,
         body: record.merge({"format" => "json"})
       )
       .to_return(
         status: 200,
-        body: add_attributes_to_response(record, index, domain).to_json,
+        body: add_attributes_to_response(record, index, resource).to_json,
       )
-    @created_records << add_attributes_to_response(record, index, domain)
+    @created_records << add_attributes_to_response(record, index, resource)
     end
-  end
-
-  def initialize(domain)
-    @created_records = []
-    stub_create(domain)
-    stub_destroy(domain)
-    stub_list(domain)
-    stub_show(domain)
-    stub_update(domain)
   end
 
 end

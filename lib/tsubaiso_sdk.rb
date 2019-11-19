@@ -4,7 +4,7 @@ class TsubaisoSDK
 
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
-    @access_token = options[:access_token]
+    @access_token = options[:access_token] || "Fake_Token"
   end
 
   def list_bank_account_masters
