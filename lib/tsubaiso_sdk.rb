@@ -110,7 +110,7 @@ class TsubaisoSDK
     params = {
       'format' => 'json',
     }
-    uri = URI.parse(@base_url + "/bank_accounts/list/#{options[:year]}/#{options[:month]}")
+    uri = URI.parse(@base_url + "/bank_accounts/list/#{options[:year]}/#{options[:month]}/")
     api_request(uri,'GET',params)
   end
 

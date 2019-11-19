@@ -1,11 +1,13 @@
 require "json"
 require 'webmock'
+require_relative '../../lib/url_builder.rb'
 include WebMock::API
 
 WebMock.enable!
 WebMock.disable_net_connect!
 
 class StubRegister
+  include UrlBuilder
 
   def initialize(resource, root_url, token)
     @common_request_headers = {
@@ -50,7 +52,7 @@ class StubRegister
   def stub_update(resource)
     if find_and_load_json(resource, "update")
       expected_params = find_and_load_json(resource, "update")
-      stub_request(:post, @root_url+ "/" + resource + "/update/#{@created_records[0][:id]}")
+      stub_request(:post, url(@root_url,resource,"update") + @created_records[0][:id])
       .with(
         headers: @common_request_headers,
         body: expected_params.merge({"format" => "json"})
@@ -64,7 +66,7 @@ class StubRegister
 
   def stub_show(resource)
     @created_records.each_with_index do |record, index|
-      stub_request(:get, @root_url + "/" + resource + "/show/" + record[:id])
+      stub_request(:get, url(@root_url, resource, "show") + record[:id])
       .with(
         headers: @common_request_headers,
         body: {"format" => "json"}
@@ -77,32 +79,19 @@ class StubRegister
   end
 
   def stub_list(resource)
-    if resource == "bank_accounts"
-      # TODO: URL Builderという別のモジュールを作って、各モジュール、アクションごとにURLを生成できるようにする。
-      # これでrecouses/:Month/:YearのURLに対応させる。
-      stub_request(:get, @root_url + "/" + resource + "/list/2019/7")
-      .with(
-        headers: @common_request_headers
-      )
-      .to_return(
-        status: 200,
-        body: @created_records.to_json
-      )
-    else
-      stub_request(:get, @root_url + "/" + resource + "/list/")
-      .with(
-        headers: @common_request_headers
-      )
-      .to_return(
-        status: 200,
-        body: @created_records.to_json
-      )
-    end
+    stub_request(:get, url(@root_url, resource, "list", 2019, 7))
+    .with(
+      headers: @common_request_headers
+    )
+    .to_return(
+      status: 200,
+      body: @created_records.to_json
+    )
   end
 
   def stub_destroy(resource)
     @created_records.each_with_index do |record, index|
-      stub_request(:post, @root_url + "/" + resource + "/destroy/" + record[:id])
+      stub_request(:post, url(@root_url, resource, "destroy") + record[:id])
       .with(
         headers: @common_request_headers
       )
@@ -115,7 +104,7 @@ class StubRegister
   def stub_create(resource)
     expected_params = *find_and_load_json(resource, "create")
     expected_params.each_with_index do |record, index|
-      stub_request(:post, @root_url + "/" + resource + "/create/")
+      stub_request(:post, url(@root_url, resource, "create"))
       .with(
         headers: @common_request_headers,
         body: record.merge({"format" => "json"})
