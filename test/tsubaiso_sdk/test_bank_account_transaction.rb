@@ -2,21 +2,12 @@ require 'minitest/autorun'
 require 'time'
 require_relative '../../lib/tsubaiso_sdk'
 require_relative '../stubbings/stub_register.rb'
-
-include WebMock::API
+require_relative './common_setup_teardown.rb'
 
 class BankAccountTransactionTest < Minitest::Test
+  include CommonSetupTeardown
 
   def setup
-    WebMock.enable!
-    WebMock.disable_net_connect!
-    @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
-    StubRegister.new(
-      "bank_account_transactions",
-      @api.instance_variable_get(:@base_url),
-      @api.instance_variable_get(:@access_token)
-    )
-
     @bank_account_transaction_1 = {
       bank_account_id: 0,
       journal_timestamp: "2019-07-25",
@@ -27,6 +18,7 @@ class BankAccountTransactionTest < Minitest::Test
       memo: "this is created from API.",
       dept_code: "HEAD"
     }
+    super("bank_account_transactions")
   end
 
   def test_create_bank_account_transaction
@@ -68,9 +60,5 @@ class BankAccountTransactionTest < Minitest::Test
 
     assert_equal Time.parse(@bank_account_transaction_1[:journal_timestamp]), Time.parse(updated_bat[:journal_timestamp])
     assert_equal @bank_account_transaction_1[:memo], updated_bat[:memo]
-  end
-
-  def teardown
-    WebMock.disable!
   end
 end

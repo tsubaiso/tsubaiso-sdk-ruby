@@ -2,21 +2,12 @@ require 'minitest/autorun'
 require 'time'
 require_relative '../../lib/tsubaiso_sdk'
 require_relative '../stubbings/stub_register.rb'
-
-include WebMock::API
+require_relative './common_setup_teardown.rb'
 
 class BankAccountMasterTest < Minitest::Test
+  include CommonSetupTeardown
 
   def setup
-    WebMock.enable!
-    WebMock.disable_net_connect!
-    @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
-    StubRegister.new(
-      "bank_account_masters",
-      @api.instance_variable_get(:@base_url),
-      @api.instance_variable_get(:@access_token)
-    )
-
     @bank_account_master_1 = {
       name: "ANZ Bank",
       account_type: "1",
@@ -61,6 +52,7 @@ class BankAccountMasterTest < Minitest::Test
       currency_code: "",
       currency_rate_master_code: nil
     }
+    super("bank_account_masters")
   end
 
   def test_create_bank_account_master
@@ -124,10 +116,6 @@ class BankAccountMasterTest < Minitest::Test
     assert_equal @bank_account_master_1[:account_number], updated_bank_account_master[:json][:account_number]
     assert_equal @bank_account_master_1[:zengin_bank_code], updated_bank_account_master[:json][:zengin_bank_code]
     assert_equal @bank_account_master_1[:zengin_branch_code], updated_bank_account_master[:json][:zengin_branch_code]
-  end
-
-  def teardown
-    WebMock.disable!
   end
 
 end
