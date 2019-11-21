@@ -2,6 +2,17 @@ class TsubaisoSDK
   require 'net/http'
   require 'json'
 
+  module UrlBuilder
+    def url(root, resource, method, year = nil, month = nil)
+      require_yms = %w(ar ap_payments manual_journals reimbursements reimbursement_transactions bank_accounts)
+      if require_yms.include?(resource) && method == "list"
+        return root + "/" + resource + "/list/" + year.to_s + "/" + month.to_s + "/"
+      else
+        return root + "/" + resource + "/" + method + "/"
+      end
+    end
+  end
+
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
     @access_token = options[:access_token] || "Fake_Token"

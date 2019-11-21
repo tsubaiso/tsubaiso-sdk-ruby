@@ -1,13 +1,13 @@
 require "json"
 require 'webmock'
-require_relative '../../lib/url_builder.rb'
+require_relative '../../lib/tsubaiso_sdk.rb'
 include WebMock::API
 
 WebMock.enable!
 WebMock.disable_net_connect!
 
 class StubRegister
-  include UrlBuilder
+  include TsubaisoSDK::UrlBuilder
 
   def initialize(resource, root_url, token)
     @common_request_headers = {
