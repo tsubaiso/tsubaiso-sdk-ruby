@@ -815,8 +815,8 @@ class TsubaisoSDK
   def create_parameters(keys,options)
     # Add new keys and value if options has keys, even if value in options is nil.
     # This code avoid updateing attributes witch is not specified by the users.
-    returned_params = (keys & options.keys).inject({ 'format' => 'json' }) do |params, key|
-        params.merge(key => options[key])
+    (keys & options.keys).inject({ 'format' => 'json' }) do |params, key|
+      params.merge(key.to_s => options[key])
     end
   end
 
