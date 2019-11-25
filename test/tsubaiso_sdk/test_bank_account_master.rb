@@ -1,7 +1,4 @@
 require 'minitest/autorun'
-require 'time'
-require_relative '../../lib/tsubaiso_sdk'
-require_relative '../stubbings/stub_register.rb'
 require_relative './common_setup_teardown.rb'
 
 class BankAccountMasterTest < Minitest::Test

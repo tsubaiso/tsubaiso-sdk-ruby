@@ -1,0 +1,13 @@
+[
+  {
+    "code": "10000",
+    "is_valid": 1,
+    "name": "テスト株式会社",
+    "name_kana": "テストカブシキガイシャ",
+    "tax_type_for_remittance_charge": "3",
+    "used_in_ap": 1,
+    "used_in_ar": 1,
+    "pay_date_if_holiday": 1,
+    "receive_date_if_holiday": 1
+  }
+]

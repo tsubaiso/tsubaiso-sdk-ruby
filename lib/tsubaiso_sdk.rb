@@ -103,7 +103,7 @@ class TsubaisoSDK
     end
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/bank_account_transactions/update/#{options[:id]}")
-    result = api_request(uri, "POST",params)
+    api_request(uri, "POST",params)
   end
 
   def list_bank_account(options)
@@ -342,7 +342,7 @@ class TsubaisoSDK
 
   def list_physical_inventory_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/physical_inventory_masters/list')
+    uri = URI.parse(@base_url + '/physical_inventory_masters/list/')
     api_request(uri, 'GET', params)
   end
 
@@ -407,7 +407,7 @@ class TsubaisoSDK
       'code' => code,
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/customer_masters/show')
+    uri = URI.parse(@base_url + '/customer_masters/show/')
     api_request(uri, 'GET', params)
   end
 
@@ -595,11 +595,11 @@ class TsubaisoSDK
     ]
     params = {}
     available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym]
+      params[key.to_s] = options[key.to_sym]  if options.has_key?(key.to_sym)
     end
     params['format'] = 'json'
 
-    uri = URI.parse(@base_url + '/customer_masters/create')
+    uri = URI.parse(@base_url + '/customer_masters/create/')
     api_request(uri, 'POST', params)
   end
 
@@ -831,15 +831,13 @@ class TsubaisoSDK
   end
 
   def create_physical_inventory_masters(options)
-    params = {
-      'format' => 'json',
-      'name' => options[:name],
-      'memo' => options[:memo],
-      'start_ymd' => options[:start_ymd],
-      'finish_ymd' => options[:finish_ymd],
-      'tag_list' => options[:tag_list],
-      'dept_code' => options[:dept_code]
-    }
+    params = {}
+    candidate_keys = [:name, :start_ymd, :finish_ymd, :memo, :tag_list, :dept_code]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+
     uri = URI.parse(@base_url + '/physical_inventory_masters/create/')
     api_request(uri, 'POST', params)
   end
@@ -908,7 +906,7 @@ class TsubaisoSDK
     ]
     params = {}
     available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym]
+      params[key.to_s] = options[key.to_sym] if options.has_key?(key.to_sym)
     end
     params['format'] = 'json'
 
@@ -933,7 +931,7 @@ class TsubaisoSDK
     end
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_reason_masters/update/' + options[:id].to_s)
-    result = api_request(uri, "POST",params)
+    api_request(uri, "POST",params)
   end
 
   def update_staff_data(options)
@@ -1044,7 +1042,13 @@ class TsubaisoSDK
   end
 
   def update_physical_inventory_masters(options)
-    params = options.merge({ 'format' => 'json' })
+    params = {}
+    candidate_keys = [:name, :start_ymd, :finish_ymd, :memo]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+
     uri = URI.parse(@base_url + "/physical_inventory_masters/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end

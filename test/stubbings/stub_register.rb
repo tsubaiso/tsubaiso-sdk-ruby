@@ -44,6 +44,7 @@ class StubRegister
       :updated_at => Time.now.to_s
     })
 
+    record["tag_list"] = record["tag_list"].split(",") if record["tag_list"]&.kind_of?(String)
     record.merge(new_attributs)
   end
 
@@ -63,11 +64,26 @@ class StubRegister
   end
 
   def stub_show(resource)
-    @created_records.each_with_index do |record, index|
+    @created_records.each do |record|
       stub_request(:get, @root_url + "/" + resource + "/show/" + record[:id])
       .with(
         headers: @common_request_headers,
         body: {"format" => "json"}
+      )
+      .to_return(
+        status: 200,
+        body: record.to_json
+      )
+    end
+    # Serch by Code (support customer_master_show)
+    @created_records.each do |record|
+      stub_request(:get, @root_url + "/" + resource + "/show/")
+      .with(
+        headers: @common_request_headers,
+        body: {
+          "format" => "json",
+          "code" => record["code"]
+        }
       )
       .to_return(
         status: 200,
@@ -107,7 +123,7 @@ class StubRegister
         headers: @common_request_headers
       )
       .to_return(
-        status: 422
+        status: 204
       )
     end
   end
@@ -124,7 +140,7 @@ class StubRegister
         status: 200,
         body: add_attributes_to_response(record, index, resource).to_json,
       )
-    @created_records << add_attributes_to_response(record, index, resource)
+      @created_records << add_attributes_to_response(record, index, resource)
     end
   end
 
