@@ -264,6 +264,28 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
+  def test_list_sales
+    august_sale_a = @api.create_sale(@sale_201608)
+    feb_sale = @api.create_sale(@sale_201702)
+    september_sale = @api.create_sale(@sale_201609)
+
+    august_sale_a_id = august_sale_a[:json][:id]
+    feb_sale_id = feb_sale[:json][:id]
+    september_sale_id = september_sale[:json][:id]
+
+    sales_list = @api.list_sales(2016, 8)
+    assert_equal 200, sales_list[:status].to_i, sales_list.inspect
+    assert sales_list[:json].size == 1
+
+    assert(sales_list[:json].any? { |x| x[:id] == august_sale_a_id })
+    assert(sales_list[:json].none? { |x| x[:id] == feb_sale_id })
+    assert(sales_list[:json].none? { |x| x[:id] == september_sale_id })
+  ensure
+    @api.destroy_sale("AR#{august_sale_a[:json][:id]}") if august_sale_a[:json][:id]
+    @api.destroy_sale("AR#{feb_sale[:json][:id]}") if feb_sale[:json][:id]
+    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
+  end
+
   def test_index_api_history
     index = @api.index_api_history
     assert_equal 200, index[:status].to_i, index.inspect
@@ -281,29 +303,8 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal initial_api_count + 1, new_api_count
   end
 
-  def test_create_customer
-    customer = @api.create_customer(@customer_1000)
-
-    assert_equal 200, customer[:status].to_i, customer.inspect
-    assert_equal @customer_1000[:name], customer[:json][:name]
-    assert_equal @customer_1000[:pay_date_if_holiday], customer[:json][:pay_date_if_holiday]
-    assert_equal @customer_1000[:receive_date_if_holiday], customer[:json][:receive_date_if_holiday]
-  ensure
-    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
-  end
-
-  def test_create_sale
-    sale = @api.create_sale(@sale_201608)
-
-    assert_equal 200, sale[:status].to_i, sale.inspect
-    assert_equal @sale_201608[:dept_code], sale[:json][:dept_code]
-    assert_equal @sale_201608[:data_partner][:id_code], sale[:json][:data_partner][:id_code]
-  ensure
-    @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
-  end
-
   def test_find_or_create_sale
-    sale1 = @api.find_or_create_sale(@sale_201608)
+    sale1 = @api.find_or_create_sale(@sale_201608.merge({key: {id_code: '1', partner_code: 'Example' }}))
 
     assert_equal 200, sale1[:status].to_i, sale1.inspect
     assert_equal @sale_201608[:dept_code], sale1[:json][:dept_code]
@@ -319,7 +320,7 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_create_purchase
-    purchase = @api.create(@purchase_201608)
+    purchase = @api.create_purchase(@purchase_201608)
     assert_equal 200, purchase[:status].to_i, purchase.inspect
     assert_equal @purchase_201608[:dept_code], purchase[:json][:dept_code]
     assert_equal @purchase_201608[:data_partner][:id_code], purchase[:json][:data_partner][:id_code]
@@ -444,25 +445,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_petty_cash_reason_master(created_pcrm[:json][:id]) if created_pcrm[:json][:id]
   end
 
-  def test_update_sale
-    sale = @api.create_sale(@sale_201608)
-    options = {
-      id: sale[:json][:id],
-      price_including_tax: 25_000,
-      memo: 'Updated memo',
-      data_partner: { id_code: '100' }
-    }
-
-    updated_sale = @api.update_sale(options)
-    assert_equal 200, updated_sale[:status].to_i, updated_sale[:json]
-    assert_equal options[:id], updated_sale[:json][:id]
-    assert_equal options[:memo], updated_sale[:json][:memo]
-    assert_equal options[:price_including_tax], updated_sale[:json][:price_including_tax]
-    assert_equal options[:data_partner][:id_code], updated_sale[:json][:data_partner][:id_code]
-  ensure
-    @api.destroy_sale("AP#{sale[:json][:id]}") if sale[:json][:id]
-  end
-
   def test_update_purchase
     purchase = @api.create_purchase(@purchase_201608)
     assert purchase[:json][:id], purchase
@@ -481,25 +463,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:data_partner][:id_code], updated_purchase[:json][:data_partner][:id_code]
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
-  end
-
-  def test_update_customer
-    customer = @api.create_customer(@customer_1000)
-    options = {
-      id: customer[:json][:id],
-      name: 'New Customer Name',
-      pay_date_if_holiday: 0,
-      receive_date_if_holiday: 0
-    }
-
-    updated_customer = @api.update_customer(options)
-    assert_equal 200, updated_customer[:status].to_i
-    assert_equal customer[:json][:id], updated_customer[:json][:id]
-    assert_equal options[:name], updated_customer[:json][:name]
-    assert_equal options[:pay_date_if_holiday], updated_customer[:json][:pay_date_if_holiday]
-    assert_equal options[:receive_date_if_holiday], updated_customer[:json][:receive_date_if_holiday]
-  ensure
-    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
 
   def test_update_staff_data
@@ -668,26 +631,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal purchase[:json][:id], get_purchase[:json][:id]
   ensure
     @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
-  end
-
-  def test_show_customer
-    customer = @api.create_customer(@customer_1000)
-    get_customer = @api.show_customer(customer[:json][:id])
-    assert_equal 200, get_customer[:status].to_i, get_customer.inspect
-    assert_equal customer[:json][:id], get_customer[:json][:id]
-  ensure
-    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
-  end
-
-  def test_show_customer_by_code
-    customer = @api.create_customer(@customer_1000)
-
-    get_customer = @api.show_customer_by_code(@customer_1000[:code])
-    assert_equal 200, get_customer[:status].to_i, get_customer.inspect
-    assert_equal customer[:json][:id], get_customer[:json][:id]
-    assert_equal customer[:json][:code], get_customer[:json][:code]
-  ensure
-    @api.destroy_customer(customer[:json][:id]) if customer[:json][:id]
   end
 
   def test_show_staff
@@ -903,26 +846,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
   end
 
-  def test_list_sales
-    august_sale_a = @api.create_sale(@sale_201608)
-    august_sale_b = @api.create_sale(@sale_201608)
-    september_sale = @api.create_sale(@sale_201609)
-
-    august_sale_a_id = august_sale_a[:json][:id]
-    august_sale_b_id = august_sale_b[:json][:id]
-    september_sale_id = september_sale[:json][:id]
-
-    sales_list = @api.list_sales(2016, 8)
-    assert_equal 200, sales_list[:status].to_i, sales_list.inspect
-    assert(sales_list[:json].any? { |x| x[:id] == august_sale_a_id })
-    assert(sales_list[:json].any? { |x| x[:id] == august_sale_b_id })
-    assert(sales_list[:json].none? { |x| x[:id] == september_sale_id })
-  ensure
-    @api.destroy_sale("AR#{august_sale_a[:json][:id]}") if august_sale_a[:json][:id]
-    @api.destroy_sale("AR#{august_sale_b[:json][:id]}") if august_sale_b[:json][:id]
-    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
-  end
-
   def test_list_bank_reason_masters
     created_bank_reason_master_1 = @api.create_bank_reason_masters(@bank_reason_master_1)
     created_bank_reason_master_2 = @api.create_bank_reason_masters(@bank_reason_master_2)
@@ -1038,17 +961,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
   end
 
-  def test_list_customers
-    customer_1000 = @api.create_customer(@customer_1000)
-
-    customer_1000_id = customer_1000[:json][:id]
-
-    customer_list = @api.list_customers
-    assert_equal 200, customer_list[:status].to_i, customer_list.inspect
-    assert(customer_list[:json].any? { |x| x[:id] == customer_1000_id })
-  ensure
-    @api.destroy_customer(customer_1000[:json][:id]) if customer_1000[:json][:id]
-  end
 
   def test_list_staff
     staff_list = @api.list_staff

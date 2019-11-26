@@ -1,9 +1,7 @@
 require "json"
 require 'webmock'
+require 'active_support'
 include WebMock::API
-
-WebMock.enable!
-WebMock.disable_net_connect!
 
 class StubRegister
 
@@ -23,6 +21,7 @@ class StubRegister
     stub_list(resource)
     stub_show(resource)
     stub_update(resource)
+    stub_find_or_create(resource)
   end
 
   private
@@ -36,7 +35,7 @@ class StubRegister
   def add_attributes_to_response(record, index, resource)
     new_attributs = {}
     new_params = find_and_load_json(resource, "create" ,"response")
-    new_attributs.merge!(new_params) if new_params
+    new_attributs.deep_merge!(new_params) if new_params
 
     new_attributs.merge!({
       :id => index.to_s,
@@ -45,7 +44,24 @@ class StubRegister
     })
 
     record["tag_list"] = record["tag_list"].split(",") if record["tag_list"]&.kind_of?(String)
-    record.merge(new_attributs)
+    record.deep_merge(new_attributs)
+  end
+
+  def stub_find_or_create(resource)
+    # This stub support ar_receipts, ap_payments
+    if find_and_load_json(resource, "find_or_create")
+      expected_param = find_and_load_json(resource, "find_or_create")
+      stub_request(:post, @root_url + "/" + resource + "/find_or_create")
+      .with(
+        headers: @common_request_headers,
+        body: expected_param.merge({"format" => "json"})
+      )
+      .to_return(
+        status: 200,
+        body: add_attributes_to_response(expected_param, 99, resource).to_json,
+      )
+      @created_records << add_attributes_to_response(expected_param, 99, resource)
+    end
   end
 
   def stub_update(resource)
@@ -77,7 +93,7 @@ class StubRegister
     end
     # Serch by Code (support customer_master_show)
     @created_records.each do |record|
-      stub_request(:get, @root_url + "/" + resource + "/show/")
+      stub_request(:get, @root_url + "/" + resource + "/show")
       .with(
         headers: @common_request_headers,
         body: {
@@ -104,8 +120,17 @@ class StubRegister
         status: 200,
         body: @created_records.to_json
       )
+    elsif resource == "ar"
+      stub_request(:get, @root_url + "/" + resource + "/list/2016/8")
+      .with(
+        headers: @common_request_headers
+      )
+      .to_return(
+        status: 200,
+        body: @created_records.select{|record| record["realization_timestamp"] =~ /2016-08-\d{2}/}.to_json
+      )
     else
-      stub_request(:get, @root_url + "/" + resource + "/list/")
+      stub_request(:get, @root_url + "/" + resource + "/list")
       .with(
         headers: @common_request_headers
       )
@@ -131,7 +156,7 @@ class StubRegister
   def stub_create(resource)
     expected_params = *find_and_load_json(resource, "create")
     expected_params.each_with_index do |record, index|
-      stub_request(:post, @root_url + "/" + resource + "/create/")
+      stub_request(:post, @root_url + "/" + resource + "/create")
       .with(
         headers: @common_request_headers,
         body: record.merge({"format" => "json"})

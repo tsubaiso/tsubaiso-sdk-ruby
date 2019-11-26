@@ -1,0 +1,9 @@
+{
+  "id": 0,
+  "price_including_tax": 25000,
+  "memo": "Updated memo",
+  "data_partner": {
+    "id_code": "100"
+  },
+  "format" : "json"
+}

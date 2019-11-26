@@ -1,6 +1,5 @@
 require 'minitest/autorun'
 require_relative './common_setup_teardown.rb'
-require_relative './monkey_webmock.rb'
 
 class CustomerTest < Minitest::Test
   include CommonSetupTeardown
@@ -62,4 +61,11 @@ class CustomerTest < Minitest::Test
     assert_equal customer[:json][:code], get_customer[:json][:code]
   end
 
+  def test_list_customers
+    customer_1000 = @api.create_customer(@customer_1000)
+    customer_1000_id = customer_1000[:json][:id]
+    customer_list = @api.list_customers
+    assert_equal 200, customer_list[:status].to_i, customer_list.inspect
+    assert(customer_list[:json].any? { |x| x[:id] == customer_1000_id })
+  end
 end
