@@ -1,0 +1,54 @@
+[
+  {
+    "price_including_tax": 5400,
+    "accrual_timestamp": "2017-02-28",
+    "customer_master_code": "105",
+    "dept_code": null,
+    "reason_master_code": "BUYING_IN",
+    "dc": "c",
+    "memo": "",
+    "tax_code": 18,
+    "port_type": 1,
+    "tag_list": null,
+    "data_partner": {
+      "link_url": "www.example.com/9",
+      "id_code": "9"
+    },
+    "format": "json"
+  },
+  {
+    "price_including_tax": 5400,
+    "accrual_timestamp": "2016-08-01",
+    "customer_master_code": "102",
+    "dept_code": "SETSURITSU",
+    "reason_master_code": "BUYING_IN",
+    "dc": "c",
+    "memo": "",
+    "tax_code": 1007,
+    "port_type": 1,
+    "tag_list": null,
+    "data_partner": {
+      "link_url": "www.example.com/3",
+      "id_code": "3",
+      "partner_code": "Example"
+    },
+    "format": "json"
+  },
+  {
+    "price_including_tax": 5400,
+    "accrual_timestamp": "2016-09-01",
+    "customer_master_code": "102",
+    "dept_code": "SETSURITSU",
+    "reason_master_code": "BUYING_IN",
+    "dc": "c",
+    "memo": "",
+    "tax_code": 1007,
+    "port_type": 1,
+    "tag_list": null,
+    "data_partner": {
+      "link_url": "www.example.com/4",
+      "id_code": "4"
+    },
+    "format": "json"
+  }
+]

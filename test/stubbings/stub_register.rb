@@ -129,6 +129,15 @@ class StubRegister
         status: 200,
         body: @created_records.select{|record| record["realization_timestamp"] =~ /2016-08-\d{2}/}.to_json
       )
+    elsif resource == "ap_payments"
+      stub_request(:get, @root_url + "/" + resource + "/list/2016/8")
+      .with(
+        headers: @common_request_headers
+      )
+      .to_return(
+        status: 200,
+        body: @created_records.select{|record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}.to_json
+      )
     else
       stub_request(:get, @root_url + "/" + resource + "/list")
       .with(

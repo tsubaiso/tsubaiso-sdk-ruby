@@ -330,16 +330,17 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_find_or_create_purchase
-    purchase1 = @api.find_or_create_purchase(@purchase_201608)
+    key_options = { key:
+    { id_code: @purchase_201608[:data_partner][:id_code],
+      partner_code: @purchase_201608[:data_partner][:partner_code] } }
+
+    purchase1 = @api.find_or_create_purchase(@purchase_201608.merge(key_options))
 
     assert_equal 200, purchase1[:status].to_i, purchase1.inspect
     assert_equal @purchase_201608[:dept_code], purchase1[:json][:dept_code]
     assert_equal @purchase_201608[:data_partner][:id_code], purchase1[:json][:data_partner][:id_code]
     assert_equal @purchase_201608[:data_partner][:partner_code], purchase1[:json][:data_partner][:partner_code]
 
-    key_options = { key:
-                      { id_code: @purchase_201608[:data_partner][:id_code],
-                        partner_code: @purchase_201608[:data_partner][:partner_code] } }
     purchase2 = @api.find_or_create_purchase(@purchase_201608.merge(key_options))
     assert_equal 200, purchase2[:status].to_i, purchase2.inspect
     assert_equal purchase2[:json][:id], purchase1[:json][:id]
@@ -449,7 +450,7 @@ class TsubaisoSDKTest < Minitest::Test
     purchase = @api.create_purchase(@purchase_201608)
     assert purchase[:json][:id], purchase
     options = {
-      id: purchase[:json][:id],
+      id: purchase[:json][:id].to_i,
       price_including_tax: 50_000,
       memo: 'Updated memo',
       data_partner: { id_code: '300' }
@@ -906,22 +907,35 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_list_purchases
-    august_purchase_a = @api.create_purchase(@purchase_201608)
-    august_purchase_b = @api.create_purchase(@purchase_201608)
+    # august_purchase_a = @api.create_purchase(@purchase_201608)
+    # august_purchase_b = @api.create_purchase(@purchase_201608)
+    # september_purchase = @api.create_purchase(@purchase_201609)
+
+    # august_purchase_a_id = august_purchase_a[:json][:id]
+    # august_purchase_b_id = august_purchase_b[:json][:id]
+    # september_purchase_id = september_purchase[:json][:id]
+
+    # purchase_list = @api.list_purchases(2016, 8)
+    # assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
+    # assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_a_id })
+    # assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_b_id })
+    # assert(purchase_list[:json].none? { |x| x[:id] == september_purchase_id })
+    feb_purchase = @api.create_purchase(@purchase_201702)
+    august_purchase = @api.create_purchase(@purchase_201608)
     september_purchase = @api.create_purchase(@purchase_201609)
 
-    august_purchase_a_id = august_purchase_a[:json][:id]
-    august_purchase_b_id = august_purchase_b[:json][:id]
+    feb_purchase_id = feb_purchase[:json][:id]
+    august_purchase_id = august_purchase[:json][:id]
     september_purchase_id = september_purchase[:json][:id]
 
     purchase_list = @api.list_purchases(2016, 8)
     assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
-    assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_a_id })
-    assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_b_id })
+    assert(purchase_list[:json].none? { |x| x[:id] == feb_purchase_id })
+    assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_id })
     assert(purchase_list[:json].none? { |x| x[:id] == september_purchase_id })
   ensure
-    @api.destroy_purchase("AP#{august_purchase_a[:json][:id]}") if august_purchase_a[:json][:id]
-    @api.destroy_purchase("AP#{august_purchase_b[:json][:id]}") if august_purchase_b[:json][:id]
+    @api.destroy_purchase("AP#{feb_purchase[:json][:id]}") if feb_purchase[:json][:id]
+    @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
     @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
   end
 

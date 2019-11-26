@@ -2,6 +2,9 @@ class TsubaisoSDK
   require 'net/http'
   require 'json'
 
+  require_relative './debug_patch.rb'
+  prepend ApiDebug
+
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
     @access_token = options[:access_token] || "Fake_Token"
@@ -187,11 +190,9 @@ class TsubaisoSDK
 
   def list_purchases(year, month)
     params = {
-      'year' => year,
-      'month' => month,
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/ap_payments/list')
+    uri = URI.parse(@base_url + "/ap_payments/list/#{year.to_i}/#{month.to_i}")
     api_request(uri, 'GET', params)
   end
 

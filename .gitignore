@@ -1,5 +1,4 @@
 *~
 *.gem
 /log
-monkey_webmock.rb
 debug_patch.rb
