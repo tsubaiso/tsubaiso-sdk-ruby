@@ -8,102 +8,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
 
     # data
-    @sale_201608 = {
-      price_including_tax: 10_800,
-      realization_timestamp: '2016-08-01',
-      customer_master_code: '101',
-      dept_code: 'SETSURITSU',
-      reason_master_code: 'SALES',
-      dc: 'd',
-      memo: '',
-      tax_code: 1007,
-      scheduled_memo: 'This is a scheduled memo.',
-      scheduled_receive_timestamp: '2016-09-25',
-      data_partner: { link_url: 'www.example.com/1', id_code: '1', partner_code: 'Example' }
-    }
-
-    @sale_201609 = {
-      price_including_tax: 10_800,
-      realization_timestamp: '2016-09-01',
-      customer_master_code: '101',
-      dept_code: 'SETSURITSU',
-      reason_master_code: 'SALES',
-      dc: 'd',
-      memo: '',
-      tax_code: 1007,
-      scheduled_memo: 'This is a scheduled memo.',
-      scheduled_receive_timestamp: '2016-09-25',
-      data_partner: { link_url: 'www.example.com/2', id_code: '2' }
-    }
-
-    @sale_201702 = {
-      price_including_tax: 10_800,
-      realization_timestamp: '2017-02-28',
-      customer_master_code: '105',
-      reason_master_code: 'SALES',
-      dc: 'd',
-      memo: '',
-      tax_code: 18,
-      scheduled_memo: 'This is a scheduled memo.',
-      scheduled_receive_timestamp: '2017-03-25',
-      data_partner: { link_url: 'www.example.com/8', id_code: '8' }
-    }
-
-    @purchase_201608 = {
-      price_including_tax: 5400,
-      year: 2016,
-      month: 8,
-      accrual_timestamp: '2016-08-01',
-      customer_master_code: '102',
-      dept_code: 'SETSURITSU',
-      reason_master_code: 'BUYING_IN',
-      dc: 'c',
-      memo: '',
-      tax_code: 1007,
-      port_type: 1,
-      data_partner: { link_url: 'www.example.com/3', id_code: '3', partner_code: 'Example' }
-    }
-
-    @purchase_201609 = {
-      price_including_tax: 5400,
-      year: 2016,
-      month: 9,
-      accrual_timestamp: '2016-09-01',
-      customer_master_code: '102',
-      dept_code: 'SETSURITSU',
-      reason_master_code: 'BUYING_IN',
-      dc: 'c',
-      memo: '',
-      tax_code: 1007,
-      port_type: 1,
-      data_partner: { link_url: 'www.example.com/4', id_code: '4' }
-    }
-
-    @purchase_201702 = {
-      price_including_tax: 5400,
-      year: 2017,
-      month: 2,
-      accrual_timestamp: '2017-02-28',
-      customer_master_code: '105',
-      reason_master_code: 'BUYING_IN',
-      dc: 'c',
-      memo: '',
-      tax_code: 18,
-      port_type: 1,
-      data_partner: { link_url: 'www.example.com/9', id_code: '9' }
-    }
-
-    @customer_1000 = {
-      name: 'テスト株式会社',
-      name_kana: 'テストカブシキガイシャ',
-      code: '10000',
-      tax_type_for_remittance_charge: '3',
-      used_in_ar: 1,
-      used_in_ap: 1,
-      is_valid: 1,
-      pay_date_if_holiday: 1,
-      receive_date_if_holiday: 1
-    }
 
     @staff_data_1 = {
       code: 'QUALIFICATION',
@@ -225,35 +129,6 @@ class TsubaisoSDKTest < Minitest::Test
       sort_number: '0'
     }
 
-    @bank_reason_master_1 = {
-      sort_number: 1,
-      reason_code: "create_from_API",
-      reason_name: "New Bank Reason Created From API",
-      dc: "d",
-      is_valid: 0,
-      memo: "This reason has been created form API",
-      account_code: 1
-    }
-
-    @bank_reason_master_2 = {
-      sort_number: 1,
-      reason_code: "create_from_API2",
-      reason_name: "New Bank Reason Created From API2",
-      dc: "c",
-      is_valid: 0,
-      memo: "This reason has been created form API2",
-      account_code: 1
-    }
-
-    @bank_reason_master_3 = {
-      sort_number: 1,
-      reason_code: "create_from_API3",
-      reason_name: "New Bank Reason Created From API3",
-      dc: "d",
-      is_valid: 0,
-      memo: "This reason has been created form API3",
-      account_code: 1
-    }
   end
 
   def test_failed_request
@@ -262,28 +137,6 @@ class TsubaisoSDKTest < Minitest::Test
 
     assert_equal 401, sale[:status].to_i, sale.inspect
     assert_equal 'Bad credentials', sale[:json][:error]
-  end
-
-  def test_list_sales
-    august_sale_a = @api.create_sale(@sale_201608)
-    feb_sale = @api.create_sale(@sale_201702)
-    september_sale = @api.create_sale(@sale_201609)
-
-    august_sale_a_id = august_sale_a[:json][:id]
-    feb_sale_id = feb_sale[:json][:id]
-    september_sale_id = september_sale[:json][:id]
-
-    sales_list = @api.list_sales(2016, 8)
-    assert_equal 200, sales_list[:status].to_i, sales_list.inspect
-    assert sales_list[:json].size == 1
-
-    assert(sales_list[:json].any? { |x| x[:id] == august_sale_a_id })
-    assert(sales_list[:json].none? { |x| x[:id] == feb_sale_id })
-    assert(sales_list[:json].none? { |x| x[:id] == september_sale_id })
-  ensure
-    @api.destroy_sale("AR#{august_sale_a[:json][:id]}") if august_sale_a[:json][:id]
-    @api.destroy_sale("AR#{feb_sale[:json][:id]}") if feb_sale[:json][:id]
-    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
   end
 
   def test_index_api_history
@@ -301,52 +154,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, index[:status].to_i, index.inspect
     new_api_count = index[:json].first[:cnt]
     assert_equal initial_api_count + 1, new_api_count
-  end
-
-  def test_find_or_create_sale
-    sale1 = @api.find_or_create_sale(@sale_201608.merge({key: {id_code: '1', partner_code: 'Example' }}))
-
-    assert_equal 200, sale1[:status].to_i, sale1.inspect
-    assert_equal @sale_201608[:dept_code], sale1[:json][:dept_code]
-    assert_equal @sale_201608[:data_partner][:id_code], sale1[:json][:data_partner][:id_code]
-    assert_equal @sale_201608[:data_partner][:partner_code], sale1[:json][:data_partner][:partner_code]
-
-    key_options = { key: { id_code: sale1[:json][:data_partner][:id_code], partner_code: sale1[:json][:data_partner][:partner_code] } }
-    sale2 = @api.find_or_create_sale(@sale_201608.merge(key_options))
-    assert_equal sale2[:json][:id], sale1[:json][:id]
-    assert_equal sale2[:json][:data_partner][:id_code], sale1[:json][:data_partner][:id_code]
-  ensure
-    @api.destroy_sale("AR#{sale1[:json][:id]}") if sale1[:json][:id]
-  end
-
-  def test_create_purchase
-    purchase = @api.create_purchase(@purchase_201608)
-    assert_equal 200, purchase[:status].to_i, purchase.inspect
-    assert_equal @purchase_201608[:dept_code], purchase[:json][:dept_code]
-    assert_equal @purchase_201608[:data_partner][:id_code], purchase[:json][:data_partner][:id_code]
-    assert_equal @purchase_201608[:data_partner][:partner_code], purchase[:json][:data_partner][:partner_code]
-  ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
-  end
-
-  def test_find_or_create_purchase
-    key_options = { key:
-    { id_code: @purchase_201608[:data_partner][:id_code],
-      partner_code: @purchase_201608[:data_partner][:partner_code] } }
-
-    purchase1 = @api.find_or_create_purchase(@purchase_201608.merge(key_options))
-
-    assert_equal 200, purchase1[:status].to_i, purchase1.inspect
-    assert_equal @purchase_201608[:dept_code], purchase1[:json][:dept_code]
-    assert_equal @purchase_201608[:data_partner][:id_code], purchase1[:json][:data_partner][:id_code]
-    assert_equal @purchase_201608[:data_partner][:partner_code], purchase1[:json][:data_partner][:partner_code]
-
-    purchase2 = @api.find_or_create_purchase(@purchase_201608.merge(key_options))
-    assert_equal 200, purchase2[:status].to_i, purchase2.inspect
-    assert_equal purchase2[:json][:id], purchase1[:json][:id]
-    assert_equal purchase2[:json][:data_partner][:id_code], purchase1[:json][:data_partner][:id_code]
-  ensure
-    @api.destroy_purchase("AP#{purchase1[:json][:id]}") if purchase1[:json][:id]
   end
 
   def test_create_staff_data
@@ -444,26 +251,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert(masters_before_count != masters_after_count)
   ensure
     @api.destroy_petty_cash_reason_master(created_pcrm[:json][:id]) if created_pcrm[:json][:id]
-  end
-
-  def test_update_purchase
-    purchase = @api.create_purchase(@purchase_201608)
-    assert purchase[:json][:id], purchase
-    options = {
-      id: purchase[:json][:id].to_i,
-      price_including_tax: 50_000,
-      memo: 'Updated memo',
-      data_partner: { id_code: '300' }
-    }
-
-    updated_purchase = @api.update_purchase(options)
-    assert_equal 200, updated_purchase[:status].to_i, updated_purchase.inspect
-    assert_equal options[:id], updated_purchase[:json][:id]
-    assert_equal options[:memo], updated_purchase[:json][:memo]
-    assert_equal options[:price_including_tax], updated_purchase[:json][:price_including_tax]
-    assert_equal options[:data_partner][:id_code], updated_purchase[:json][:data_partner][:id_code]
-  ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
   end
 
   def test_update_staff_data
@@ -575,29 +362,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
-  def test_update_bank_reason_masters
-    created_bank_reason_master = @api.create_bank_reason_masters(@bank_reason_master_1)
-    assert_equal 200, created_bank_reason_master[:status].to_i
-
-    updating_options = {
-      id: created_bank_reason_master[:json][:id],
-      sort_number: 2,
-      reason_name: "updated reason name",
-      memo: "This reason has been updated from API."
-    }
-
-    updated_bank_reason_master = @api.update_bank_reason_masters(updating_options)
-    assert_equal 200, updated_bank_reason_master[:status].to_i
-    assert_equal updating_options[:sort_number], updated_bank_reason_master[:json][:sort_number]
-    assert_equal updating_options[:reason_name], updated_bank_reason_master[:json][:reason_name]
-    assert_equal updating_options[:memo], updated_bank_reason_master[:json][:memo]
-
-    assert_equal @bank_reason_master_1[:reason_code], updated_bank_reason_master[:json][:reason_code]
-    assert_equal @bank_reason_master_1[:dc], updated_bank_reason_master[:json][:dc]
-  ensure
-     @api.destroy_bank_reason_masters(created_bank_reason_master[:json][:id]) if created_bank_reason_master[:json][:id]
-  end
-
   def test_update_petty_cash_reason_master
     old_petty_cash_reason_master = @api.create_petty_cash_reason_master(@petty_cash_reason_master_1)
     options = {
@@ -612,26 +376,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal old_petty_cash_reason_master[:json][:reason_code], updated_petty_cash_reason_master[:json][:reason_code]
   ensure
     @api.destroy_petty_cash_reason_master(updated_petty_cash_reason_master[:json][:id]) if updated_petty_cash_reason_master[:json][:id]
-  end
-
-  def test_show_sale
-    sale = @api.create_sale(@sale_201608)
-
-    get_sale = @api.show_sale("AR#{sale[:json][:id]}")
-    assert_equal 200, get_sale[:status].to_i, get_sale.inspect
-    assert_equal sale[:json][:price_including_tax], get_sale[:json][:price_including_tax]
-  ensure
-    @api.destroy_sale("AR#{sale[:json][:id]}") if sale[:json][:id]
-  end
-
-  def test_show_purchase
-    purchase = @api.create_purchase(@purchase_201608)
-
-    get_purchase = @api.show_purchase("AP#{purchase[:json][:id]}")
-    assert_equal 200, get_purchase[:status].to_i, get_purchase.inspect
-    assert_equal purchase[:json][:id], get_purchase[:json][:id]
-  ensure
-    @api.destroy_purchase("AP#{purchase[:json][:id]}") if purchase[:json][:id]
   end
 
   def test_show_staff
@@ -820,16 +564,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal first_petty_cash_reason_master[:reason_name], petty_cash_reason_master[:json][:reason_name]
   end
 
-  def test_show_bank_reason_master
-    created_bank_reason_master = @api.create_bank_reason_masters(@bank_reason_master_1)
-    shown_bank_reason_master = @api.show_bank_reason_master(created_bank_reason_master[:json][:id])
-    assert_equal @bank_reason_master_1[:sort_number], shown_bank_reason_master[:json][:sort_number]
-    assert_equal @bank_reason_master_1[:reason_code], shown_bank_reason_master[:json][:reason_code]
-    assert_equal @bank_reason_master_1[:reason_name], shown_bank_reason_master[:json][:reason_name]
-  ensure
-    @api.destroy_bank_reason_masters(created_bank_reason_master[:json][:id]) if created_bank_reason_master[:json][:id]
-  end
-
   def test_show_corporate_master
     # With HatagayaTest CorporateMaster ID Only
     shown_corporate_master = @api.show_corporate_master(2099)
@@ -846,31 +580,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 90020, shown_corporate_master[:json][:corporate_code]
     assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
   end
-
-  def test_list_bank_reason_masters
-    created_bank_reason_master_1 = @api.create_bank_reason_masters(@bank_reason_master_1)
-    created_bank_reason_master_2 = @api.create_bank_reason_masters(@bank_reason_master_2)
-    created_bank_reason_master_3 = @api.create_bank_reason_masters(@bank_reason_master_3)
-
-    assert_equal 200, created_bank_reason_master_1[:status].to_i
-    assert_equal 200, created_bank_reason_master_2[:status].to_i
-    assert_equal 200, created_bank_reason_master_3[:status].to_i
-
-    created_master_id_1 = created_bank_reason_master_1[:json][:id]
-    created_master_id_2 = created_bank_reason_master_2[:json][:id]
-    created_master_id_3 = created_bank_reason_master_3[:json][:id]
-
-    bank_reason_master_list = @api.list_bank_reason_masters
-    assert_equal 200, bank_reason_master_list[:status].to_i, bank_reason_master_list.inspect
-    assert(bank_reason_master_list[:json].any? { |x| x[:id] == created_master_id_1 })
-    assert(bank_reason_master_list[:json].any? { |x| x[:id] == created_master_id_2 })
-    assert(bank_reason_master_list[:json].any? { |x| x[:id] == created_master_id_3 })
-  ensure
-    @api.destroy_bank_reason_masters(created_bank_reason_master_1[:json][:id]) if created_bank_reason_master_1[:json][:id]
-    @api.destroy_bank_reason_masters(created_bank_reason_master_2[:json][:id]) if created_bank_reason_master_2[:json][:id]
-    @api.destroy_bank_reason_masters(created_bank_reason_master_3[:json][:id]) if created_bank_reason_master_3[:json][:id]
-  end
-
 
   def test_list_sales_and_account_balances
     realization_timestamp = Time.parse(@sale_201702[:realization_timestamp])
@@ -904,39 +613,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert(balance_list[:json].all? { |x| x[:customer_master_code] == filtered_cm[:code] && x[:ar_segment] == filtered_cm[:used_in_ar] })
   ensure
     @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
-  end
-
-  def test_list_purchases
-    # august_purchase_a = @api.create_purchase(@purchase_201608)
-    # august_purchase_b = @api.create_purchase(@purchase_201608)
-    # september_purchase = @api.create_purchase(@purchase_201609)
-
-    # august_purchase_a_id = august_purchase_a[:json][:id]
-    # august_purchase_b_id = august_purchase_b[:json][:id]
-    # september_purchase_id = september_purchase[:json][:id]
-
-    # purchase_list = @api.list_purchases(2016, 8)
-    # assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
-    # assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_a_id })
-    # assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_b_id })
-    # assert(purchase_list[:json].none? { |x| x[:id] == september_purchase_id })
-    feb_purchase = @api.create_purchase(@purchase_201702)
-    august_purchase = @api.create_purchase(@purchase_201608)
-    september_purchase = @api.create_purchase(@purchase_201609)
-
-    feb_purchase_id = feb_purchase[:json][:id]
-    august_purchase_id = august_purchase[:json][:id]
-    september_purchase_id = september_purchase[:json][:id]
-
-    purchase_list = @api.list_purchases(2016, 8)
-    assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
-    assert(purchase_list[:json].none? { |x| x[:id] == feb_purchase_id })
-    assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_id })
-    assert(purchase_list[:json].none? { |x| x[:id] == september_purchase_id })
-  ensure
-    @api.destroy_purchase("AP#{feb_purchase[:json][:id]}") if feb_purchase[:json][:id]
-    @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
-    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
   end
 
   def test_list_purchases_and_account_balances

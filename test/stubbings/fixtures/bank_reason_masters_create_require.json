@@ -1,0 +1,32 @@
+[
+  {
+    "sort_number": 1,
+    "reason_code": "create_from_API",
+    "reason_name": "New Bank Reason Created From API",
+    "dc": "d",
+    "is_valid": 0,
+    "memo": "This reason has been created form API",
+    "account_code": 1,
+    "format": "json"
+  },
+  {
+    "sort_number": 1,
+    "reason_code": "create_from_API2",
+    "reason_name": "New Bank Reason Created From API2",
+    "dc": "c",
+    "is_valid": 0,
+    "memo": "This reason has been created form API2",
+    "account_code": 1,
+    "format": "json"
+  },
+  {
+    "sort_number": 1,
+    "reason_code": "create_from_API3",
+    "reason_name": "New Bank Reason Created From API3",
+    "dc": "d",
+    "is_valid": 0,
+    "memo": "This reason has been created form API3",
+    "account_code": 1,
+    "format": "json"
+  }
+]

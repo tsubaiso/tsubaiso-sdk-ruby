@@ -347,7 +347,7 @@ class TsubaisoSDK
 
   def list_bank_reason_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/bank_reason_masters/list/')
+    uri = URI.parse(@base_url + '/bank_reason_masters/list')
     api_request(uri, 'GET', params)
   end
 
