@@ -1,9 +1,8 @@
 class TsubaisoSDK
   require 'net/http'
   require 'json'
-
-  require_relative './debug_patch.rb'
-  prepend ApiDebug
+  # require_relative './debug_patch.rb'
+  # prepend ApiDebug
 
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
@@ -360,7 +359,7 @@ class TsubaisoSDK
 
   def list_petty_cash_reason_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/petty_cash_reason_masters/list/')
+    uri = URI.parse(@base_url + '/petty_cash_reason_masters/list')
     api_request(uri, 'GET', params)
   end
 
@@ -829,7 +828,7 @@ class TsubaisoSDK
       'port_type' => options[:port_type],
       'sort_number' => options[:sort_number]
     }
-    uri = URI.parse(@base_url + '/petty_cash_reason_masters/create/')
+    uri = URI.parse(@base_url + '/petty_cash_reason_masters/create')
     api_request(uri, 'POST', params)
   end
 
@@ -1049,17 +1048,21 @@ class TsubaisoSDK
   end
 
   def update_petty_cash_reason_master(petty_cash_reason_master_id, options)
-    params = {
-      'format' => 'json',
-      'reason_code' => options[:reason_code],
-      'reason_name' => options[:reason_name],
-      'dc' => options[:dc],
-      'account_code' => options[:account_code],
-      'is_valid' => options[:is_valid],
-      'memo' => options[:memo],
-      'port_type' => options[:port_type],
-      'sort_number' => options[:sort_number]
-    }
+    params = {}
+    candidate_keys = [
+      :reason_code,
+      :reason_name,
+      :dc,
+      :account_code,
+      :is_valid,
+      :memo,
+      :port_type,
+      :sort_number
+    ]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/petty_cash_reason_masters/update/#{petty_cash_reason_master_id}")
     api_request(uri, 'POST', params)
   end
