@@ -91,6 +91,25 @@ class StubRegister
         body: record.to_json
       )
     end
+
+    # Serch by code and staff_id and code (support staff_data)
+    @created_records.each do |record|
+      stub_request(:get, @root_url + "/" + resource + "/show")
+      .with(
+        headers: @common_request_headers,
+        body: {
+          "format" => "json",
+          "staff_id" => record["staff_id"],
+          "code" => record["code"],
+          "time" => record["start_timestamp"]
+        }
+      )
+      .to_return(
+        status: 200,
+        body: record.to_json
+      )
+    end
+
     # Serch by Code (support customer_master_show)
     @created_records.each do |record|
       stub_request(:get, @root_url + "/" + resource + "/show")
@@ -137,6 +156,16 @@ class StubRegister
       .to_return(
         status: 200,
         body: @created_records.select{|record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}.to_json
+      )
+    elsif resource == "staff_data"
+      stub_request(:get, @root_url + "/" + resource + "/list")
+      .with(
+        headers: @common_request_headers,
+        body: { "format" => "json", "staff_id" => 300 }
+      )
+      .to_return(
+        status: 200,
+        body: @created_records.to_json
       )
     else
       stub_request(:get, @root_url + "/" + resource + "/list")

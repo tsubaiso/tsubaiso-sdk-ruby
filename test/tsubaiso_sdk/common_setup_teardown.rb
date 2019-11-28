@@ -19,4 +19,5 @@ module CommonSetupTeardown
   def teardown
     WebMock.disable!
   end
+
 end

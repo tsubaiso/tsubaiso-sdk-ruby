@@ -1,0 +1,9 @@
+[{
+  "staff_id": 300,
+  "code": "QUALIFICATION",
+  "memo": "First memo",
+  "value": "TOEIC",
+  "start_timestamp": "2016-01-01",
+  "format": "json",
+  "no_finish_timestamp": "1"
+}]

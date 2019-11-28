@@ -1,8 +1,8 @@
 class TsubaisoSDK
   require 'net/http'
   require 'json'
-  # require_relative './debug_patch.rb'
-  # prepend ApiDebug
+  require_relative './debug_patch.rb'
+  prepend ApiDebug
 
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
@@ -424,12 +424,12 @@ class TsubaisoSDK
         'time' => options[:time],
         'format' => 'json'
       }
-      id = options[:id]
+      # id = options[:id]
     else
       params = { 'format' => 'json' }
-      id = options
+      id = "/" + options.to_s
     end
-    uri = URI.parse(@base_url + "/staff_data/show/#{id}")
+    uri = URI.parse(@base_url + "/staff_data/show#{id}")
     api_request(uri, 'GET', params)
   end
 
@@ -970,7 +970,7 @@ class TsubaisoSDK
       params[:no_finish_timestamp] = options[:no_finish_timestamp]
     end
 
-    uri = URI.parse(@base_url + "/staff_data/update/#{options[:id]}")
+    uri = URI.parse(@base_url + "/staff_data/update/#{options[:staff_id]}")
     api_request(uri, 'POST', params)
   end
 
