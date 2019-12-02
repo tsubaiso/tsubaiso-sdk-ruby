@@ -1,7 +1,7 @@
   {
     "bank_account_master_id" : "1",
-    "start_timestamp" : "2019/06/30 00:00:00 +0900",
-    "finish_timestamp" : "2019/07/30 00:00:00 +0900",
+    "start_timestamp" : "2016/07/30 00:00:00 +0900",
+    "finish_timestamp" : "2016/08/30 00:00:00 +0900",
     "start_balance_fixed" : null,
     "start_balance" : null,
     "finish_balance" : null,

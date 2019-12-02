@@ -1,9 +1,12 @@
 require "json"
 require 'webmock'
 require 'active_support'
+require_relative '../../lib/tsubaiso_sdk.rb'
+
 include WebMock::API
 
 class StubRegister
+  include TsubaisoSDK::UrlBuilder
 
   def initialize(resource, root_url, token)
     @common_request_headers = {
@@ -32,156 +35,93 @@ class StubRegister
     JSON.load(File.read(path))
   end
 
-  def add_attributes_to_response(record, index, resource)
-    new_attributs = {}
-    new_params = find_and_load_json(resource, "create" ,"response")
-    new_attributs.deep_merge!(new_params) if new_params
+  def add_attributes(record, index, resource)
+    return_params = {}
 
-    new_attributs.merge!({
+    return_params.merge!(record) if record
+    new_attributes = find_and_load_json(resource, "create" ,"response")
+    return_params.deep_merge!(new_attributes) if new_attributes
+
+    return_params.merge!({
       :id => index.to_s,
       :created_at => Time.now.to_s,
       :updated_at => Time.now.to_s
     })
 
-    record["tag_list"] = record["tag_list"].split(",") if record["tag_list"]&.kind_of?(String)
-    record.deep_merge(new_attributs)
+    return_params["tag_list"] = record["tag_list"].split(",") if record["tag_list"]&.kind_of?(String)
+    return return_params
   end
 
   def stub_find_or_create(resource)
-    # This stub support ar_receipts, ap_payments
+    # NOTE: This stub support ar_receipts, ap_payments
     if find_and_load_json(resource, "find_or_create")
       expected_param = find_and_load_json(resource, "find_or_create")
-      stub_request(:post, @root_url + "/" + resource + "/find_or_create")
-      .with(
-        headers: @common_request_headers,
-        body: expected_param.merge({"format" => "json"})
-      )
-      .to_return(
-        status: 200,
-        body: add_attributes_to_response(expected_param, 99, resource).to_json,
-      )
-      @created_records << add_attributes_to_response(expected_param, 99, resource)
+      return_body    = add_attributes(expected_param, 99, resource)
+      stub_requests(:post, url(@root_url, resource, 'find_or_create'), return_body, expected_param)
+      @created_records << return_body
     end
   end
 
   def stub_update(resource)
     if find_and_load_json(resource, "update")
       expected_params = find_and_load_json(resource, "update")
-      stub_request(:post, @root_url+ "/" + resource + "/update/#{@created_records[0][:id]}")
-      .with(
-        headers: @common_request_headers,
-        body: expected_params.merge({"format" => "json"})
-      )
-      .to_return(
-        status: 200,
-        body: @created_records[0].merge(expected_params).to_json
-      )
+      stub_requests(:post, url(@root_url, resource, 'update') + '/0', @created_records[0].merge(expected_params), expected_params)
     end
   end
 
   def stub_show(resource)
     @created_records.each do |record|
-      stub_request(:get, @root_url + "/" + resource + "/show/" + record[:id])
-      .with(
-        headers: @common_request_headers,
-        body: {"format" => "json"}
-      )
-      .to_return(
-        status: 200,
-        body: record.to_json
-      )
-    end
+      stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record)
 
-    # Serch by code and staff_id and code (support staff_data)
-    @created_records.each do |record|
-      stub_request(:get, @root_url + "/" + resource + "/show")
-      .with(
-        headers: @common_request_headers,
-        body: {
-          "format" => "json",
-          "staff_id" => record["staff_id"],
-          "code" => record["code"],
-          "time" => record["start_timestamp"]
+      case resource
+      when "customer_masters"
+        # NOTE: Serch by Code (support customer_master_show)
+        stub_requests(:get, url(@root_url, resource, "show"), record, { code: record['code'] })
+      when "staff_data"
+        # NOTE: Serch by code and staff_id (support staff_data)
+        expected_body = {
+          staff_id: record['staff_id'],
+          code: record['code'],
+          time: record['start_timestamp']
         }
-      )
-      .to_return(
-        status: 200,
-        body: record.to_json
-      )
-    end
-
-    # Serch by Code (support customer_master_show)
-    @created_records.each do |record|
-      stub_request(:get, @root_url + "/" + resource + "/show")
-      .with(
-        headers: @common_request_headers,
-        body: {
-          "format" => "json",
-          "code" => record["code"]
-        }
-      )
-      .to_return(
-        status: 200,
-        body: record.to_json
-      )
+        stub_requests(:get, url(@root_url, resource, "show"), record, expected_body)
+      end
     end
   end
 
+  def stub_requests(http_method, url, response_body, expected_body = {}, &proc)
+    response_body.select!(&proc) if proc
+    expected_body.merge!( {"format" => "json"} )
+
+    stub_request(http_method, url)
+    .with(
+      { headers: @common_request_headers }.merge({ body: expected_body })
+    )
+    .to_return(
+      { status: 200 }.merge( { body: response_body.to_json } )
+    )
+  end
+
   def stub_list(resource)
-    if resource == "bank_accounts"
-      # TODO: URL Builderという別のモジュールを作って、各モジュール、アクションごとにURLを生成できるようにする。
-      # これでrecouses/:Month/:YearのURLに対応させる。
-      stub_request(:get, @root_url + "/" + resource + "/list/2019/7")
-      .with(
-        headers: @common_request_headers
-      )
-      .to_return(
-        status: 200,
-        body: @created_records.to_json
-      )
-    elsif resource == "ar"
-      stub_request(:get, @root_url + "/" + resource + "/list/2016/8")
-      .with(
-        headers: @common_request_headers
-      )
-      .to_return(
-        status: 200,
-        body: @created_records.select{|record| record["realization_timestamp"] =~ /2016-08-\d{2}/}.to_json
-      )
-    elsif resource == "ap_payments"
-      stub_request(:get, @root_url + "/" + resource + "/list/2016/8")
-      .with(
-        headers: @common_request_headers
-      )
-      .to_return(
-        status: 200,
-        body: @created_records.select{|record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}.to_json
-      )
-    elsif resource == "staff_data"
-      stub_request(:get, @root_url + "/" + resource + "/list")
-      .with(
-        headers: @common_request_headers,
-        body: { "format" => "json", "staff_id" => 300 }
-      )
-      .to_return(
-        status: 200,
-        body: @created_records.to_json
-      )
+    case resource
+    when "bank_accounts"
+      stub_requests(:get, url(@root_url, resource, "list", 2016, 8), @created_records)
+    when "ar"
+      stub_requests(:get, url(@root_url, resource, "list", 2016, 8), @created_records){ |record| record["realization_timestamp"] =~ /2016-08-\d{2}/}
+    when "ap_payments"
+      stub_requests(:get, url(@root_url, resource, "list", 2016, 8), @created_records){ |record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}
+    when "staff_data"
+      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { staff_id: 300 })
+    when "bank_account_transactions"
+      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { bank_account_id: 0})
     else
-      stub_request(:get, @root_url + "/" + resource + "/list")
-      .with(
-        headers: @common_request_headers
-      )
-      .to_return(
-        status: 200,
-        body: @created_records.to_json
-      )
+      stub_requests(:get, url(@root_url, resource, "list"), @created_records)
     end
   end
 
   def stub_destroy(resource)
     @created_records.each_with_index do |record, index|
-      stub_request(:post, @root_url + "/" + resource + "/destroy/" + record[:id])
+      stub_request(:post, url(@root_url, resource, "destroy") + "/" + record[:id])
       .with(
         headers: @common_request_headers
       )
@@ -193,17 +133,11 @@ class StubRegister
 
   def stub_create(resource)
     expected_params = *find_and_load_json(resource, "create")
+
     expected_params.each_with_index do |record, index|
-      stub_request(:post, @root_url + "/" + resource + "/create")
-      .with(
-        headers: @common_request_headers,
-        body: record.merge({"format" => "json"})
-      )
-      .to_return(
-        status: 200,
-        body: add_attributes_to_response(record, index, resource).to_json,
-      )
-      @created_records << add_attributes_to_response(record, index, resource)
+      return_body = add_attributes(record, index, resource)
+      stub_requests(:post, url(@root_url, resource, "create"), return_body, record)
+      @created_records << return_body
     end
   end
 

@@ -11,15 +11,15 @@ class BankAccountTest < Minitest::Test
   def test_create_bank_account
     options = {
       bank_account_master_id: "1",
-      start_timestamp: "2019-06-30",
-      finish_timestamp: "2019-07-30",
+      start_timestamp: "2016-07-30",
+      finish_timestamp: "2016-08-30",
     }
     new_bank_account = @api.create_bank_account(options)
 
     assert_equal 200, new_bank_account[:status].to_i, new_bank_account.inspect
     serch_options = {
-      year: 2019,
-      month: 7
+      year: 2016,
+      month: 8
     }
     listed_bank_accounts = @api.list_bank_account(serch_options)
     assert_equal 200, listed_bank_accounts[:status].to_i, listed_bank_accounts.inspect
