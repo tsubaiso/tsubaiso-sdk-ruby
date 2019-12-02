@@ -1,0 +1,10 @@
+{
+  "journal_id": null,
+  "start_timestamp": "2016/03/01 00:00:00 +0900",
+  "finish_timestamp": "2016/03/31 00:00:00 +0900",
+  "application_term": "2016/03/31 00:00:00 +0900",
+  "owner_user_code": "yamakawa",
+  "reimbursement_transactions_count": 0,
+  "dept_code": "COMMON",
+  "applicant_staff_code": null
+}

@@ -16,7 +16,7 @@ class StubRegister
       'User-Agent'=>'Ruby'
     }
     @root_url = root_url
-    @common_request_headers.merge!({"Access-Token" => token})
+    @common_request_headers.merge!( {"Access-Token" => token} )
     @created_records = []
 
     stub_create(resource)
@@ -114,6 +114,8 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { staff_id: 300 })
     when "bank_account_transactions"
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { bank_account_id: 0})
+    when 'reimbursements'
+      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { year: 2016, month: 3})
     else
       stub_requests(:get, url(@root_url, resource, "list"), @created_records)
     end

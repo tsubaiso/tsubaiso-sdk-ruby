@@ -6,7 +6,7 @@ class TsubaisoSDK
 
   module UrlBuilder
     def url(root, resource, method, year = nil, month = nil)
-      require_yms = %w(ar ap_payments manual_journals reimbursements reimbursement_transactions bank_accounts)
+      require_yms = %w(ar ap_payments manual_journals reimbursement_transactions bank_accounts)
       if require_yms.include?(resource) && method == "list"
         return root + "/" + resource + "/list/" + year.to_s + "/" + month.to_s
       else
@@ -754,7 +754,7 @@ class TsubaisoSDK
       'dept_code' => options[:dept_code],
       'memo' => options[:memo]
     }
-    uri = URI.parse(@base_url + '/reimbursements/create/')
+    uri = URI.parse(@base_url + '/reimbursements/create')
     api_request(uri, 'POST', params)
   end
 
@@ -773,7 +773,7 @@ class TsubaisoSDK
       'tax_type' => options[:tax_type],
       'data_partner' => options[:data_partner]
     }
-    uri = URI.parse(@base_url + '/reimbursement_transactions/create/')
+    uri = URI.parse(@base_url + '/reimbursement_transactions/create')
     api_request(uri, 'POST', params)
   end
 
@@ -789,7 +789,7 @@ class TsubaisoSDK
       'start_date' => options[:start_date],
       'finish_date' => options[:finish_date]
     }
-    uri = URI.parse(@base_url + '/depts/create/')
+    uri = URI.parse(@base_url + '/depts/create')
     api_request(uri, 'POST', params)
   end
 
@@ -803,7 +803,7 @@ class TsubaisoSDK
       'start_ymd' => options[:start_ymd],
       'finish_ymd' => options[:finish_ymd]
     }
-    uri = URI.parse(@base_url + '/tags/create/')
+    uri = URI.parse(@base_url + '/tags/create')
     api_request(uri, 'POST', params)
   end
 
@@ -823,7 +823,7 @@ class TsubaisoSDK
       'criteria' => options[:criteria],
       'distribution_conditions' => options[:distribution_conditions]
     }
-    uri = URI.parse(@base_url + '/journal_distributions/create/')
+    uri = URI.parse(@base_url + '/journal_distributions/create')
     api_request(uri, 'POST', params)
   end
 
@@ -998,14 +998,18 @@ class TsubaisoSDK
   end
 
   def update_reimbursement(reimbursement_id, options)
-    params = {
-      'format' => 'json',
-      'applicant' => options[:applicant],
-      'application_term' => options[:application_term],
-      'staff_code' => options[:staff_code],
-      'dept_code' => options[:dept_code],
-      'memo' => options[:memo]
-    }
+    params = {}
+    candidate_keys = [
+      :applicant,
+      :application_term,
+      :staff_code,
+      :dept_code,
+      :memo,
+    ]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/reimbursements/update/#{reimbursement_id}")
     api_request(uri, 'POST', params)
   end

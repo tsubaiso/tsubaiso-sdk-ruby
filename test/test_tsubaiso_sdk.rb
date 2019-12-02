@@ -225,25 +225,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
   end
 
-  def test_update_staff_data
-    staff_list = @api.list_staff
-    first_staff_id = staff_list[:json].first[:id]
-    @staff_data_1[:staff_id] = first_staff_id
-
-    staff_data = @api.create_staff_data(@staff_data_1)
-    options = {
-      staff_id: staff_data[:json][:id],
-      value: 'Programmer'
-    }
-
-    updated_staff_data = @api.update_staff_data(options)
-    assert_equal 200, updated_staff_data[:status].to_i, updated_staff_data.inspect
-    assert_equal staff_data[:json][:id], updated_staff_data[:json][:id]
-    assert_equal 'Programmer', updated_staff_data[:json][:value]
-  ensure
-    @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
-  end
-
   def test_update_reimbursement
     reimbursement = @api.create_reimbursement(@reimbursement_1)
     options = {
@@ -341,32 +322,6 @@ class TsubaisoSDKTest < Minitest::Test
     get_staff_member = @api.show_staff(first_staff_id)
     assert_equal 200, get_staff_member[:status].to_i, get_staff_member.inspect
     assert_equal first_staff_id, get_staff_member[:json][:id]
-  end
-
-  def test_show_staff_data
-    staff_list = @api.list_staff
-    first_staff_id = staff_list[:json].first[:id]
-    @staff_data_1[:staff_id] = first_staff_id
-
-    staff_data = @api.create_staff_data(@staff_data_1)
-
-    # get data using id
-    get_staff_data = @api.show_staff_data(staff_data[:json][:id])
-    assert_equal 200, get_staff_data[:status].to_i, get_staff_data.inspect
-    assert_equal staff_data[:json][:id], get_staff_data[:json][:id]
-
-    options = {
-      staff_id: staff_data[:json][:staff_id],
-      code: staff_data[:json][:code],
-      time: staff_data[:json][:start_timestamp]
-    }
-
-    # get data using staff id and code
-    get_staff_data_2 = @api.show_staff_data(options)
-    assert_equal 200, get_staff_data_2[:status].to_i, get_staff_data.inspect
-    assert_equal staff_data[:json][:id], get_staff_data_2[:json][:id]
-  ensure
-    @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
   end
 
   def test_show_staff_datum_master
