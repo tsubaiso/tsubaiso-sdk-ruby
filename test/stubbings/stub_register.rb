@@ -73,10 +73,10 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record)
 
       case resource
-      when "customer_masters"
-        # NOTE: Serch by Code (support customer_master_show)
+      when 'customer_masters', 'staff_datum_masters'
+        # NOTE: Serch by Code (support customer_master_show & staff_datum_master_show)
         stub_requests(:get, url(@root_url, resource, "show"), record, { code: record['code'] })
-      when "staff_data"
+      when 'staff_data'
         # NOTE: Serch by code and staff_id (support staff_data)
         expected_body = {
           staff_id: record['staff_id'],

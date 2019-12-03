@@ -108,23 +108,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
-  def test_index_api_history
-    index = @api.index_api_history
-    assert_equal 200, index[:status].to_i, index.inspect
-    assert !index[:json].empty?
-
-    initial_api_count = if index[:json].first[:ym] == "#{Time.now.year}#{format('%02d', Time.new.month)}"
-                          index[:json].first[:cnt]
-                        else
-                          0
-                        end
-
-    index = @api.index_api_history
-    assert_equal 200, index[:status].to_i, index.inspect
-    new_api_count = index[:json].first[:cnt]
-    assert_equal initial_api_count + 1, new_api_count
-  end
-
   def test_create_manual_journal
     manual_journal = @api.create_manual_journal(@manual_journal_1)
 
@@ -229,28 +212,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:code], updated_tag[:json][:code]
   ensure
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
-  end
-
-
-  def test_show_staff_datum_master
-    staff_datum_masters_list = @api.list_staff_datum_masters
-    first_staff_datum_master_id = staff_datum_masters_list[:json].first[:id]
-
-    get_staff_datum_master = @api.show_staff_datum_master(first_staff_datum_master_id)
-    assert_equal 200, get_staff_datum_master[:status].to_i, get_staff_datum_master.inspect
-    assert_equal first_staff_datum_master_id, get_staff_datum_master[:json][:id]
-  end
-
-  def test_show_staff_datum_master_by_code
-    staff_datum_masters_list = @api.list_staff_datum_masters
-    first_staff_datum_master_code = staff_datum_masters_list[:json].first[:code]
-
-    options = { code: first_staff_datum_master_code }
-
-    # get data using code
-    get_staff_data_2 = @api.show_staff_datum_master(options)
-    assert_equal 200, get_staff_data_2[:status].to_i, get_staff_data_2.inspect
-    assert_equal first_staff_datum_master_code, get_staff_data_2[:json][:code]
   end
 
   def test_show_manual_journal
@@ -411,12 +372,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
   end
 
-  def test_list_staff_datum_masters
-    staff_datum_masters_list = @api.list_staff_datum_masters
-    assert_equal 200, staff_datum_masters_list[:status].to_i, staff_datum_masters_list.inspect
-    assert !staff_datum_masters_list.empty?
-  end
-
   def test_list_manual_journals
     manual_journals_list = @api.list_manual_journals(2016, 4)
     assert_equal 200, manual_journals_list[:status].to_i, manual_journals_list.inspect
@@ -511,22 +466,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, list[:status].to_i, list.inspect
     assert list[:json]
     assert !list[:json].empty?
-  end
-
-  def test_list_api_history
-    options = {
-      month: Date.today.month,
-      year: Date.today.year
-    }
-    list = @api.list_api_history(options)
-    assert_equal 200, list[:status].to_i, list.inspect
-    list_count = list[:json].count
-
-    list_again = @api.list_api_history(options)
-    assert_equal 200, list[:status].to_i, list.inspect
-    assert_equal list_again[:json].first[:controller], 'api_histories'
-    assert_equal list_again[:json].first[:method], 'list'
-    assert_equal list_count, list_again[:json].count - 1
   end
 
   def test_calc_scheduled_dates

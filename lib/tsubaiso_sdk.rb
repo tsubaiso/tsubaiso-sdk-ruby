@@ -2,7 +2,7 @@ class TsubaisoSDK
   require 'net/http'
   require 'json'
   require_relative './debug_patch.rb'
-  # prepend ApiDebug
+  prepend ApiDebug
 
   module UrlBuilder
     def url(root, resource, method, year = nil, month = nil)
@@ -450,12 +450,11 @@ class TsubaisoSDK
         'code' => options[:code],
         'format' => 'json'
       }
-      id = options[:id]
     else
       params = { 'format' => 'json' }
-      id = options
+      id = '/' + options.to_s
     end
-    uri = URI.parse(@base_url + "/staff_datum_masters/show/#{id}")
+    uri = URI.parse(@base_url + "/staff_datum_masters/show#{id}")
     api_request(uri, 'GET', params)
   end
 
