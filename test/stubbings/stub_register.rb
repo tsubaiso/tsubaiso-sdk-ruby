@@ -137,8 +137,9 @@ class StubRegister
     expected_params = *find_and_load_json(resource, "create")
 
     expected_params.each_with_index do |record, index|
+      # list, show しか対応していないAPIにcreate用のスタブを作りたくない。
       return_body = add_attributes(record, index, resource)
-      stub_requests(:post, url(@root_url, resource, "create"), return_body, record)
+      stub_requests(:post, url(@root_url, resource, "create"), return_body, record) unless resource == 'reimbursement_reason_masters'
       @created_records << return_body
     end
   end

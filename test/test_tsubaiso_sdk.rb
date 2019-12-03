@@ -125,19 +125,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal initial_api_count + 1, new_api_count
   end
 
-  def test_create_staff_data
-    staff_list = @api.list_staff
-    first_staff_id = staff_list[:json].first[:id]
-    @staff_data_1[:staff_id] = first_staff_id
-
-    staff_data = @api.create_staff_data(@staff_data_1)
-
-    assert_equal 200, staff_data[:status].to_i, staff_data.inspect
-    assert_equal @staff_data_1[:value], staff_data[:json][:value]
-  ensure
-    @api.destroy_staff_data(staff_data[:json][:id]) if staff_data[:json][:id]
-  end
-
   def test_create_manual_journal
     manual_journal = @api.create_manual_journal(@manual_journal_1)
 
@@ -273,16 +260,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 200, get_staff_data_2[:status].to_i, get_staff_data_2.inspect
     assert_equal first_staff_datum_master_code, get_staff_data_2[:json][:code]
   end
-
-  def test_show_reimbursement_reason_master
-    reim_reason_msts = @api.list_reimbursement_reason_masters
-    reim_reason_mst_id = reim_reason_msts[:json].first[:id]
-    reim_reason_mst = @api.show_reimbursement_reason_master(reim_reason_mst_id)
-
-    assert_equal 200, reim_reason_mst[:status].to_i, reim_reason_mst.inspect
-    assert_equal reim_reason_mst[:json][:id], reim_reason_mst_id
-  end
-
 
   def test_show_manual_journal
     manual_journal = @api.create_manual_journal(@manual_journal_1)
@@ -528,13 +505,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
     @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
     @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
-  end
-
-  def test_list_reimbursement_reason_masters
-    reimbursement_reason_masters_list = @api.list_reimbursement_reason_masters
-    assert_equal 200, reimbursement_reason_masters_list[:status].to_i, reimbursement_reason_masters_list.inspect
-    assert reimbursement_reason_masters_list[:json]
-    assert !reimbursement_reason_masters_list[:json].empty?
   end
 
   def test_list_depts
