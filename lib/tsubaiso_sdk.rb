@@ -2,7 +2,7 @@ class TsubaisoSDK
   require 'net/http'
   require 'json'
   require_relative './debug_patch.rb'
-  prepend ApiDebug
+  # prepend ApiDebug
 
   module UrlBuilder
     def url(root, resource, method, year = nil, month = nil)
@@ -345,7 +345,7 @@ class TsubaisoSDK
 
   def list_ar_reason_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/ar_reason_masters/list/')
+    uri = URI.parse(@base_url + '/ar_reason_masters/list')
     api_request(uri, 'GET', params)
   end
 
@@ -380,7 +380,7 @@ class TsubaisoSDK
       'month' => options[:month],
       'year' => options[:year]
     }
-    uri = URI.parse(@base_url + '/api_histories/list/')
+    uri = URI.parse(@base_url + '/api_histories/list')
     api_request(uri, 'GET', params)
   end
 

@@ -22,23 +22,23 @@ class StubRegister
     stub_create(resource)
     stub_destroy(resource)
     stub_list(resource)
-    stub_show(resource)
+    resource == 'api_histories' ? stub_index(resource) : stub_show(resource)
     stub_update(resource)
     stub_find_or_create(resource)
   end
 
   private
 
-  def find_and_load_json(resource, method, req_or_res = "require")
+  def load_json(resource, method, req_or_res = "require")
     path = "test/stubbings/fixtures/#{resource}_#{method}_#{req_or_res}.json"
     return nil unless File.exist?(path)
     JSON.load(File.read(path))
   end
 
-  def add_attributes(record, index, resource)
+  def add_attrs(record, index, resource)
     return_params = record ? record.dup : {}
 
-    new_attributes = find_and_load_json(resource, 'create' ,'response')
+    new_attributes = load_json(resource, 'create' ,'response')
     return_params.deep_merge!(new_attributes) if new_attributes
 
     return_params.merge!({
@@ -53,18 +53,18 @@ class StubRegister
 
   def stub_find_or_create(resource)
     # NOTE: This stub support ar_receipts, ap_payments
-    if find_and_load_json(resource, "find_or_create")
-      expected_param = find_and_load_json(resource, "find_or_create")
-      return_body    = add_attributes(expected_param, 99, resource)
+    if load_json(resource, "find_or_create")
+      expected_param = load_json(resource, "find_or_create")
+      return_body    = add_attrs(expected_param, 99, resource)
       stub_requests(:post, url(@root_url, resource, 'find_or_create'), return_body, expected_param)
       @created_records << return_body
     end
   end
 
   def stub_update(resource)
-    if find_and_load_json(resource, "update")
-      expected_params = find_and_load_json(resource, "update")
-      stub_requests(:post, url(@root_url, resource, 'update') + '/0', @created_records[0].merge(expected_params), expected_params)
+    if load_json(resource, 'update')
+      param = load_json(resource, 'update')
+      stub_requests(:post, url(@root_url, resource, 'update') + '/0', @created_records[0].merge(param), param)
     end
   end
 
@@ -100,7 +100,19 @@ class StubRegister
     )
   end
 
+  def stub_index(resource)
+    # NOTE: for api_history
+    stub_requests(:get, url(@root_url, resource, 'index'), load_json(resource, 'index', 'response'))
+  end
+
   def stub_list(resource)
+    if @created_records.size == 0
+      # This conditions is for modules which support only list & show.
+      load_json(resource,'list','response')&.each_with_index do |record, i|
+        @created_records << add_attrs(record, i, resource)
+      end
+    end
+
     case resource
     when "bank_accounts"
       stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records)
@@ -114,6 +126,8 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { bank_account_id: 0})
     when 'reimbursements'
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { year: 2016, month: 3})
+    when 'api_histories'
+      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { year: 2019, month: 12}){ |record| record['access_timestamp'] =~ /2019\/12\/\d{2}/}
     when 'reimbursement_transactions'
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { id: 300 }) { |record| record['reimbursement_id'] == 300 }
     else
@@ -134,12 +148,9 @@ class StubRegister
   end
 
   def stub_create(resource)
-    expected_params = *find_and_load_json(resource, "create")
-
-    expected_params.each_with_index do |record, index|
-      # list, show しか対応していないAPIにcreate用のスタブを作りたくない。
-      return_body = add_attributes(record, index, resource)
-      stub_requests(:post, url(@root_url, resource, "create"), return_body, record) unless resource == 'reimbursement_reason_masters'
+    load_json(resource, "create")&.each_with_index do |record, i|
+      return_body = add_attrs(record, i, resource)
+      stub_requests(:post, url(@root_url, resource, "create"), return_body, record)
       @created_records << return_body
     end
   end

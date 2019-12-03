@@ -231,14 +231,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
-  def test_show_staff
-    staff_list = @api.list_staff
-    first_staff_id = staff_list[:json].first[:id]
-
-    get_staff_member = @api.show_staff(first_staff_id)
-    assert_equal 200, get_staff_member[:status].to_i, get_staff_member.inspect
-    assert_equal first_staff_id, get_staff_member[:json][:id]
-  end
 
   def test_show_staff_datum_master
     staff_datum_masters_list = @api.list_staff_datum_masters
@@ -321,24 +313,6 @@ class TsubaisoSDKTest < Minitest::Test
     payroll = @api.show_payroll(first_payroll_id)
     assert_equal 200, payroll[:status].to_i, payroll.inspect
     assert_equal first_payroll_id, payroll[:json][:id]
-  end
-
-  def test_show_ap_reason_master
-    ap_reason_masters = @api.list_ap_reason_masters
-    first_ap_reason_master = ap_reason_masters[:json].first
-    ap_reason_master = @api.show_ap_reason_master(first_ap_reason_master[:id])
-
-    assert_equal 200, ap_reason_master[:status].to_i, ap_reason_master.inspect
-    assert_equal first_ap_reason_master[:reason_code], ap_reason_master[:json][:reason_code]
-  end
-
-  def test_show_ar_reason_master
-    ar_reason_masters = @api.list_ar_reason_masters
-    ar_reason_master_id = ar_reason_masters[:json].first[:id]
-    ar_reason_master = @api.show_ar_reason_master(ar_reason_master_id)
-
-    assert_equal 200, ar_reason_master[:status].to_i, ar_reason_master.inspect
-    assert_equal ar_reason_master[:json][:id], ar_reason_master_id
   end
 
   def test_show_tax_master
@@ -437,22 +411,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
   end
 
-
-  def test_list_staff
-    staff_list = @api.list_staff
-    assert_equal 200, staff_list[:status].to_i, staff_list.inspect
-    assert !staff_list.empty?
-  end
-
-  def test_list_staff_data
-    staff_list = @api.list_staff
-    first_staff_id = staff_list[:json].first[:id]
-
-    staff_data_list = @api.list_staff_data(first_staff_id)
-    assert_equal 200, staff_data_list[:status].to_i, staff_data_list.inspect
-    assert(staff_data_list[:json].all? { |x| x[:staff_id] == first_staff_id })
-  end
-
   def test_list_staff_datum_masters
     staff_datum_masters_list = @api.list_staff_datum_masters
     assert_equal 200, staff_datum_masters_list[:status].to_i, staff_datum_masters_list.inspect
@@ -546,20 +504,6 @@ class TsubaisoSDKTest < Minitest::Test
 
     assert_equal 200, payrolls_list[:status].to_i, payrolls_list.inspect
     assert !payrolls_list.empty?
-  end
-
-  def test_list_ar_reason_masters
-    ar_reason_masters_list = @api.list_ar_reason_masters
-    assert_equal 200, ar_reason_masters_list[:status].to_i, ar_reason_masters_list.inspect
-    assert ar_reason_masters_list[:json]
-    assert !ar_reason_masters_list[:json].empty?
-  end
-
-  def test_list_ap_reason_masters
-    ap_reason_masters_list = @api.list_ap_reason_masters
-    assert_equal 200, ap_reason_masters_list[:status].to_i, ap_reason_masters_list.inspect
-    assert ap_reason_masters_list[:json]
-    assert !ap_reason_masters_list[:json].empty?
   end
 
   def test_list_fixed_assets
