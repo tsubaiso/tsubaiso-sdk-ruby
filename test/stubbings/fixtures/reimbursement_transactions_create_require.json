@@ -1,0 +1,36 @@
+[
+  {
+  "format": "json",
+  "reimbursement_id": 300,
+  "transaction_timestamp": "2016-03-01",
+  "price_value": 10000,
+  "reason_code": "SUPPLIES",
+  "port_type": null,
+  "dc": "c",
+  "brief": "everyting going well",
+  "memo": "easy",
+  "tag_list": null,
+  "tax_type": "tax",
+  "data_partner": {
+    "link_url": "www.example.com/5",
+    "id_code": "5"
+   }
+  },
+  {
+    "format": "json",
+    "reimbursement_id": 300,
+    "transaction_timestamp": "2016-03-01",
+    "price_value": 20000,
+    "reason_code": "SUPPLIES",
+    "port_type": null,
+    "dc": "c",
+    "brief": "not well",
+    "memo": "hard",
+    "tag_list": null,
+    "tax_type": "tax",
+    "data_partner": {
+      "link_url": "www.example.com/6",
+      "id_code": "6"
+    }
+  }
+]

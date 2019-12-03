@@ -6,7 +6,7 @@ class TsubaisoSDK
 
   module UrlBuilder
     def url(root, resource, method, year = nil, month = nil)
-      require_yms = %w(ar ap_payments manual_journals reimbursement_transactions bank_accounts)
+      require_yms = %w(ar ap_payments manual_journals bank_accounts)
       if require_yms.include?(resource) && method == "list"
         return root + "/" + resource + "/list/" + year.to_s + "/" + month.to_s
       else
@@ -1015,19 +1015,24 @@ class TsubaisoSDK
   end
 
   def update_reimbursement_transaction(options)
-    params = {
-      'format' => 'json',
-      'port_type' => options[:port_type],
-      'transaction_timestamp' => options[:transaction_timestamp],
-      'price_value' => options[:price_value],
-      'dc' => options[:dc],
-      'reason_code' => options[:reason_code],
-      'brief' => options[:brief],
-      'memo'  => options[:memo],
-      'tag_list' => options[:tag_list],
-      'tax_type' => options[:tax_type],
-      'data_partner' => options[:data_partner]
-    }
+    params = {}
+    candidate_keys = [
+      :port_type,
+      :transaction_timestamp,
+      :price_value,
+      :bc,
+      :reason_code,
+      :brief,
+      :memo,
+      :tag_list,
+      :tax_type,
+      :data_partner
+    ]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+
     uri = URI.parse(@base_url + "/reimbursement_transactions/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end

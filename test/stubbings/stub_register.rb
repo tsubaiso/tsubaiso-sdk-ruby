@@ -36,10 +36,9 @@ class StubRegister
   end
 
   def add_attributes(record, index, resource)
-    return_params = {}
+    return_params = record ? record.dup : {}
 
-    return_params.merge!(record) if record
-    new_attributes = find_and_load_json(resource, "create" ,"response")
+    new_attributes = find_and_load_json(resource, 'create' ,'response')
     return_params.deep_merge!(new_attributes) if new_attributes
 
     return_params.merge!({
@@ -89,13 +88,12 @@ class StubRegister
     end
   end
 
-  def stub_requests(http_method, url, response_body, expected_body = {}, &proc)
-    response_body.select!(&proc) if proc
-    expected_body.merge!( {"format" => "json"} )
+  def stub_requests(http_method, url, created_records, expected_body = {}, &condition)
+    response_body = condition ? created_records.select(&condition) : created_records
 
     stub_request(http_method, url)
     .with(
-      { headers: @common_request_headers }.merge({ body: expected_body })
+      { headers: @common_request_headers }.merge({ body: expected_body.merge(format: 'json') })
     )
     .to_return(
       { status: 200 }.merge( { body: response_body.to_json } )
@@ -105,17 +103,19 @@ class StubRegister
   def stub_list(resource)
     case resource
     when "bank_accounts"
-      stub_requests(:get, url(@root_url, resource, "list", 2016, 8), @created_records)
+      stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records)
     when "ar"
-      stub_requests(:get, url(@root_url, resource, "list", 2016, 8), @created_records){ |record| record["realization_timestamp"] =~ /2016-08-\d{2}/}
+      stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records){ |record| record["realization_timestamp"] =~ /2016-08-\d{2}/}
     when "ap_payments"
-      stub_requests(:get, url(@root_url, resource, "list", 2016, 8), @created_records){ |record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}
+      stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records){ |record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}
     when "staff_data"
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { staff_id: 300 })
     when "bank_account_transactions"
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { bank_account_id: 0})
     when 'reimbursements'
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { year: 2016, month: 3})
+    when 'reimbursement_transactions'
+      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { id: 300 }) { |record| record['reimbursement_id'] == 300 }
     else
       stub_requests(:get, url(@root_url, resource, "list"), @created_records)
     end

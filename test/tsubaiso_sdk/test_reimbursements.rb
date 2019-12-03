@@ -54,4 +54,10 @@ class ReimbursementsTest < Minitest::Test
     assert_equal options[:dept_code], updated_reimbursement[:json][:dept_code]
   end
 
+  def test_create_reimbursement
+    reimbursement = @api.create_reimbursement(@reimbursement_1)
+    assert_equal 200, reimbursement[:status].to_i, reimbursement.inspect
+    assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
+  end
+
 end
