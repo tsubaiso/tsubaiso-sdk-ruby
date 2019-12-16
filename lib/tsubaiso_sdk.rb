@@ -318,7 +318,7 @@ class TsubaisoSDK
 
   def list_tags
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/tags/list/')
+    uri = URI.parse(@base_url + '/tags/list')
     api_request(uri, 'GET', params)
   end
 
@@ -1052,15 +1052,19 @@ class TsubaisoSDK
   end
 
   def update_tag(tag_id, options)
-    params = {
-      'format' => 'json',
-      'code' => options[:code],
-      'name' => options[:name],
-      'sort_no' => options[:sort_no],
-      'tag_group_code' => options[:tag_group_code],
-      'start_ymd' => options[:start_ymd],
-      'finish_ymd' => options[:finish_ymd]
-    }
+    params = {}
+    candidate_keys = [
+      :code,
+      :name,
+      :sort_no,
+      :tagg_group_code,
+      :start_ymd,
+      :finish_ymd
+    ]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/tags/update/#{tag_id}")
     api_request(uri, 'POST', params)
   end

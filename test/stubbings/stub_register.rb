@@ -70,7 +70,6 @@ class StubRegister
 
   def stub_show(resource)
     @created_records.each do |record|
-      # record[:id] = record.first[:id] if record.kind_of?(Array)
       stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record)
 
       case resource
@@ -133,6 +132,8 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { id: 300 }) { |record| record['reimbursement_id'] == 300 }
     when 'manual_journals'
       stub_requests(:get, url(@root_url, resource, "list", 2016, 4), @created_records)
+    when 'tags'
+      stub_requests(:get, url(@root_url, resource, "list"), @created_records.group_by{ |record| record['tag_group_code'] })
     else
       stub_requests(:get, url(@root_url, resource, "list"), @created_records)
     end

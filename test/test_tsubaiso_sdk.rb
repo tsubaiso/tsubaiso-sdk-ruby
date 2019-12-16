@@ -15,10 +15,10 @@ class TsubaisoSDKTest < Minitest::Test
             memo: 'aaaaaaaa'
           }
 
-          @reimbursement_2 = {
+    @reimbursement_2 = {
             applicant: 'Matsuno',
             application_term: '2016-03-01',
-           staff_code: 'EP2000',
+            staff_code: 'EP2000',
             memo: 'aaaaaaaa'
            }
 
@@ -28,17 +28,6 @@ class TsubaisoSDKTest < Minitest::Test
       start_timestamp: '2016-01-01',
       no_finish_timestamp: '1',
       memo: 'First memo'
-    }
-
-    @dept_1 = {
-      sort_no: 12_345_678,
-      code: 'test_code',
-      name: 'テスト部門',
-      name_abbr: 'テストブモン',
-      color: '#ffffff',
-      memo: 'テストメモ',
-      start_date: '2016-01-01',
-      finish_date: '2016-01-02'
     }
 
     @tag_1 = {
@@ -72,14 +61,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
-  def test_create_dept
-    dept = @api.create_dept(@dept_1)
-    assert_equal 200, dept[:status].to_i, dept.inspect
-    assert_equal @dept_1[:code], dept[:json][:code]
-  ensure
-    @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
-  end
-
   def test_create_tag
     tag = @api.create_tag(@tag_1)
     assert_equal 200, tag[:status].to_i, tag.inspect
@@ -107,37 +88,16 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
   end
 
-  def test_update_dept
-    dept = @api.create_dept(@dept_1)
-    options = {
-      id: dept[:json][:id],
-      sort_no: 98_765,
-      memo: 'updated at test',
-      name: '更新部門',
-      name_abbr: '更新部門'
-    }
-
-    updated_dept = @api.update_dept(dept[:json][:id], options)
-    assert_equal 200, updated_dept[:status].to_i, updated_dept.inspect
-    assert_equal options[:memo], updated_dept[:json][:memo]
-    assert_equal options[:name], updated_dept[:json][:name]
-    assert_equal options[:name_abbr], updated_dept[:json][:name_abbr]
-  ensure
-    @api.destroy_dept(updated_dept[:json][:id] || dept[:json][:id]) if updated_dept[:json][:id] || dept[:json][:id]
-  end
-
   def test_update_tag
     tag = @api.create_tag(@tag_1)
     assert tag[:json][:id], tag
     options = {
-      name: '更新タグ',
-      code: 'updated_tag'
+      name: '更新タグ'
     }
 
     updated_tag = @api.update_tag(tag[:json][:id], options)
     assert_equal 200, updated_tag[:status].to_i, updated_tag.inspect
     assert_equal options[:name], updated_tag[:json][:name]
-    assert_equal options[:code], updated_tag[:json][:code]
   ensure
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
@@ -154,15 +114,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
   end
 
-  def test_show_dept
-    dept = @api.create_dept(@dept_1)
-    dept = @api.show_dept(dept[:json][:id])
-
-    assert_equal 200, dept[:status].to_i, dept.inspect
-    assert_equal @dept_1[:memo], dept[:json][:memo]
-  ensure
-    @api.destroy_dept(dept[:json][:id])
-  end
 
   def test_show_tag
     tag = @api.create_tag(@tag_1)
@@ -330,16 +281,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
   end
 
-  def test_list_depts
-    dept = @api.create_dept(@dept_1)
-    assert_equal 200, dept[:status].to_i, dept.inspect
-
-    depts = @api.list_depts
-    assert_equal 200, depts[:status].to_i, depts.inspect
-    assert(depts[:json].any? { |x| x[:id] == dept[:json][:id] })
-  ensure
-    @api.destroy_dept(dept[:json][:id]) if dept[:json][:id]
-  end
 
   def test_list_tax_masters
     tax_masters = @api.list_tax_masters
