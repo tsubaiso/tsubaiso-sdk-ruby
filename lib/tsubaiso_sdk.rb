@@ -225,11 +225,9 @@ class TsubaisoSDK
 
   def list_payrolls(year, month)
     params = {
-      'format' => 'json',
-      'year' => year,
-      'month' => month
+      'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/payrolls/list')
+    uri = URI.parse(@base_url + "/payrolls/list/#{year.to_s}/#{month.to_s}")
     api_request(uri, 'GET', params)
   end
 

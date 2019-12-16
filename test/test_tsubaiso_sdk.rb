@@ -92,24 +92,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
   end
 
-  def test_show_bonus
-    bonuses = @api.list_bonuses(1, 2016)
-    bonus_id = bonuses[:json].first[:id]
-    bonus = @api.show_bonus(bonus_id)
-
-    assert_equal 200, bonus[:status].to_i, bonus.inspect
-    assert_equal bonus[:json][:id], bonus_id
-  end
-
-  def test_show_payroll
-    payrolls_list = @api.list_payrolls(2017, 2)
-    first_payroll_id = payrolls_list[:json].first[:id]
-
-    payroll = @api.show_payroll(first_payroll_id)
-    assert_equal 200, payroll[:status].to_i, payroll.inspect
-    assert_equal first_payroll_id, payroll[:json][:id]
-  end
-
   def test_show_corporate_master
     # With HatagayaTest CorporateMaster ID Only
     shown_corporate_master = @api.show_corporate_master(2099)
@@ -237,20 +219,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
     @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
     @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
-  end
-
-  def test_list_bonuses
-    bonuses_list = @api.list_bonuses(1, 2016)
-    assert_equal 200, bonuses_list[:status].to_i, bonuses_list.inspect
-    assert bonuses_list[:json]
-    assert !bonuses_list[:json].empty?
-  end
-
-  def test_list_payrolls
-    payrolls_list = @api.list_payrolls(2016, 2)
-
-    assert_equal 200, payrolls_list[:status].to_i, payrolls_list.inspect
-    assert !payrolls_list.empty?
   end
 
   def test_list_fixed_assets

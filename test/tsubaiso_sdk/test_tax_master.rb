@@ -5,14 +5,6 @@ class TexMasterTest < Minitest::Test
   include CommonSetupTeardown
 
   def setup
-    @tag_1 = {
-      code: 'test_code',
-      name: 'テストタグ',
-      sort_no: 10_000,
-      tag_group_code: 'DEFAULT',
-      start_ymd: '2016-01-01',
-      finish_ymd: '2016-12-31'
-    }
     super("tax_masters")
   end
 
