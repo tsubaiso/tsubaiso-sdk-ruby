@@ -74,7 +74,7 @@ class StubRegister
 
       case resource
       when 'customer_masters', 'staff_datum_masters'
-        # NOTE: Serch by Code (support customer_master_show & staff_datum_master_show)
+        # NOTE: Serch by Code (support customer_master_show & staff_datum_master_show & corporate_masters)
         stub_requests(:get, url(@root_url, resource, "show"), record, { code: record['code'] })
       when 'staff_data'
         # NOTE: Serch by code and staff_id (support staff_data)
@@ -84,6 +84,10 @@ class StubRegister
           time: record['start_timestamp']
         }
         stub_requests(:get, url(@root_url, resource, "show"), record, expected_body)
+      when 'corporate_masters'
+        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: record['corporate_code'] })
+        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: nil })
+        stub_requests(:get, url(@root_url, resource, "show"), record, { ccode: record['corporate_code'] })
       end
     end
   end

@@ -94,19 +94,19 @@ class TsubaisoSDKTest < Minitest::Test
 
   def test_show_corporate_master
     # With HatagayaTest CorporateMaster ID Only
-    shown_corporate_master = @api.show_corporate_master(2099)
-    assert_equal 90020, shown_corporate_master[:json][:corporate_code]
-    assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
+    shown_corporate_master = @api.show_corporate_master(5)
+    assert_equal 3, shown_corporate_master[:json][:corporate_code]
+    assert_equal '幡ヶ谷建設株式会社', shown_corporate_master[:json][:name]
 
     # With HatagayaTest Corporate Code Only
-    shown_corporate_master = @api.show_corporate_master(nil, { ccode: 90020 })
-    assert_equal 90020, shown_corporate_master[:json][:corporate_code]
-    assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
+    shown_corporate_master = @api.show_corporate_master(nil, { ccode: 3 })
+    assert_equal 3, shown_corporate_master[:json][:corporate_code]
+    assert_equal '幡ヶ谷建設株式会社', shown_corporate_master[:json][:name]
 
     # With HatagayaTest Both CorporateMaster ID and Corporate Code
-    shown_corporate_master = @api.show_corporate_master(2099, { ccode: 90020 })
-    assert_equal 90020, shown_corporate_master[:json][:corporate_code]
-    assert_equal '幡ヶ谷システム株式会社（開発テスト）', shown_corporate_master[:json][:name]
+    shown_corporate_master = @api.show_corporate_master(5, { ccode: 3 })
+    assert_equal 3, shown_corporate_master[:json][:corporate_code]
+    assert_equal '幡ヶ谷建設株式会社', shown_corporate_master[:json][:name]
   end
 
   def test_list_sales_and_account_balances

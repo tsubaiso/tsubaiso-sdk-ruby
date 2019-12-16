@@ -540,8 +540,9 @@ class TsubaisoSDK
       'ccode' => options[:ccode],
       'format' => 'json'
     }
+    corporate_master_id = '/' + corporate_master_id.to_s if corporate_master_id
 
-    uri = URI.parse(@base_url + "/corporate_masters/show/#{corporate_master_id}")
+    uri = URI.parse(@base_url + "/corporate_masters/show#{corporate_master_id}")
     api_request(uri, 'GET', params)
   end
 
