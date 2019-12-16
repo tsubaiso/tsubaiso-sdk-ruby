@@ -48,7 +48,7 @@ class StubRegister
     })
 
     return_params["tag_list"] = record["tag_list"].split(",") if record["tag_list"]&.kind_of?(String)
-    return return_params
+    return_params
   end
 
   def stub_find_or_create(resource)
@@ -70,6 +70,7 @@ class StubRegister
 
   def stub_show(resource)
     @created_records.each do |record|
+      record[:id] = record.first[:id] if record.kind_of?(Array)
       stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record)
 
       case resource
@@ -130,6 +131,8 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { year: 2019, month: 12}){ |record| record['access_timestamp'] =~ /2019\/12\/\d{2}/}
     when 'reimbursement_transactions'
       stub_requests(:get, url(@root_url, resource, "list"), @created_records, { id: 300 }) { |record| record['reimbursement_id'] == 300 }
+    when 'manual_journals'
+      stub_requests(:get, url(@root_url, resource, "list", 2016, 4), @created_records)
     else
       stub_requests(:get, url(@root_url, resource, "list"), @created_records)
     end

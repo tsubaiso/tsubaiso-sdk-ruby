@@ -8,7 +8,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
 
     # data
-
     @reimbursement_1 = {
             applicant: 'Irfan',
             application_term: '2016-03-01',
@@ -29,41 +28,6 @@ class TsubaisoSDKTest < Minitest::Test
       start_timestamp: '2016-01-01',
       no_finish_timestamp: '1',
       memo: 'First memo'
-    }
-
-    @manual_journal_1 = {
-      journal_timestamp: '2016-04-01',
-      journal_dcs: [
-        {
-          debit: {
-            account_code: '110',
-            price_including_tax: 200_000,
-            tax_type: 0
-          },
-          credit: {
-            account_code: '100',
-            price_including_tax: 200_000,
-            tax_type: 0
-          },
-          tag_list: 'KIWI',
-          dept_code: 'SYSTEM'
-        },
-        {
-          debit: {
-            account_code: '1',
-            price_including_tax: 54_321,
-            tax_type: 0
-          },
-          credit: {
-            account_code: '110',
-            price_including_tax: 54_321,
-            tax_type: 0
-          },
-          memo: 'Created From API',
-          dept_code: 'R_AND_D'
-        }
-      ],
-      data_partner: { link_url: 'www.example.com/7', id_code: '7' }
     }
 
     @dept_1 = {
@@ -108,18 +72,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
-  def test_create_manual_journal
-    manual_journal = @api.create_manual_journal(@manual_journal_1)
-
-    begin
-      assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
-      assert_equal @manual_journal_1[:journal_dcs][0][:debit][:price_including_tax], manual_journal[:json].first[:journal_dcs][0][:debit][:price_including_tax]
-      assert_equal @manual_journal_1[:data_partner][:id_code], manual_journal[:json].first[:data_partner][:id_code]
-    ensure
-      @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
-    end
-  end
-
   def test_create_dept
     dept = @api.create_dept(@dept_1)
     assert_equal 200, dept[:status].to_i, dept.inspect
@@ -155,30 +107,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
   end
 
-  def test_update_manual_journal
-    manual_journal = @api.create_manual_journal(@manual_journal_1)
-    options = {
-      id: manual_journal[:json].first[:id],
-      journal_dcs: manual_journal[:json].first[:journal_dcs],
-      data_partner: { :id_code => '700' }
-    }
-    options[:journal_dcs][0][:debit][:price_including_tax]  = 2000
-    options[:journal_dcs][0][:credit][:price_including_tax] = 2000
-    options[:journal_dcs][0][:memo] = 'Updated from API'
-    options[:journal_dcs][1][:dept_code] = 'SETSURITSU'
-    options[:journal_dcs][1][:tag_list] = 'GLOZE'
-
-    updated_manual_journal = @api.update_manual_journal(options)
-    assert_equal 200, updated_manual_journal[:status].to_i, updated_manual_journal.inspect
-    assert_equal options[:journal_dcs][0][:debit][:price_including_tax], updated_manual_journal[:json].first[:journal_dcs][0][:debit][:price_including_tax]
-    assert_equal options[:journal_dcs][0][:memo], updated_manual_journal[:json].first[:journal_dcs][0][:memo]
-    assert_equal options[:journal_dcs][1][:dept_code], updated_manual_journal[:json].first[:journal_dcs][1][:dept_code]
-    assert_equal [options[:journal_dcs][1][:tag_list]], updated_manual_journal[:json].first[:journal_dcs][1][:tag_list]
-    assert_equal options[:data_partner][:id_code], updated_manual_journal[:json].first[:data_partner][:id_code]
-  ensure
-    @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
-  end
-
   def test_update_dept
     dept = @api.create_dept(@dept_1)
     options = {
@@ -212,18 +140,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal options[:code], updated_tag[:json][:code]
   ensure
     @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
-  end
-
-  def test_show_manual_journal
-    manual_journal = @api.create_manual_journal(@manual_journal_1)
-    manual_journals_list = @api.list_manual_journals(2016, 4)
-    last_manual_journal_id = manual_journals_list[:json].last[:id]
-
-    manual_journal = @api.show_manual_journal(last_manual_journal_id)
-    assert_equal 200, manual_journal[:status].to_i, manual_journal.inspect
-    assert_equal last_manual_journal_id, manual_journal[:json].first[:id]
-  ensure
-    @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
   end
 
   def test_show_journal
@@ -370,12 +286,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert(balance_list[:json].all? { |x| x[:customer_master_id] == customer_master_id && x[:ap_segment] == ap_segment })
   ensure
     @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
-  end
-
-  def test_list_manual_journals
-    manual_journals_list = @api.list_manual_journals(2016, 4)
-    assert_equal 200, manual_journals_list[:status].to_i, manual_journals_list.inspect
-    assert !manual_journals_list.empty?
   end
 
   def test_list_journals

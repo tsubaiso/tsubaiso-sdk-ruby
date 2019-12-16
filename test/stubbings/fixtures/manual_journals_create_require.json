@@ -1,0 +1,44 @@
+[{
+  "journal_timestamp": "2016-04-01",
+  "journal_dcs": [
+    {
+      "debit": {
+        "account_code": "110",
+        "price_including_tax": 200000,
+        "tax_type": 0,
+        "sales_tax": null
+      },
+      "credit": {
+        "account_code": "100",
+        "price_including_tax": 200000,
+        "tax_type": 0,
+        "sales_tax": null
+      },
+      "dept_code": null,
+      "memo": null,
+      "tag_list": null
+    },
+    {
+      "debit": {
+        "account_code": "1",
+        "price_including_tax": 54321,
+        "tax_type": 0,
+        "sales_tax": null
+      },
+      "credit": {
+        "account_code": "110",
+        "price_including_tax": 54321,
+        "tax_type": 0,
+        "sales_tax": null
+      },
+      "dept_code": null,
+      "memo": "Created From API",
+      "tag_list": null
+    }
+  ],
+  "data_partner": {
+    "link_url": "www.example.com/7",
+    "id_code": "7"
+  },
+  "format": "json"
+}]
