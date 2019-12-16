@@ -70,7 +70,7 @@ class StubRegister
 
   def stub_show(resource)
     @created_records.each do |record|
-      record[:id] = record.first[:id] if record.kind_of?(Array)
+      # record[:id] = record.first[:id] if record.kind_of?(Array)
       stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record)
 
       case resource

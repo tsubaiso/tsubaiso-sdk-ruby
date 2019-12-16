@@ -306,7 +306,7 @@ class TsubaisoSDK
 
   def list_depts
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/depts/list/')
+    uri = URI.parse(@base_url + '/depts/list')
     api_request(uri, 'GET', params)
   end
 
@@ -1032,17 +1032,21 @@ class TsubaisoSDK
   end
 
   def update_dept(dept_id, options)
-    params = {
-      'format' => 'json',
-      'sort_no' => options[:sort_no],
-      'code' => options[:code],
-      'name' => options[:name],
-      'name_abbr' => options[:name_abbr],
-      'color' => options[:color],
-      'memo' => options[:memo],
-      'start_date' => options[:start_date],
-      'finish_date' => options[:finish_date]
-    }
+    params = {}
+    candidate_keys = [
+      :sort_no,
+      :code,
+      :name,
+      :memo,
+      :name_abbr,
+      :color,
+      :start_date,
+      :finish_date
+    ]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/depts/update/#{dept_id}")
     api_request(uri, 'POST', params)
   end

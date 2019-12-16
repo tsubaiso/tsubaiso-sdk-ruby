@@ -1,0 +1,11 @@
+[{
+  "format": "json",
+  "sort_no": 12345678,
+  "code": "test_code",
+  "name": "テスト部門",
+  "name_abbr": "テストブモン",
+  "color": "#ffffff",
+  "memo": "テストメモ",
+  "start_date": "2016-01-01",
+  "finish_date": "2016-01-02"
+}]
