@@ -312,7 +312,7 @@ class TsubaisoSDK
 
   def list_tax_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/tax_masters/list/')
+    uri = URI.parse(@base_url + '/tax_masters/list')
     api_request(uri, 'GET', params)
   end
 

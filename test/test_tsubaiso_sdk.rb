@@ -61,14 +61,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
-  def test_create_tag
-    tag = @api.create_tag(@tag_1)
-    assert_equal 200, tag[:status].to_i, tag.inspect
-    assert_equal @tag_1[:code], tag[:json][:code]
-  ensure
-    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
-  end
-
   def test_create_journal_distribution
     options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
 
@@ -88,20 +80,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
   end
 
-  def test_update_tag
-    tag = @api.create_tag(@tag_1)
-    assert tag[:json][:id], tag
-    options = {
-      name: '更新タグ'
-    }
-
-    updated_tag = @api.update_tag(tag[:json][:id], options)
-    assert_equal 200, updated_tag[:status].to_i, updated_tag.inspect
-    assert_equal options[:name], updated_tag[:json][:name]
-  ensure
-    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
-  end
-
   def test_show_journal
     manual_journal = @api.create_manual_journal(@manual_journal_1)
     journals_list = @api.list_journals({ start_date: '2016-04-01', finish_date: '2016-04-30' })
@@ -112,17 +90,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal first_journal_id, journal[:json][:records][:id]
   ensure
     @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
-  end
-
-
-  def test_show_tag
-    tag = @api.create_tag(@tag_1)
-    tag = @api.show_tag(tag[:json][:id])
-
-    assert_equal 200, tag[:status].to_i, tag.inspect
-    assert_equal @tag_1[:name], tag[:json][:name]
-  ensure
-    @api.destroy_tag(tag[:json][:id])
   end
 
   def test_show_bonus
@@ -286,16 +253,6 @@ class TsubaisoSDKTest < Minitest::Test
     tax_masters = @api.list_tax_masters
     assert_equal 200, tax_masters[:status].to_i, tax_masters.inspect
     assert !tax_masters[:json].empty?
-  end
-
-  def test_list_tags
-    tag = @api.create_tag(@tag_1)
-
-    tags = @api.list_tags
-    assert_equal 200, tags[:status].to_i, tags.inspect
-    assert(tags[:json][@tag_1[:tag_group_code].to_sym].any? { |x| x[:id] == tag[:json][:id] })
-  ensure
-    @api.destroy_tag(tag[:json][:id]) if tag[:json][:id]
   end
 
   def test_list_bonuses
