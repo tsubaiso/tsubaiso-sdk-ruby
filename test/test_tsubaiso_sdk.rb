@@ -110,15 +110,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal first_payroll_id, payroll[:json][:id]
   end
 
-  def test_show_tax_master
-    tax_masters = @api.list_tax_masters
-    first_tax_master = tax_masters[:json].first
-    tax_master = @api.show_tax_master(first_tax_master[:id])
-
-    assert_equal 200, tax_master[:status].to_i, tax_master.inspect
-    assert_equal first_tax_master[:name], tax_master[:json][:name]
-  end
-
   def test_show_corporate_master
     # With HatagayaTest CorporateMaster ID Only
     shown_corporate_master = @api.show_corporate_master(2099)
@@ -246,13 +237,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
     @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
     @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
-  end
-
-
-  def test_list_tax_masters
-    tax_masters = @api.list_tax_masters
-    assert_equal 200, tax_masters[:status].to_i, tax_masters.inspect
-    assert !tax_masters[:json].empty?
   end
 
   def test_list_bonuses

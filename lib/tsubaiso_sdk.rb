@@ -328,7 +328,7 @@ class TsubaisoSDK
       'bonus_no' => bonus_no,
       'target_year' => target_year
     }
-    uri = URI.parse(@base_url + '/bonuses/list/')
+    uri = URI.parse(@base_url + '/bonuses/list')
     api_request(uri, 'GET', params)
   end
 

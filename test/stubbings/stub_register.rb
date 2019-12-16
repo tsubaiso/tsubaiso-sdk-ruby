@@ -121,21 +121,23 @@ class StubRegister
     when "ap_payments"
       stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records){ |record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}
     when "staff_data"
-      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { staff_id: 300 })
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { staff_id: 300 })
     when "bank_account_transactions"
-      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { bank_account_id: 0})
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { bank_account_id: 0})
     when 'reimbursements'
-      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { year: 2016, month: 3})
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { year: 2016, month: 3})
     when 'api_histories'
-      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { year: 2019, month: 12}){ |record| record['access_timestamp'] =~ /2019\/12\/\d{2}/}
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { year: 2019, month: 12}){ |record| record['access_timestamp'] =~ /2019\/12\/\d{2}/}
     when 'reimbursement_transactions'
-      stub_requests(:get, url(@root_url, resource, "list"), @created_records, { id: 300 }) { |record| record['reimbursement_id'] == 300 }
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { id: 300 }) { |record| record['reimbursement_id'] == 300 }
     when 'manual_journals'
-      stub_requests(:get, url(@root_url, resource, "list", 2016, 4), @created_records)
+      stub_requests(:get, url(@root_url, resource, 'list', 2016, 4), @created_records)
     when 'tags'
-      stub_requests(:get, url(@root_url, resource, "list"), @created_records.group_by{ |record| record['tag_group_code'] })
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records.group_by{ |record| record['tag_group_code'] })
+    when 'bonuses'
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { target_year: 2016, bonus_no: 1 })
     else
-      stub_requests(:get, url(@root_url, resource, "list"), @created_records)
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records)
     end
   end
 
