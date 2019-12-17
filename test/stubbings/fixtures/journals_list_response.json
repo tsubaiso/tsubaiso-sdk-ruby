@@ -1,0 +1,74 @@
+  [
+    {
+      "id": 24625,
+      "journal_timestamp": "2019/12/17 00:00:00 +0900",
+      "journal_dcs": [
+        {
+          "debit": {
+            "account_code": "135~999",
+            "tax_type": 0,
+            "price_excluding_tax": 10800,
+            "price_including_tax": 10800,
+            "sales_tax": 0
+          },
+          "credit": {
+            "account_code": "500",
+            "tax_type": 1007,
+            "price_excluding_tax": 10000,
+            "price_including_tax": 10800,
+            "sales_tax": 800
+          },
+          "dept_code": "SETSURITSU",
+          "memo": "/テスト株式会社101/売上明細"
+        }
+      ]
+    },
+    {
+      "id": 24626,
+      "journal_timestamp": "2019/12/17 00:00:00 +0900",
+      "journal_dcs": [
+        {
+          "debit": {
+            "account_code": "135~999",
+            "tax_type": 0,
+            "price_excluding_tax": 10800,
+            "price_including_tax": 10800,
+            "sales_tax": 0
+          },
+          "credit": {
+            "account_code": "500",
+            "tax_type": 1007,
+            "price_excluding_tax": 10000,
+            "price_including_tax": 10800,
+            "sales_tax": 800
+          },
+          "dept_code": "SETSURITSU",
+          "memo": "/テスト株式会社101/売上明細"
+        }
+      ]
+    },
+    {
+      "id": 24627,
+      "journal_timestamp": "2019/11/04 00:00:00 +0900",
+      "journal_dcs": [
+        {
+          "debit": {
+            "account_code": "604",
+            "tax_type": 1007,
+            "price_excluding_tax": 10800,
+            "price_including_tax": 10800,
+            "sales_tax": 400
+          },
+          "credit": {
+            "account_code": "325~999",
+            "tax_type": 0,
+            "price_excluding_tax": 10000,
+            "price_including_tax": 800,
+            "sales_tax": 0
+          },
+          "dept_code": "SETSURITSU",
+          "memo": "/テスト株式会社102/仕入・経費明細"
+        }
+      ]
+    }
+  ]

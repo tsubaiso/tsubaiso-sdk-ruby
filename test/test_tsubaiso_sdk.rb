@@ -8,37 +8,6 @@ class TsubaisoSDKTest < Minitest::Test
     @api = TsubaisoSDK.new({ base_url: ENV['SDK_BASE_URL'], access_token: ENV['SDK_ACCESS_TOKEN'] })
 
     # data
-    @reimbursement_1 = {
-            applicant: 'Irfan',
-            application_term: '2016-03-01',
-            staff_code: 'EP2000',
-            memo: 'aaaaaaaa'
-          }
-
-    @reimbursement_2 = {
-            applicant: 'Matsuno',
-            application_term: '2016-03-01',
-            staff_code: 'EP2000',
-            memo: 'aaaaaaaa'
-           }
-
-    @staff_data_1 = {
-      code: 'QUALIFICATION',
-      value: 'TOEIC',
-      start_timestamp: '2016-01-01',
-      no_finish_timestamp: '1',
-      memo: 'First memo'
-    }
-
-    @tag_1 = {
-      code: 'test_code',
-      name: 'テストタグ',
-      sort_no: 10_000,
-      tag_group_code: 'DEFAULT',
-      start_ymd: '2016-01-01',
-      finish_ymd: '2016-12-31'
-    }
-
     @journal_distribution_1 = {
       title: 'title',
       start_date: '2012-07-01',
@@ -50,6 +19,100 @@ class TsubaisoSDKTest < Minitest::Test
       target_timestamp: '2017-02-01',
       distribution_conditions: { 'SETSURITSU' => '1', 'COMMON' => '1' }
     }
+
+    @manual_journal_1 = {
+      journal_timestamp: '2016-04-01',
+      journal_dcs: [
+        {
+          debit: {
+            account_code: '110',
+            price_including_tax: 200_000,
+            tax_type: 0
+          },
+          credit: {
+            account_code: '100',
+            price_including_tax: 200_000,
+            tax_type: 0
+          }#,
+          # tag_list: 'KIWI',
+          # dept_code: 'SYSTEM'
+        },
+        {
+          debit: {
+            account_code: '1',
+            price_including_tax: 54_321,
+            tax_type: 0
+          },
+          credit: {
+            account_code: '110',
+            price_including_tax: 54_321,
+            tax_type: 0
+          },
+          memo: 'Created From API'#,
+         # dept_code: 'R_AND_D'
+        }
+      ],
+      data_partner: { link_url: 'www.example.com/7', id_code: '7' }
+    }
+
+    @sale_201912 = {
+      price_including_tax: 10_800,
+      realization_timestamp: '2019-12-17',
+      customer_master_code: '101',
+      dept_code: 'SETSURITSU',
+      reason_master_code: 'SALES',
+      dc: 'd',
+      memo: '',
+      tax_code: 1007,
+      scheduled_memo: 'This is a scheduled memo.',
+      scheduled_receive_timestamp: '2019-12-18',
+      data_partner: { link_url: 'www.example.com/1', id_code: '1', partner_code: 'Example' }
+    }
+
+    @sale_201911 = {
+      price_including_tax: 10_800,
+      realization_timestamp: '2019-12-17',
+      customer_master_code: '101',
+      dept_code: 'SETSURITSU',
+      reason_master_code: 'SALES',
+      dc: 'd',
+      memo: '',
+      tax_code: 1007,
+      scheduled_memo: 'This is a scheduled memo.',
+      scheduled_receive_timestamp: '2016-11-25',
+      data_partner: { link_url: 'www.example.com/2', id_code: '2' }
+    }
+
+    @purchase_201912 = {
+      price_including_tax: 5400,
+      year: 2019,
+      month: 12,
+      accrual_timestamp: '2019-12-04',
+      customer_master_code: '102',
+      dept_code: 'SETSURITSU',
+      reason_master_code: 'BUYING_IN',
+      dc: 'c',
+      memo: '',
+      tax_code: 1007,
+      port_type: 1,
+      data_partner: { link_url: 'www.example.com/3', id_code: '3', partner_code: 'Example' }
+    }
+
+    @purchase_201911 = {
+      price_including_tax: 5400,
+      year: 2019,
+      month: 11,
+      accrual_timestamp: '2019-11-01',
+      customer_master_code: '102',
+      dept_code: 'HEAD',
+      reason_master_code: 'BUYING_IN',
+      dc: 'c',
+      memo: '',
+      tax_code: 1007,
+      port_type: 1,
+      data_partner: { link_url: 'www.example.com/4', id_code: '4' }
+    }
+
 
   end
 
@@ -78,35 +141,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert(records_before_count != records_after_count)
   ensure
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
-  end
-
-  def test_show_journal
-    manual_journal = @api.create_manual_journal(@manual_journal_1)
-    journals_list = @api.list_journals({ start_date: '2016-04-01', finish_date: '2016-04-30' })
-    first_journal_id = journals_list[:json][:records].first[:id]
-
-    journal = @api.show_journal(first_journal_id)
-    assert_equal 200, journal[:status].to_i, journal.inspect
-    assert_equal first_journal_id, journal[:json][:records][:id]
-  ensure
-    @api.destroy_manual_journal(manual_journal[:json].first[:id]) if successful?(manual_journal[:status])
-  end
-
-  def test_show_corporate_master
-    # With HatagayaTest CorporateMaster ID Only
-    shown_corporate_master = @api.show_corporate_master(5)
-    assert_equal 3, shown_corporate_master[:json][:corporate_code]
-    assert_equal '幡ヶ谷建設株式会社', shown_corporate_master[:json][:name]
-
-    # With HatagayaTest Corporate Code Only
-    shown_corporate_master = @api.show_corporate_master(nil, { ccode: 3 })
-    assert_equal 3, shown_corporate_master[:json][:corporate_code]
-    assert_equal '幡ヶ谷建設株式会社', shown_corporate_master[:json][:name]
-
-    # With HatagayaTest Both CorporateMaster ID and Corporate Code
-    shown_corporate_master = @api.show_corporate_master(5, { ccode: 3 })
-    assert_equal 3, shown_corporate_master[:json][:corporate_code]
-    assert_equal '幡ヶ谷建設株式会社', shown_corporate_master[:json][:name]
   end
 
   def test_list_sales_and_account_balances
@@ -177,48 +211,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert(balance_list[:json].all? { |x| x[:customer_master_id] == customer_master_id && x[:ap_segment] == ap_segment })
   ensure
     @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
-  end
-
-  def test_list_journals
-    august_sale = @api.create_sale(@sale_201608)
-    september_sale = @api.create_sale(@sale_201609)
-    august_purchase = @api.create_purchase(@purchase_201608)
-    september_purchase = @api.create_purchase(@purchase_201609)
-    assert_equal 200, august_sale[:status].to_i
-    assert_equal 200, september_sale[:status].to_i
-    assert_equal 200, august_purchase[:status].to_i
-    assert_equal 200, september_purchase[:status].to_i
-
-    options = { start_date: '2016-08-01', finish_date: '2016-08-31' }
-    journals_list = @api.list_journals(options)
-    records = journals_list[:json][:records]
-    assert_equal 200, journals_list[:status].to_i, journals_list.inspect
-    record_timestamps = records.map { |x| Time.parse(x[:journal_timestamp]) }
-    assert_includes record_timestamps, Time.parse(august_sale[:json][:realization_timestamp])
-    assert_includes record_timestamps, Time.parse(august_purchase[:json][:accrual_timestamp])
-
-    options = { price: 10_800 }
-    journals_list = @api.list_journals(options)
-    records = journals_list[:json][:records]
-    assert_equal 200, journals_list[:status].to_i, journals_list.inspect
-    record_prices = records.map { |x| x[:journal_dcs].map { |y| y[:debit][:price_including_tax] } }.flatten(1)
-    assert_includes record_prices, august_sale[:json][:price_including_tax]
-    assert_includes record_prices, september_sale[:json][:price_including_tax]
-
-    options = { dept_code: 'SETSURITSU' }
-    journals_list = @api.list_journals(options)
-    records = journals_list[:json][:records]
-    assert_equal 200, journals_list[:status].to_i, journals_list.inspect
-    record_depts = records.map { |x| x[:journal_dcs].map { |y| y[:dept_code] } }.flatten(1)
-    assert_includes record_depts, august_sale[:json][:dept_code]
-    assert_includes record_depts, september_sale[:json][:dept_code]
-    assert_includes record_depts, august_purchase[:json][:dept_code]
-    assert_includes record_depts, september_purchase[:json][:dept_code]
-  ensure
-    @api.destroy_sale("AR#{august_sale[:json][:id]}") if august_sale[:json][:id]
-    @api.destroy_sale("AR#{september_sale[:json][:id]}") if september_sale[:json][:id]
-    @api.destroy_purchase("AP#{august_purchase[:json][:id]}") if august_purchase[:json][:id]
-    @api.destroy_purchase("AP#{september_purchase[:json][:id]}") if september_purchase[:json][:id]
   end
 
   def test_list_fixed_assets

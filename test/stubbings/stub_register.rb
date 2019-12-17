@@ -86,8 +86,10 @@ class StubRegister
         stub_requests(:get, url(@root_url, resource, "show"), record, expected_body)
       when 'corporate_masters'
         stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: record['corporate_code'] })
-        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: nil })
+        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: nil  })
         stub_requests(:get, url(@root_url, resource, "show"), record, { ccode: record['corporate_code'] })
+      when 'journals'
+        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], { record: record })
       end
     end
   end
@@ -142,6 +144,10 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, 'list'), @created_records.group_by{ |record| record['tag_group_code'] })
     when 'bonuses'
       stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { target_year: 2016, bonus_no: 1 })
+    when 'journals'
+      stub_requests(:get, url(@root_url, resource, 'list'), {'records': @created_records}, { 'start_date': '2019-12-01', 'finish_date': '2019-12-31'} )
+      stub_requests(:get, url(@root_url, resource, 'list'), {'records': @created_records}, { 'price_min': 10800, 'price_max': 10800} )
+      stub_requests(:get, url(@root_url, resource, 'list'), {'records': @created_records}, { 'dept_code': 'SETSURITSU' } )
     else
       stub_requests(:get, url(@root_url, resource, 'list'), @created_records)
     end

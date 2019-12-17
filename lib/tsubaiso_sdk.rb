@@ -284,21 +284,25 @@ class TsubaisoSDK
   end
 
   def list_journals(options)
-    params = {
-      'start_date' => options[:start_date],
-      'finish_date' => options[:finish_date],
-      'start_created_at' => options[:start_created_at],
-      'finish_created_at' => options[:finish_created_at],
-      'timestamp_order' => options[:timestamp_order],
-      'account_codes' => options[:account_codes],
-      'price' => options[:price],
-      'memo' => options[:memo],
-      'dept_code' => options[:dept_code],
-      'tag_list' => options[:tag_list],
-      'id' => options[:id],
-      'format' => 'json'
-    }
-    uri = URI.parse(@base_url + '/journals/list/')
+    params = {}
+    candidate_keys = [
+      :start_date,
+      :finish_date,
+      :start_created_at,
+      :finish_created_at,
+      :account_codes,
+      :price_min,
+      :price_max,
+      :memo,
+      :dept_code,
+      :id,
+      :tag_list,
+    ]
+    candidate_keys.each do |key|
+      params[key.to_s] = options[key] if options.has_key?(key)
+    end
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + '/journals/list')
     api_request(uri, 'GET', params)
   end
 
