@@ -193,7 +193,7 @@ class TsubaisoSDK
       'ar_segment' => options[:ar_segment],
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/ar_receipts/balance')
+    uri = URI.parse(@base_url + '/ar/balance')
     api_request(uri, 'GET', params)
   end
 

@@ -23,6 +23,7 @@ class StubRegister
     stub_destroy(resource)
     stub_list(resource)
     resource == 'api_histories' ? stub_index(resource) : stub_show(resource)
+    stub_balance(resource)
     stub_update(resource)
     stub_find_or_create(resource)
   end
@@ -51,6 +52,15 @@ class StubRegister
     return_params
   end
 
+  def stub_balance(resource)
+    if load_json(resource, 'balance', 'require')
+      expect_param = load_json(resource, "balance")
+      return_body  = load_json(resource, 'balance', 'response')
+      stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param)
+      stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param.merge({customer_master_id: 101, ar_segment: 1})) { |record| record['customer_master_code'] == "101"}
+    end
+  end
+
   def stub_find_or_create(resource)
     # NOTE: This stub support ar_receipts, ap_payments
     if load_json(resource, "find_or_create")
@@ -70,7 +80,7 @@ class StubRegister
 
   def stub_show(resource)
     @created_records.each do |record|
-      stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record)
+      stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record) unless resource == 'journals' || resource == 'corporate_masters'
 
       case resource
       when 'customer_masters', 'staff_datum_masters'
@@ -172,6 +182,5 @@ class StubRegister
       @created_records << return_body
     end
   end
-
 end
 

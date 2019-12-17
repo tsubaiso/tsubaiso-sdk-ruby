@@ -144,13 +144,13 @@ class TsubaisoSDKTest < Minitest::Test
   end
 
   def test_list_sales_and_account_balances
-    realization_timestamp = Time.parse(@sale_201702[:realization_timestamp])
+    realization_timestamp = Time.parse(@sale_201912[:realization_timestamp])
 
     # Without customer_master_code and ar_segment option parameters
     balance_list_before = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month)
     assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
 
-    new_sale = @api.create_sale(@sale_201702)
+    new_sale = @api.create_sale(@sale_201912)
     assert_equal 200, new_sale[:status].to_i, new_sale.inspect
     assert(new_sale[:json].count > 0)
 

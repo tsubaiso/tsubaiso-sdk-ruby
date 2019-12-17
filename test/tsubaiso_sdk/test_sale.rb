@@ -107,4 +107,20 @@ class SaleTest < Minitest::Test
     assert_equal sale2[:json][:data_partner][:id_code], sale1[:json][:data_partner][:id_code]
   end
 
+  def test_list_sales_and_account_balances
+    # Without customer_master_code and ar_segment option parameters
+    balance_lists = @api.list_sales_and_account_balances(2019, 12)
+    assert_equal 200, balance_lists[:status].to_i, balance_lists.inspect
+    assert_equal 3, balance_lists[:json].size
+
+    # With customer_master_id and ar_segment option parameters
+    balance_list_with_opts = @api.list_sales_and_account_balances(2019, 12,
+                                                        :customer_master_id => 101,
+                                                        :ar_segment => 1)
+
+    assert_equal 200, balance_list_with_opts[:status].to_i, balance_list_with_opts.inspect
+    assert_equal 2, balance_list_with_opts[:json].size
+    assert(balance_list_with_opts[:json].all? { |x| x[:customer_master_code] == "101" && x[:ar_segment] == 1 })
+  end
+
 end
