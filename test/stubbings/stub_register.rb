@@ -54,10 +54,10 @@ class StubRegister
 
   def stub_balance(resource)
     if load_json(resource, 'balance', 'require')
-      expect_param = load_json(resource, "balance")
+      expect_param = load_json(resource, 'balance')
       return_body  = load_json(resource, 'balance', 'response')
       stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param)
-      stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param.merge({customer_master_id: 101, ar_segment: 1})) { |record| record['customer_master_code'] == "101"}
+      stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param.merge({customer_master_id: 101})) { |record| record['customer_master_code'] == "101"}
     end
   end
 
@@ -99,7 +99,7 @@ class StubRegister
         stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: nil  })
         stub_requests(:get, url(@root_url, resource, "show"), record, { ccode: record['corporate_code'] })
       when 'journals'
-        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], { record: record })
+        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], { 'record': record })
       end
     end
   end
@@ -177,7 +177,11 @@ class StubRegister
 
   def stub_create(resource)
     load_json(resource, "create")&.each_with_index do |record, i|
-      return_body = add_attrs(record, i, resource)
+      if resource == 'journal_distributions'
+        return_body = add_attrs({}, i, resource)
+      else
+        return_body = add_attrs(record, i, resource)
+      end
       stub_requests(:post, url(@root_url, resource, "create"), return_body, record)
       @created_records << return_body
     end

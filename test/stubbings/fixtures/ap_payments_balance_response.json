@@ -1,0 +1,44 @@
+[
+  {
+    "customer_master_code": "105",
+    "finish_balance": 5400,
+    "memo": null,
+    "created_at": "2019/08/28 12:24:56 +0900",
+    "ym": "2019-12",
+    "ap_segment": 1,
+    "start_balance_real": 0,
+    "paid_amount": 0,
+    "buying_amount": 0,
+    "tax_buying_amount": 400,
+    "remittance_charge": 0,
+    "exchange_gain_and_loss": 0
+  },
+  {
+    "customer_master_code": "101",
+    "finish_balance": 5400,
+    "memo": null,
+    "created_at": "2019/08/28 12:24:56 +0900",
+    "ym": "2019-12",
+    "ap_segment": 1,
+    "start_balance_real": 0,
+    "paid_amount": 0,
+    "buying_amount": 0,
+    "tax_buying_amount": 400,
+    "remittance_charge": 0,
+    "exchange_gain_and_loss": 0
+  },
+  {
+    "customer_master_code": "101",
+    "finish_balance": 5400,
+    "memo": null,
+    "created_at": "2019/08/28 12:24:56 +0900",
+    "ym": "2019-12",
+    "ap_segment": 1,
+    "start_balance_real": 0,
+    "paid_amount": 0,
+    "buying_amount": 0,
+    "tax_buying_amount": 400,
+    "remittance_charge": 0,
+    "exchange_gain_and_loss": 0
+  }
+]

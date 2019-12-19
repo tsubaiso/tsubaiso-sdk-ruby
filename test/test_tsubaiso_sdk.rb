@@ -143,48 +143,14 @@ class TsubaisoSDKTest < Minitest::Test
     @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
   end
 
-  def test_list_sales_and_account_balances
-    realization_timestamp = Time.parse(@sale_201912[:realization_timestamp])
-
-    # Without customer_master_code and ar_segment option parameters
-    balance_list_before = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month)
-    assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
-
-    new_sale = @api.create_sale(@sale_201912)
-    assert_equal 200, new_sale[:status].to_i, new_sale.inspect
-    assert(new_sale[:json].count > 0)
-
-    balance_list_after = @api.list_sales_and_account_balances(realization_timestamp.year, realization_timestamp.month)
-    assert_equal 200, balance_list_after[:status].to_i, balance_list_after.inspect
-    assert(balance_list_after[:json].count > 0)
-    assert(balance_list_after[:json] != balance_list_before[:json])
-
-    customer_masters_list = @api.list_customers
-    assert_equal 200, customer_masters_list[:status].to_i, customer_masters_list.inspect
-    assert(customer_masters_list[:json].any? { |x| x[:code] == new_sale[:json][:customer_master_code] })
-    filtered_cm = customer_masters_list[:json].select { |x| x[:code] == new_sale[:json][:customer_master_code] }.first
-
-    # With customer_master_id and ar_segment option parameters
-    balance_list = @api.list_sales_and_account_balances(realization_timestamp.year,
-                                                        realization_timestamp.month,
-                                                        :customer_master_id => filtered_cm[:id],
-                                                        :ar_segment => filtered_cm[:used_in_ar])
-
-    assert_equal 200, balance_list[:status].to_i, balance_list.inspect
-    assert(balance_list[:json].count > 0)
-    assert(balance_list[:json].all? { |x| x[:customer_master_code] == filtered_cm[:code] && x[:ar_segment] == filtered_cm[:used_in_ar] })
-  ensure
-    @api.destroy_sale("AR#{new_sale[:json][:id]}") if new_sale[:json][:id]
-  end
-
   def test_list_purchases_and_account_balances
-    accrual_timestamp = Time.parse(@purchase_201702[:accrual_timestamp])
+    accrual_timestamp = Time.parse(@purchase_201912[:accrual_timestamp])
 
     # Without customer_master_id and ap_segment option parameters
     balance_list_before = @api.list_purchases_and_account_balances(accrual_timestamp.year, accrual_timestamp.month)
     assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
 
-    new_purchase = @api.create_purchase(@purchase_201702)
+    new_purchase = @api.create_purchase(@purchase_201912)
     assert_equal 200, new_purchase[:status].to_i, new_purchase.inspect
     assert(new_purchase[:json].count > 0)
 

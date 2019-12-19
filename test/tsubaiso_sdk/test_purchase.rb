@@ -102,20 +102,19 @@ class PurchaseTest < Minitest::Test
     assert_equal purchase[:json][:id], get_purchase[:json][:id]
   end
 
-  def test_list_purchases
-    feb_purchase = @api.create_purchase(@purchase_201702)
-    august_purchase = @api.create_purchase(@purchase_201608)
-    september_purchase = @api.create_purchase(@purchase_201609)
+  def test_list_purchases_and_account_balances
+    # Without customer_master_code and ar_segment option parameters
+    balance_lists = @api.list_purchases_and_account_balances(2019, 12)
+    assert_equal 200, balance_lists[:status].to_i, balance_lists.inspect
+    assert_equal 3, balance_lists[:json].size
 
-    feb_purchase_id = feb_purchase[:json][:id]
-    august_purchase_id = august_purchase[:json][:id]
-    september_purchase_id = september_purchase[:json][:id]
+    # With customer_master_id option parameters
+    balance_list_with_opts = @api.list_purchases_and_account_balances(2019, 12,
+                                                        :customer_master_id => 101)
 
-    purchase_list = @api.list_purchases(2016, 8)
-    assert_equal 200, purchase_list[:status].to_i, purchase_list.inspect
-    assert(purchase_list[:json].none? { |x| x[:id] == feb_purchase_id })
-    assert(purchase_list[:json].any? { |x| x[:id] == august_purchase_id })
-    assert(purchase_list[:json].none? { |x| x[:id] == september_purchase_id })
+    assert_equal 200, balance_list_with_opts[:status].to_i, balance_list_with_opts.inspect
+    assert_equal 2, balance_list_with_opts[:json].size
+    assert(balance_list_with_opts[:json].all? { |x| x[:customer_master_code] == "101"})
   end
 
 end
