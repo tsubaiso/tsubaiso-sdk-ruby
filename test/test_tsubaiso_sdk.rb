@@ -124,61 +124,6 @@ class TsubaisoSDKTest < Minitest::Test
     assert_equal 'Bad credentials', sale[:json][:error]
   end
 
-  def test_create_journal_distribution
-    options = { start_date: @journal_distribution_1[:target_timestamp], finish_date: @journal_distribution_1[:target_timestamp] }
-
-    journals_list_before = @api.list_journals(options)
-    records_before_count = journals_list_before[:json][:records].count
-    assert_equal 200, journals_list_before[:status].to_i, journals_list_before.inspect
-
-    journal_distribution = @api.create_journal_distribution(@journal_distribution_1)
-    assert_equal 200, journal_distribution[:status].to_i, journal_distribution.inspect
-    assert_equal Time.parse(@journal_distribution_1[:target_timestamp]), Time.parse(journal_distribution[:json][:target_ym])
-
-    journals_list_after = @api.list_journals(options)
-    records_after_count = journals_list_after[:json][:records].count
-    assert_equal 200, journals_list_after[:status].to_i, journals_list_after.inspect
-    assert(records_before_count != records_after_count)
-  ensure
-    @api.destroy_journal_distribution(journal_distribution[:json][:id]) if journal_distribution[:json][:id]
-  end
-
-  def test_list_purchases_and_account_balances
-    accrual_timestamp = Time.parse(@purchase_201912[:accrual_timestamp])
-
-    # Without customer_master_id and ap_segment option parameters
-    balance_list_before = @api.list_purchases_and_account_balances(accrual_timestamp.year, accrual_timestamp.month)
-    assert_equal 200, balance_list_before[:status].to_i, balance_list_before.inspect
-
-    new_purchase = @api.create_purchase(@purchase_201912)
-    assert_equal 200, new_purchase[:status].to_i, new_purchase.inspect
-    assert(new_purchase[:json].count > 0)
-
-    balance_list_after = @api.list_purchases_and_account_balances(accrual_timestamp.year, accrual_timestamp.month)
-    assert_equal 200, balance_list_after[:status].to_i, balance_list_after.inspect
-    assert(balance_list_after[:json].count > 0)
-    assert(balance_list_after[:json] != balance_list_before[:json])
-
-    customer_masters_list = @api.list_customers
-    assert_equal 200, customer_masters_list[:status].to_i, customer_masters_list.inspect
-    assert(customer_masters_list[:json].any? { |x| x[:code] == new_purchase[:json][:customer_master_code] })
-    filtered_customer_master = customer_masters_list[:json].select { |x| x[:code] == new_purchase[:json][:customer_master_code] }.first
-    customer_master_id = filtered_customer_master[:id]
-    ap_segment = filtered_customer_master[:used_in_ap]
-
-    # With customer_master_id and ap_segment option parameters
-    balance_list = @api.list_purchases_and_account_balances(accrual_timestamp.year,
-                                                            accrual_timestamp.month,
-                                                            :customer_master_id => customer_master_id,
-                                                            :ap_segment => ap_segment)
-
-    assert_equal 200, balance_list[:status].to_i, balance_list.inspect
-    assert(balance_list[:json].count > 0)
-    assert(balance_list[:json].all? { |x| x[:customer_master_id] == customer_master_id && x[:ap_segment] == ap_segment })
-  ensure
-    @api.destroy_purchase("AP#{new_purchase[:json][:id]}") if new_purchase[:json][:id]
-  end
-
   def test_list_fixed_assets
     list = @api.list_fixed_assets
     assert_equal 200, list[:status].to_i, list.inspect

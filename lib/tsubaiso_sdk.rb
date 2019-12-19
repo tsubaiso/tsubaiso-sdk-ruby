@@ -361,7 +361,7 @@ class TsubaisoSDK
   # Alpha version now.
   def list_fixed_assets
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/fixed_assets/list/')
+    uri = URI.parse(@base_url + '/fixed_assets/list')
     api_request(uri, 'GET', params)
   end
 
