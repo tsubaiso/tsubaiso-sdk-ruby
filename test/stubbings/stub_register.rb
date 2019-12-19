@@ -26,6 +26,7 @@ class StubRegister
     stub_balance(resource)
     stub_update(resource)
     stub_find_or_create(resource)
+    stub_calc(resource)
   end
 
   private
@@ -50,6 +51,11 @@ class StubRegister
 
     return_params["tag_list"] = record["tag_list"].split(",") if record["tag_list"]&.kind_of?(String)
     return_params
+  end
+
+  def stub_calc(resource)
+    return unless load_json(resource, 'calc', 'require')
+    stub_requests(:get, url(@root_url, resource, 'calc'), {"scheduled_date": "2019-01-10"}, load_json(resource, 'calc', 'require'))
   end
 
   def stub_balance(resource)
