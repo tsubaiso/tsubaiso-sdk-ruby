@@ -1,8 +1,6 @@
 class TsubaisoSDK
   require 'net/http'
   require 'json'
-  require_relative './debug_patch.rb'
-  prepend ApiDebug
 
   module UrlBuilder
     def url(root, resource, method, year = nil, month = nil)
