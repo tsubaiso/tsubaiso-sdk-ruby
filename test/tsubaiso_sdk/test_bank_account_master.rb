@@ -1,8 +1,8 @@
 require 'minitest/autorun'
-require_relative './common_setup_teardown.rb'
+require_relative './common_setup_and_teardown.rb'
 
 class BankAccountMasterTest < Minitest::Test
-  include CommonSetupTeardown
+  include CommonSetupAndTeardown
 
   def setup
     @bank_account_master_1 = {

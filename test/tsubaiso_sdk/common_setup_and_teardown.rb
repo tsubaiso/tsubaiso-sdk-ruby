@@ -1,4 +1,4 @@
-module CommonSetupTeardown
+module CommonSetupAndTeardown
   require 'time'
   require_relative '../../lib/tsubaiso_sdk'
   require_relative '../stubbings/stub_register.rb'

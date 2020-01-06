@@ -23,6 +23,7 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+
   def update_bank_account_master(options)
     params = {}
     candidate_keys = [
@@ -41,7 +42,7 @@ class TsubaisoSDK
     ]
 
     candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
+      params[key.to_s] = options[key] if options.has_key?(key) # Hash#slice can be used instead if your ruby version is =< 2.5.0 
     end
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_account_masters/update/' + options[:id].to_s)

@@ -31,7 +31,7 @@ class StubRegister
 
   private
 
-  def load_json(resource, method, req_or_res = "require")
+  def load_json(resource, method, req_or_res = 'request')
     path = "test/stubbings/fixtures/#{resource}_#{method}_#{req_or_res}.json"
     return nil unless File.exist?(path)
     JSON.load(File.read(path))
@@ -49,28 +49,28 @@ class StubRegister
       :updated_at => Time.now.to_s
     })
 
-    return_params["tag_list"] = record["tag_list"].split(",") if record["tag_list"]&.kind_of?(String)
+    return_params['tag_list'] = record['tag_list'].split(',') if record['tag_list']&.kind_of?(String)
     return_params
   end
 
   def stub_calc(resource)
-    return unless load_json(resource, 'calc', 'require')
-    stub_requests(:get, url(@root_url, resource, 'calc'), {"scheduled_date": "2019-01-10"}, load_json(resource, 'calc', 'require'))
+    return unless load_json(resource, 'calc')
+    stub_requests(:get, url(@root_url, resource, 'calc'), {'scheduled_date': '2019-01-10'}, load_json(resource, 'calc'))
   end
 
   def stub_balance(resource)
-    if load_json(resource, 'balance', 'require')
+    if load_json(resource, 'balance')
       expect_param = load_json(resource, 'balance')
       return_body  = load_json(resource, 'balance', 'response')
       stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param)
-      stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param.merge({customer_master_id: 101})) { |record| record['customer_master_code'] == "101"}
+      stub_requests(:get, url(@root_url, resource, 'balance'), return_body, expect_param.merge({customer_master_id: 101})) { |record| record['customer_master_code'] == '101'}
     end
   end
 
   def stub_find_or_create(resource)
     # NOTE: This stub support ar_receipts, ap_payments
-    if load_json(resource, "find_or_create")
-      expected_param = load_json(resource, "find_or_create")
+    if load_json(resource, 'find_or_create')
+      expected_param = load_json(resource, 'find_or_create')
       return_body    = add_attrs(expected_param, 99, resource)
       stub_requests(:post, url(@root_url, resource, 'find_or_create'), return_body, expected_param)
       @created_records << return_body
@@ -91,7 +91,7 @@ class StubRegister
       case resource
       when 'customer_masters', 'staff_datum_masters'
         # NOTE: Serch by Code (support customer_master_show & staff_datum_master_show & corporate_masters)
-        stub_requests(:get, url(@root_url, resource, "show"), record, { code: record['code'] })
+        stub_requests(:get, url(@root_url, resource, 'show'), record, { code: record['code'] })
       when 'staff_data'
         # NOTE: Serch by code and staff_id (support staff_data)
         expected_body = {
@@ -99,13 +99,13 @@ class StubRegister
           code: record['code'],
           time: record['start_timestamp']
         }
-        stub_requests(:get, url(@root_url, resource, "show"), record, expected_body)
+        stub_requests(:get, url(@root_url, resource, 'show'), record, expected_body)
       when 'corporate_masters'
-        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: record['corporate_code'] })
-        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], record, { ccode: nil  })
-        stub_requests(:get, url(@root_url, resource, "show"), record, { ccode: record['corporate_code'] })
+        stub_requests(:get, url(@root_url, resource, 'show') + '/' + record[:id], record, { ccode: record['corporate_code'] })
+        stub_requests(:get, url(@root_url, resource, 'show') + '/' + record[:id], record, { ccode: nil  })
+        stub_requests(:get, url(@root_url, resource, 'show'), record, { ccode: record['corporate_code'] })
       when 'journals'
-        stub_requests(:get, url(@root_url, resource, "show") + '/' + record[:id], { 'record': record })
+        stub_requests(:get, url(@root_url, resource, 'show') + '/' + record[:id], { 'record': record })
       end
     end
   end
@@ -143,9 +143,9 @@ class StubRegister
     when 'payrolls'
       stub_requests(:get, url(@root_url, resource, 'list', 2017, 2), @created_records)
     when 'ar'
-      stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records){ |record| record["realization_timestamp"] =~ /2016-08-\d{2}/}
+      stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records){ |record| record['realization_timestamp'] =~ /2016-08-\d{2}/}
     when 'ap_payments'
-      stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records){ |record| record["accrual_timestamp"] =~ /2016-08-\d{2}/}
+      stub_requests(:get, url(@root_url, resource, 'list', 2016, 8), @created_records){ |record| record['accrual_timestamp'] =~ /2016-08-\d{2}/}
     when 'staff_data'
       stub_requests(:get, url(@root_url, resource, 'list'), @created_records, { staff_id: 300 })
     when 'bank_account_transactions'
@@ -171,7 +171,7 @@ class StubRegister
 
   def stub_destroy(resource)
     @created_records.each_with_index do |record, index|
-      stub_request(:post, url(@root_url, resource, "destroy") + "/" + record[:id])
+      stub_request(:post, url(@root_url, resource, 'destroy') + "/" + record[:id])
       .with(
         headers: @common_request_headers
       )
@@ -182,13 +182,13 @@ class StubRegister
   end
 
   def stub_create(resource)
-    load_json(resource, "create")&.each_with_index do |record, i|
+    load_json(resource, 'create')&.each_with_index do |record, i|
       if resource == 'journal_distributions'
         return_body = add_attrs({}, i, resource)
       else
         return_body = add_attrs(record, i, resource)
       end
-      stub_requests(:post, url(@root_url, resource, "create"), return_body, record)
+      stub_requests(:post, url(@root_url, resource, 'create'), return_body, record)
       @created_records << return_body
     end
   end

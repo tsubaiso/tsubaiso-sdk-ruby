@@ -1,8 +1,8 @@
 require 'minitest/autorun'
-require_relative './common_setup_teardown.rb'
+require_relative './common_setup_and_teardown.rb'
 
 class StaffDataTest < Minitest::Test
-  include CommonSetupTeardown
+  include CommonSetupAndTeardown
 
   def setup
     @staff_data_1 = {

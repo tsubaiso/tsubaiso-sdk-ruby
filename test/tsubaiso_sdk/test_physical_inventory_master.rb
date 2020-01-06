@@ -1,8 +1,8 @@
 require 'minitest/autorun'
-require_relative './common_setup_teardown.rb'
+require_relative './common_setup_and_teardown.rb'
 
 class PhysicalInventoryMaster < Minitest::Test
-  include CommonSetupTeardown
+  include CommonSetupAndTeardown
 
   def setup
     @pim_201901 = {

@@ -1,8 +1,8 @@
 require 'minitest/autorun'
-require_relative 'common_setup_teardown'
+require_relative 'common_setup_and_teardown'
 
 class PettyCashReasonMaster < Minitest::Test
-  include CommonSetupTeardown
+  include CommonSetupAndTeardown
 
   def setup
     @petty_cash_reason_master_1 = {
