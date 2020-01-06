@@ -41,9 +41,7 @@ class TsubaisoSDK
       :currency_rate_master_code
     ]
 
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key) # Hash#slice can be used instead if your ruby version is =< 2.5.0 
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_account_masters/update/' + options[:id].to_s)
     api_request(uri, 'POST', params)
@@ -109,9 +107,7 @@ class TsubaisoSDK
       :dept_code,
     ]
 
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/bank_account_transactions/update/#{options[:id]}")
     api_request(uri, "POST",params)
@@ -297,9 +293,7 @@ class TsubaisoSDK
       :id,
       :tag_list,
     ]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/journals/list')
     api_request(uri, 'GET', params)
@@ -599,9 +593,7 @@ class TsubaisoSDK
       'data_partner'
     ]
     params = {}
-    available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym]  if options.has_key?(key.to_sym)
-    end
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
     params['format'] = 'json'
 
     uri = URI.parse(@base_url + '/customer_masters/create')
@@ -662,9 +654,7 @@ class TsubaisoSDK
       'data_partner',
       'key'
     ]
-    available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym] if options.has_key?(key.to_sym)
-    end
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/ar/find_or_create')
     api_request(uri, 'POST', params)
@@ -842,9 +832,7 @@ class TsubaisoSDK
   def create_physical_inventory_masters(options)
     params = {}
     candidate_keys = [:name, :start_ymd, :finish_ymd, :memo, :tag_list, :dept_code]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
 
     uri = URI.parse(@base_url + '/physical_inventory_masters/create')
@@ -869,9 +857,7 @@ class TsubaisoSDK
       'data_partner'
     ]
     params = {}
-    available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym] if options.has_key?(key.to_sym)
-    end
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/ar/update/#{options[:id]}")
     api_request(uri, 'POST', params)
@@ -934,9 +920,7 @@ class TsubaisoSDK
       'data_partner'
     ]
     params = {}
-    available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym] if options.has_key?(key.to_sym)
-    end
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
     params['format'] = 'json'
 
     uri = URI.parse(@base_url + "/customer_masters/update/#{options[:id]}")
@@ -955,9 +939,7 @@ class TsubaisoSDK
       :account_code
     ]
 
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_reason_masters/update/' + options[:id].to_s)
     api_request(uri, "POST",params)
@@ -1002,9 +984,7 @@ class TsubaisoSDK
       :dept_code,
       :memo,
     ]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/reimbursements/update/#{reimbursement_id}")
     api_request(uri, 'POST', params)
@@ -1024,9 +1004,7 @@ class TsubaisoSDK
       :tax_type,
       :data_partner
     ]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
 
     uri = URI.parse(@base_url + "/reimbursement_transactions/update/#{options[:id]}")
@@ -1045,9 +1023,7 @@ class TsubaisoSDK
       :start_date,
       :finish_date
     ]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/depts/update/#{dept_id}")
     api_request(uri, 'POST', params)
@@ -1063,9 +1039,7 @@ class TsubaisoSDK
       :start_ymd,
       :finish_ymd
     ]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/tags/update/#{tag_id}")
     api_request(uri, 'POST', params)
@@ -1083,9 +1057,7 @@ class TsubaisoSDK
       :port_type,
       :sort_number
     ]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/petty_cash_reason_masters/update/#{petty_cash_reason_master_id}")
     api_request(uri, 'POST', params)
@@ -1094,9 +1066,7 @@ class TsubaisoSDK
   def update_physical_inventory_masters(options)
     params = {}
     candidate_keys = [:name, :start_ymd, :finish_ymd, :memo]
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
 
     uri = URI.parse(@base_url + "/physical_inventory_masters/update/#{options[:id]}")
@@ -1205,6 +1175,15 @@ class TsubaisoSDK
   end
 
   private
+
+
+  def create_parameters(keys,options)
+    # Add new keys and value if options has keys, even if value in options is nil.
+    # This code avoid updateing attributes witch is not specified by the users.
+    (keys & options.keys).inject({ 'format' => 'json' }) do |params, key|
+      params.merge(key.to_s => options[key]) # Hash#slice can be replace this code if your ruby is =< 2.5.0
+    end
+  end
 
   def api_request(uri, http_verb, params)
     http = Net::HTTP.new(uri.host, uri.port)
