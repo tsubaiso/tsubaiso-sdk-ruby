@@ -2,16 +2,27 @@ class TsubaisoSDK
   require 'net/http'
   require 'json'
 
+  module UrlBuilder
+    def url(root, resource, method, year = nil, month = nil)
+      if year && month && method == "list"
+        return root + "/" + resource + "/list/" + year.to_s + "/" + month.to_s
+      else
+        return root + "/" + resource + "/" + method
+      end
+    end
+  end
+
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
-    @access_token = options[:access_token]
+    @access_token = options[:access_token] || "Fake_Token"
   end
 
   def list_bank_account_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/bank_account_masters/index/')
+    uri = URI.parse(@base_url + '/bank_account_masters/list')
     api_request(uri, 'GET', params)
   end
+
 
   def update_bank_account_master(options)
     params = {}
@@ -27,12 +38,10 @@ class TsubaisoSDK
       :zengin_branch_code,
       :zengin_client_code_sogo,
       :currency_code,
-      :currency_rate_master_id
+      :currency_rate_master_code
     ]
 
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_account_masters/update/' + options[:id].to_s)
     api_request(uri, 'POST', params)
@@ -41,7 +50,7 @@ class TsubaisoSDK
   def list_bank_account_transactions(bank_account_id)
     params = {
       'format' => 'json',
-      'bank_account_id' => bank_account_id.to_s
+      'bank_account_id' => bank_account_id.to_i
     }
     uri = URI.parse(@base_url + "/bank_account_transactions/list")
     api_request(uri, 'GET', params)
@@ -51,7 +60,7 @@ class TsubaisoSDK
     params = {
       'format' => 'json',
     }
-    uri = URI.parse(@base_url + "bank_account_transactions/show/#{id}")
+    uri = URI.parse(@base_url + "/bank_account_transactions/show/#{id}")
     api_request(uri, 'GET', params)
   end
 
@@ -70,7 +79,6 @@ class TsubaisoSDK
       'dept_code' => options[:dept_code],
       'format' => 'json'
     }
-
     uri = URI.parse(@base_url + '/bank_account_transactions/create')
     api_request(uri, 'POST', params)
   end
@@ -99,12 +107,10 @@ class TsubaisoSDK
       :dept_code,
     ]
 
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/bank_account_transactions/update/#{options[:id]}")
-    result = api_request(uri, "POST",params)
+    api_request(uri, "POST",params)
   end
 
   def list_bank_account(options)
@@ -152,11 +158,11 @@ class TsubaisoSDK
       'zengin_bank_code' => options[:zengin_bank_code],
       'zengin_branch_code' => options[:zengin_branch_code],
       'zengin_client_code_sogo' => options[:zengin_client_code_sogo],
-      'zengin_client_code_kyuyo' => options[:zengin_client_code_kyuyo],
       'currency_code' => options[:currency_code],
-      'currency_rate_master_id' => options[:currency_rate_master_id]
+      'currency_rate_master_code' => options[:currency_rate_master_code]
     }
-    uri = URI.parse(@base_url + '/bank_account_masters/create/')
+
+    uri = URI.parse(@base_url + '/bank_account_masters/create')
     api_request(uri, 'POST', params)
   end
 
@@ -168,11 +174,9 @@ class TsubaisoSDK
 
   def list_sales(year, month)
     params = {
-      'year' => year,
-      'month' => month,
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/ar/list/')
+    uri = URI.parse(@base_url + "/ar/list/#{year.to_i}/#{month.to_i}")
     api_request(uri, 'GET', params)
   end
 
@@ -184,17 +188,15 @@ class TsubaisoSDK
       'ar_segment' => options[:ar_segment],
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/ar_receipts/balance/')
+    uri = URI.parse(@base_url + '/ar/balance')
     api_request(uri, 'GET', params)
   end
 
   def list_purchases(year, month)
     params = {
-      'year' => year,
-      'month' => month,
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/ap_payments/list/')
+    uri = URI.parse(@base_url + "/ap_payments/list/#{year.to_i}/#{month.to_i}")
     api_request(uri, 'GET', params)
   end
 
@@ -206,29 +208,27 @@ class TsubaisoSDK
       'ap_segment' => options[:ap_segment],
       'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/ap_payments/balance/')
+    uri = URI.parse(@base_url + '/ap_payments/balance')
     api_request(uri, 'GET', params)
   end
 
   def list_customers
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/customer_masters/list/')
+    uri = URI.parse(@base_url + '/customer_masters/list')
     api_request(uri, 'GET', params)
   end
 
   def list_payrolls(year, month)
     params = {
-      'format' => 'json',
-      'year' => year,
-      'month' => month
+      'format' => 'json'
     }
-    uri = URI.parse(@base_url + '/payrolls/list/')
+    uri = URI.parse(@base_url + "/payrolls/list/#{year.to_s}/#{month.to_s}")
     api_request(uri, 'GET', params)
   end
 
   def list_staff
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/staffs/list/')
+    uri = URI.parse(@base_url + '/staffs/list')
     api_request(uri, 'GET', params)
   end
 
@@ -237,13 +237,13 @@ class TsubaisoSDK
       'format' => 'json',
       'staff_id' => staff_id
     }
-    uri = URI.parse(@base_url + '/staff_data/list/')
+    uri = URI.parse(@base_url + '/staff_data/list')
     api_request(uri, 'GET', params)
   end
 
   def list_staff_datum_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/staff_datum_masters/list/')
+    uri = URI.parse(@base_url + '/staff_datum_masters/list')
     api_request(uri, 'GET', params)
   end
 
@@ -253,7 +253,7 @@ class TsubaisoSDK
       'year' => year,
       'month' => month
     }
-    uri = URI.parse(@base_url + '/reimbursements/list/')
+    uri = URI.parse(@base_url + '/reimbursements/list')
     api_request(uri, 'GET', params)
   end
 
@@ -262,60 +262,58 @@ class TsubaisoSDK
       'format' => 'json',
       'id' => reimbursement_id.to_i
     }
-    uri = URI.parse(@base_url + '/reimbursement_transactions/list/')
+    uri = URI.parse(@base_url + '/reimbursement_transactions/list')
     api_request(uri, 'GET', params)
   end
 
   def list_reimbursement_reason_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/reimbursement_reason_masters/list/')
+    uri = URI.parse(@base_url + '/reimbursement_reason_masters/list')
     api_request(uri, 'GET', params)
   end
 
   def list_manual_journals(year, month)
-    params = {
-      'year' => year,
-      'month' => month,
-      'format' => 'json'
-    }
-    uri = URI.parse(@base_url + '/manual_journals/list/')
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/manual_journals/list/#{year.to_i}/#{month.to_i}")
     api_request(uri, 'GET', params)
   end
 
   def list_journals(options)
-    params = {
-      'start_date' => options[:start_date],
-      'finish_date' => options[:finish_date],
-      'start_created_at' => options[:start_created_at],
-      'finish_created_at' => options[:finish_created_at],
-      'timestamp_order' => options[:timestamp_order],
-      'account_codes' => options[:account_codes],
-      'price' => options[:price],
-      'memo' => options[:memo],
-      'dept_code' => options[:dept_code],
-      'tag_list' => options[:tag_list],
-      'id' => options[:id],
-      'format' => 'json'
-    }
-    uri = URI.parse(@base_url + '/journals/list/')
+    params = {}
+    candidate_keys = [
+      :start_date,
+      :finish_date,
+      :start_created_at,
+      :finish_created_at,
+      :account_codes,
+      :price_min,
+      :price_max,
+      :memo,
+      :dept_code,
+      :id,
+      :tag_list,
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + '/journals/list')
     api_request(uri, 'GET', params)
   end
 
   def list_depts
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/depts/list/')
+    uri = URI.parse(@base_url + '/depts/list')
     api_request(uri, 'GET', params)
   end
 
   def list_tax_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/tax_masters/list/')
+    uri = URI.parse(@base_url + '/tax_masters/list')
     api_request(uri, 'GET', params)
   end
 
   def list_tags
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/tags/list/')
+    uri = URI.parse(@base_url + '/tags/list')
     api_request(uri, 'GET', params)
   end
 
@@ -325,7 +323,7 @@ class TsubaisoSDK
       'bonus_no' => bonus_no,
       'target_year' => target_year
     }
-    uri = URI.parse(@base_url + '/bonuses/list/')
+    uri = URI.parse(@base_url + '/bonuses/list')
     api_request(uri, 'GET', params)
   end
 
@@ -337,7 +335,7 @@ class TsubaisoSDK
 
   def list_ar_reason_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/ar_reason_masters/list/')
+    uri = URI.parse(@base_url + '/ar_reason_masters/list')
     api_request(uri, 'GET', params)
   end
 
@@ -349,20 +347,20 @@ class TsubaisoSDK
 
   def list_bank_reason_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/bank_reason_masters/list/')
+    uri = URI.parse(@base_url + '/bank_reason_masters/list')
     api_request(uri, 'GET', params)
   end
 
   # Alpha version now.
   def list_fixed_assets
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/fixed_assets/list/')
+    uri = URI.parse(@base_url + '/fixed_assets/list')
     api_request(uri, 'GET', params)
   end
 
   def list_petty_cash_reason_masters
     params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/petty_cash_reason_masters/list/')
+    uri = URI.parse(@base_url + '/petty_cash_reason_masters/list')
     api_request(uri, 'GET', params)
   end
 
@@ -372,7 +370,7 @@ class TsubaisoSDK
       'month' => options[:month],
       'year' => options[:year]
     }
-    uri = URI.parse(@base_url + '/api_histories/list/')
+    uri = URI.parse(@base_url + '/api_histories/list')
     api_request(uri, 'GET', params)
   end
 
@@ -427,12 +425,12 @@ class TsubaisoSDK
         'time' => options[:time],
         'format' => 'json'
       }
-      id = options[:id]
+      # id = options[:id]
     else
       params = { 'format' => 'json' }
-      id = options
+      id = "/" + options.to_s
     end
-    uri = URI.parse(@base_url + "/staff_data/show/#{id}")
+    uri = URI.parse(@base_url + "/staff_data/show#{id}")
     api_request(uri, 'GET', params)
   end
 
@@ -442,12 +440,11 @@ class TsubaisoSDK
         'code' => options[:code],
         'format' => 'json'
       }
-      id = options[:id]
     else
       params = { 'format' => 'json' }
-      id = options
+      id = '/' + options.to_s
     end
-    uri = URI.parse(@base_url + "/staff_datum_masters/show/#{id}")
+    uri = URI.parse(@base_url + "/staff_datum_masters/show#{id}")
     api_request(uri, 'GET', params)
   end
 
@@ -540,8 +537,9 @@ class TsubaisoSDK
       'ccode' => options[:ccode],
       'format' => 'json'
     }
+    corporate_master_id = '/' + corporate_master_id.to_s if corporate_master_id
 
-    uri = URI.parse(@base_url + "/corporate_masters/show/#{corporate_master_id}")
+    uri = URI.parse(@base_url + "/corporate_masters/show#{corporate_master_id}")
     api_request(uri, 'GET', params)
   end
 
@@ -595,9 +593,7 @@ class TsubaisoSDK
       'data_partner'
     ]
     params = {}
-    available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym]
-    end
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
     params['format'] = 'json'
 
     uri = URI.parse(@base_url + '/customer_masters/create')
@@ -641,23 +637,25 @@ class TsubaisoSDK
   end
 
   def find_or_create_sale(options)
-    params = {
-      'price_including_tax' => options[:price_including_tax],
-      'realization_timestamp' => options[:realization_timestamp],
-      'customer_master_code' => options[:customer_master_code],
-      'dept_code' => options[:dept_code],
-      'reason_master_code' => options[:reason_master_code],
-      'dc' => options[:dc],
-      'memo' => options[:memo],
-      'tax_code' => options[:tax_code],
-      'sales_tax' => options[:sales_tax],
-      'scheduled_memo' => options[:scheduled_memo],
-      'scheduled_receive_timestamp' => options[:scheduled_receive_timestamp],
-      'tag_list' => options[:tag_list],
-      'data_partner' => options[:data_partner],
-      'key' => options[:key],
-      'format' => 'json'
-    }
+    params = {}
+    available_keys = [
+      'price_including_tax',
+      'realization_timestamp',
+      'customer_master_code',
+      'dept_code',
+      'reason_master_code',
+      'dc',
+      'memo',
+      'tax_code',
+      'sales_tax',
+      'scheduled_memo',
+      'scheduled_receive_timestamp',
+      'tag_list',
+      'data_partner',
+      'key'
+    ]
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + '/ar/find_or_create')
     api_request(uri, 'POST', params)
   end
@@ -742,7 +740,7 @@ class TsubaisoSDK
       'dept_code' => options[:dept_code],
       'memo' => options[:memo]
     }
-    uri = URI.parse(@base_url + '/reimbursements/create/')
+    uri = URI.parse(@base_url + '/reimbursements/create')
     api_request(uri, 'POST', params)
   end
 
@@ -761,7 +759,7 @@ class TsubaisoSDK
       'tax_type' => options[:tax_type],
       'data_partner' => options[:data_partner]
     }
-    uri = URI.parse(@base_url + '/reimbursement_transactions/create/')
+    uri = URI.parse(@base_url + '/reimbursement_transactions/create')
     api_request(uri, 'POST', params)
   end
 
@@ -777,7 +775,7 @@ class TsubaisoSDK
       'start_date' => options[:start_date],
       'finish_date' => options[:finish_date]
     }
-    uri = URI.parse(@base_url + '/depts/create/')
+    uri = URI.parse(@base_url + '/depts/create')
     api_request(uri, 'POST', params)
   end
 
@@ -791,7 +789,7 @@ class TsubaisoSDK
       'start_ymd' => options[:start_ymd],
       'finish_ymd' => options[:finish_ymd]
     }
-    uri = URI.parse(@base_url + '/tags/create/')
+    uri = URI.parse(@base_url + '/tags/create')
     api_request(uri, 'POST', params)
   end
 
@@ -811,7 +809,7 @@ class TsubaisoSDK
       'criteria' => options[:criteria],
       'distribution_conditions' => options[:distribution_conditions]
     }
-    uri = URI.parse(@base_url + '/journal_distributions/create/')
+    uri = URI.parse(@base_url + '/journal_distributions/create')
     api_request(uri, 'POST', params)
   end
 
@@ -827,26 +825,40 @@ class TsubaisoSDK
       'port_type' => options[:port_type],
       'sort_number' => options[:sort_number]
     }
-    uri = URI.parse(@base_url + '/petty_cash_reason_masters/create/')
+    uri = URI.parse(@base_url + '/petty_cash_reason_masters/create')
     api_request(uri, 'POST', params)
   end
 
   def create_physical_inventory_masters(options)
-    params = {
-      'format' => 'json',
-      'name' => options[:name],
-      'memo' => options[:memo],
-      'start_ymd' => options[:start_ymd],
-      'finish_ymd' => options[:finish_ymd],
-      'tag_list' => options[:tag_list],
-      'dept_code' => options[:dept_code]
-    }
-    uri = URI.parse(@base_url + '/physical_inventory_masters/create/')
+    params = {}
+    candidate_keys = [:name, :start_ymd, :finish_ymd, :memo, :tag_list, :dept_code]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
+
+    uri = URI.parse(@base_url + '/physical_inventory_masters/create')
     api_request(uri, 'POST', params)
   end
 
   def update_sale(options)
-    params = options.merge({ 'format' => 'json' })
+    available_keys = [
+      'id',
+      'price_including_tax',
+      'realization_timestamp',
+      'customer_master_code',
+      'dept_code',
+      'reason_master_code',
+      'dc',
+      'memo',
+      'tax_code',
+      'sales_tax',
+      'scheduled_memo',
+      'scheduled_receive_timestamp',
+      'tag_list',
+      'data_partner'
+    ]
+    params = {}
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/ar/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end
@@ -908,9 +920,7 @@ class TsubaisoSDK
       'data_partner'
     ]
     params = {}
-    available_keys.each do |key|
-      params[key.to_s] = options[key.to_sym]
-    end
+    params = create_parameters(available_keys.map{|x| x.to_sym},options)
     params['format'] = 'json'
 
     uri = URI.parse(@base_url + "/customer_masters/update/#{options[:id]}")
@@ -929,12 +939,10 @@ class TsubaisoSDK
       :account_code
     ]
 
-    candidate_keys.each do |key|
-      params[key.to_s] = options[key] if options.has_key?(key)
-    end
+    params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + '/bank_reason_masters/update/' + options[:id].to_s)
-    result = api_request(uri, "POST",params)
+    api_request(uri, "POST",params)
   end
 
   def update_staff_data(options)
@@ -951,7 +959,7 @@ class TsubaisoSDK
       params[:no_finish_timestamp] = options[:no_finish_timestamp]
     end
 
-    uri = URI.parse(@base_url + "/staff_data/update/#{options[:id]}")
+    uri = URI.parse(@base_url + "/staff_data/update/#{options[:staff_id]}")
     api_request(uri, 'POST', params)
   end
 
@@ -968,84 +976,99 @@ class TsubaisoSDK
   end
 
   def update_reimbursement(reimbursement_id, options)
-    params = {
-      'format' => 'json',
-      'applicant' => options[:applicant],
-      'application_term' => options[:application_term],
-      'staff_code' => options[:staff_code],
-      'dept_code' => options[:dept_code],
-      'memo' => options[:memo]
-    }
+    params = {}
+    candidate_keys = [
+      :applicant,
+      :application_term,
+      :staff_code,
+      :dept_code,
+      :memo,
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/reimbursements/update/#{reimbursement_id}")
     api_request(uri, 'POST', params)
   end
 
   def update_reimbursement_transaction(options)
-    params = {
-      'format' => 'json',
-      'port_type' => options[:port_type],
-      'transaction_timestamp' => options[:transaction_timestamp],
-      'price_value' => options[:price_value],
-      'dc' => options[:dc],
-      'reason_code' => options[:reason_code],
-      'brief' => options[:brief],
-      'memo'  => options[:memo],
-      'tag_list' => options[:tag_list],
-      'tax_type' => options[:tax_type],
-      'data_partner' => options[:data_partner]
-    }
+    params = {}
+    candidate_keys = [
+      :port_type,
+      :transaction_timestamp,
+      :price_value,
+      :bc,
+      :reason_code,
+      :brief,
+      :memo,
+      :tag_list,
+      :tax_type,
+      :data_partner
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
+
     uri = URI.parse(@base_url + "/reimbursement_transactions/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end
 
   def update_dept(dept_id, options)
-    params = {
-      'format' => 'json',
-      'sort_no' => options[:sort_no],
-      'code' => options[:code],
-      'name' => options[:name],
-      'name_abbr' => options[:name_abbr],
-      'color' => options[:color],
-      'memo' => options[:memo],
-      'start_date' => options[:start_date],
-      'finish_date' => options[:finish_date]
-    }
+    params = {}
+    candidate_keys = [
+      :sort_no,
+      :code,
+      :name,
+      :memo,
+      :name_abbr,
+      :color,
+      :start_date,
+      :finish_date
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/depts/update/#{dept_id}")
     api_request(uri, 'POST', params)
   end
 
   def update_tag(tag_id, options)
-    params = {
-      'format' => 'json',
-      'code' => options[:code],
-      'name' => options[:name],
-      'sort_no' => options[:sort_no],
-      'tag_group_code' => options[:tag_group_code],
-      'start_ymd' => options[:start_ymd],
-      'finish_ymd' => options[:finish_ymd]
-    }
+    params = {}
+    candidate_keys = [
+      :code,
+      :name,
+      :sort_no,
+      :tagg_group_code,
+      :start_ymd,
+      :finish_ymd
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/tags/update/#{tag_id}")
     api_request(uri, 'POST', params)
   end
 
   def update_petty_cash_reason_master(petty_cash_reason_master_id, options)
-    params = {
-      'format' => 'json',
-      'reason_code' => options[:reason_code],
-      'reason_name' => options[:reason_name],
-      'dc' => options[:dc],
-      'account_code' => options[:account_code],
-      'is_valid' => options[:is_valid],
-      'memo' => options[:memo],
-      'port_type' => options[:port_type],
-      'sort_number' => options[:sort_number]
-    }
+    params = {}
+    candidate_keys = [
+      :reason_code,
+      :reason_name,
+      :dc,
+      :account_code,
+      :is_valid,
+      :memo,
+      :port_type,
+      :sort_number
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/petty_cash_reason_masters/update/#{petty_cash_reason_master_id}")
     api_request(uri, 'POST', params)
   end
 
   def update_physical_inventory_masters(options)
-    params = options.merge({ 'format' => 'json' })
+    params = {}
+    candidate_keys = [:name, :start_ymd, :finish_ymd, :memo]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
+
     uri = URI.parse(@base_url + "/physical_inventory_masters/update/#{options[:id]}")
     api_request(uri, 'POST', params)
   end
@@ -1152,6 +1175,15 @@ class TsubaisoSDK
   end
 
   private
+
+
+  def create_parameters(keys,options)
+    # Add new keys and value if options has keys, even if value in options is nil.
+    # This code avoid updateing attributes witch is not specified by the users.
+    (keys & options.keys).inject({ 'format' => 'json' }) do |params, key|
+      params.merge(key.to_s => options[key]) # Hash#slice can be replace this code if your ruby is =< 2.5.0
+    end
+  end
 
   def api_request(uri, http_verb, params)
     http = Net::HTTP.new(uri.host, uri.port)

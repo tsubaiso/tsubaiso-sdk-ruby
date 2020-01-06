@@ -1,0 +1,12 @@
+{
+  "ccode": 3,
+  "code": "test_code",
+  "name": "テストタグ",
+  "sort_no": 10000,
+  "tag_group_id": 1,
+  "start_ymd": "2016/01/01 00:00:00 +0900",
+  "finish_ymd": "2016/12/31 00:00:00 +0900",
+  "lock_version": 0,
+  "regist_user_code": "yamakawa",
+  "update_user_code": null
+}

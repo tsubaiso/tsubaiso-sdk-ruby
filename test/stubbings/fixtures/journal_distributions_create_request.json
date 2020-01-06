@@ -1,0 +1,23 @@
+[
+  {
+    "format": "json",
+    "search_conditions": {
+      "start_date": "2012-07-01",
+      "finish_date": "2012-07-31",
+      "account_codes": [
+        "135~999",
+        "604"
+      ],
+      "dept_code": "SETSURITSU",
+      "tag_list": null
+    },
+    "title": "title",
+    "target_timestamp": "2017-02-01",
+    "memo": "",
+    "criteria": "dept",
+    "distribution_conditions": {
+      "SETSURITSU": "1",
+      "COMMON": "1"
+    }
+  }
+]

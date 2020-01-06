@@ -1,0 +1,19 @@
+  {
+    "bank_account_master_id" : "1",
+    "start_timestamp" : "2016/07/30 00:00:00 +0900",
+    "finish_timestamp" : "2016/08/30 00:00:00 +0900",
+    "start_balance_fixed" : null,
+    "start_balance" : null,
+    "finish_balance" : null,
+    "start_balance_cache" : 1230,
+    "finish_balance_cache" : 1330,
+    "is_balanced" : false,
+    "bank_account_transactions_count" : 0,
+    "regist_user_code" : null,
+    "update_user_code" : null,
+    "start_balance_cache_fc" : null,
+    "finish_balance_cache_fc": null,
+    "start_balance_fixed_fc" : null,
+    "finish_balance_fc" : null,
+    "exchange_gl_journal_id" : null
+  }

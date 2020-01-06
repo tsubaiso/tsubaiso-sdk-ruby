@@ -1,0 +1,47 @@
+{
+  "journal_timestamp": null,
+  "journal_dcs": [
+    {
+      "debit": {
+        "account_code": "110",
+        "price_including_tax": 2000,
+        "tax_type": 0,
+        "sales_tax": 0
+      },
+      "credit": {
+        "account_code": "100",
+        "price_including_tax": 2000,
+        "tax_type": 0,
+        "sales_tax": 0
+      },
+      "dept_code": "COMMON",
+      "memo": "Updated from API",
+      "tag_list": [
+
+      ]
+    },
+    {
+      "debit": {
+        "account_code": "1",
+        "price_including_tax": 54321,
+        "tax_type": 0,
+        "sales_tax": 0
+      },
+      "credit": {
+        "account_code": "110",
+        "price_including_tax": 54321,
+        "tax_type": 0,
+        "sales_tax": 0
+      },
+      "dept_code": "SETSURITSU",
+      "memo": "Created From API",
+      "tag_list": [
+
+      ]
+    }
+  ],
+  "data_partner": {
+    "id_code": "700"
+  },
+  "format": "json"
+}

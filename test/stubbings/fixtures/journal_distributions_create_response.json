@@ -1,0 +1,19 @@
+{
+  "ccode": 3,
+  "title": "title",
+  "target_ym": "2017/02/01 00:00:00 +0900",
+  "status": null,
+  "criteria": "dept",
+  "target_conditions_account_codes": "'135~999','604'",
+  "target_conditions_segments": null,
+  "target_conditions_depts": "SETSURITSU",
+  "target_conditions_start_ymd": "2012/07/01 00:00:00 +0900",
+  "target_conditions_finish_ymd": "2012/07/31 00:00:00 +0900",
+  "target_conditions_include_closing_entry": "",
+  "distribution_conditions": "{\"SETSURITSU\":\"1\",\"COMMON\":\"1\"}",
+  "original_amounts": "{\"135~999\":{\"balance\":376400000},\"604\":{\"balance\":293714286},\"total\":{\"balance\":670114286}}",
+  "distributed_amounts": "{\"total\":{\"SETSURITSU\":335057143,\"COMMON\":335057143},\"135~999\":{\"SETSURITSU\":188200000,\"COMMON\":188200000},\"604\":{\"SETSURITSU\":146857143,\"COMMON\":146857143}}",
+  "memo": "",
+  "regist_user_code": "yamakawa",
+  "update_user_code": null
+}

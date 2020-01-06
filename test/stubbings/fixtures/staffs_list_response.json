@@ -1,0 +1,35 @@
+[
+  {
+    "ccode": 3,
+    "code": "EP0008",
+    "status": 0,
+    "visibility": 0,
+    "regist_user_code": null,
+    "update_user_code": null,
+    "login": "hgwr4",
+    "seimei": "",
+    "seimei_furigana": " "
+  },
+  {
+    "ccode": 3,
+    "code": "EP0009",
+    "status": 0,
+    "visibility": 0,
+    "regist_user_code": null,
+    "update_user_code": null,
+    "login": null,
+    "seimei": "",
+    "seimei_furigana": " "
+  },
+  {
+    "ccode": 3,
+    "code": "EP0011",
+    "status": 0,
+    "visibility": 0,
+    "regist_user_code": null,
+    "update_user_code": null,
+    "login": null,
+    "seimei": "",
+    "seimei_furigana": " "
+  }
+]

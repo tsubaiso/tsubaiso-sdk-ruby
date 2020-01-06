@@ -1,0 +1,48 @@
+[
+  {
+    "id": 861729345,
+    "ccode": 3,
+    "sort_number": 1,
+    "reason_code": "ffffff",
+    "reason_name": "reason reason",
+    "dc": "c",
+    "account_code": "1",
+    "is_valid": 1,
+    "memo": "",
+    "ar_reason_taxes": [
+
+    ]
+  },
+  {
+    "id": 861729344,
+    "ccode": 3,
+    "sort_number": 3,
+    "reason_code": "12345",
+    "reason_name": "Tsubaiso Tsubaiso",
+    "dc": "c",
+    "account_code": "1",
+    "is_valid": 1,
+    "memo": "",
+    "ar_reason_taxes": [
+
+    ]
+  },
+  {
+    "id": 90458902,
+    "ccode": 3,
+    "sort_number": 6,
+    "reason_code": "OTHERS",
+    "reason_name": "その他",
+    "dc": "d",
+    "account_code": "999",
+    "is_valid": 1,
+    "memo": "その他",
+    "ar_reason_taxes": [
+      {
+        "tax_master_id": 3,
+        "sales_tax_system": 6,
+        "is_default": 0,
+        "sort_no": 0
+      }
+    ]
+  }]

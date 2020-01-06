@@ -1,0 +1,47 @@
+[
+  {
+    "format" : "json",
+    "name" :"ANZ Bank",
+    "account_type" : "1",
+    "account_number" : "66667777",
+    "nominee" : "tsubaiso taro",
+    "memo" : "",
+    "start_ymd" : "2019-06-01",
+    "finish_ymd": null,
+    "zengin_bank_code" : "7777",
+    "zengin_branch_code" : "777",
+    "zengin_client_code_sogo" : "9999999999",
+    "currency_code" : "",
+    "currency_rate_master_code" : null
+  },
+  {
+    "format" : "json",
+    "name": "NSW Bank",
+    "account_type": "1",
+    "account_number": "66665555",
+    "nominee": "tsubaiso jiro",
+    "memo": "",
+    "start_ymd": "2019-06-02",
+    "finish_ymd": null,
+    "zengin_bank_code": "8888",
+    "zengin_branch_code": "777",
+    "zengin_client_code_sogo": "8888888888",
+    "currency_code": "",
+    "currency_rate_master_code": null
+  },
+  {
+    "format" : "json",
+    "name": "Bank of Melbourne",
+    "account_type": "1",
+    "account_number": "66664444",
+    "nominee": "tsubaiso saburo",
+    "memo": "",
+    "start_ymd": "2019-06-03",
+    "finish_ymd": null,
+    "zengin_bank_code": "9999",
+    "zengin_branch_code": "999",
+    "zengin_client_code_sogo": "7777777777",
+    "currency_code": "",
+    "currency_rate_master_code": null
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "serial_no": 381,
+  "sales_journal_dc_id": 25193,
+  "code": null,
+  "ar_receipt_attachments_count": null,
+  "regist_user_code": "yamakawa",
+  "update_user_code": null,
+  "account_code": "500",
+  "price_excluding_tax": 10000,
+  "data_partner": {
+    "id": 908007066,
+    "ccode": 3,
+    "data_partnerable_type": "ArReceipt",
+    "data_partnerable_id": 3214,
+    "access_key": "6stryskt2i2fmm7j8qyv429zf",
+    "resource_url": null,
+    "ipaddr": "59.106.220.238",
+    "editable": 0,
+    "partner_editable": 1,
+    "deletable": 0,
+    "partner_deletable": 1,
+    "package": null,
+    "regist_user_code": "yamakawa",
+    "update_user_code": null,
+    "created_at": "2019/11/25 12:01:02 +0900",
+    "updated_at": "2019/11/25 12:01:02 +0900"
+  }
+}

@@ -1,0 +1,11 @@
+[
+  {
+    "format": "json",
+    "code": "test_code",
+    "name": "テストタグ",
+    "sort_no": 10000,
+    "tag_group_code": "DEFAULT",
+    "start_ymd": "2016-01-01",
+    "finish_ymd": "2016-12-31"
+  }
+]

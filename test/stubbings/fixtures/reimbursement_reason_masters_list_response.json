@@ -1,0 +1,66 @@
+[
+  {
+    "id": 101,
+    "ccode": 3,
+    "sort_number": 10,
+    "reason_code": "TEST9999",
+    "reason_name": "テスト(1億円以上の広告宣伝費)",
+    "dc": "c",
+    "account_code": "999~999",
+    "is_valid": 1,
+    "memo": "テストメモ",
+    "port_type": null,
+    "reimbursement_reason_taxes": [
+
+    ]
+  },
+  {
+    "id": 102,
+    "ccode": 3,
+    "sort_number": 20,
+    "reason_code": "SUPPLIES",
+    "reason_name": "消耗品費",
+    "dc": "c",
+    "account_code": "710",
+    "is_valid": 1,
+    "memo": "消耗品費とは、事務用消耗品や消耗工具器具備品などの購入費用をいいます。事務用消耗品はボールペン、ノートなど事務作業で使用するもので、１回で使い切ってしまうものや長期間繰り返し使用できないものなどです。消耗工具器具備品は事務用机やイス、本棚などで耐用年数が１年未満のものや取得価額が１０万円未満の少額のものなどです。 ",
+    "port_type": null,
+    "reimbursement_reason_taxes": [
+
+    ]
+  },
+  {
+    "id": 103,
+    "ccode": 3,
+    "sort_number": 30,
+    "reason_code": "FURNITURE_FIXTURES_EQUIPMENT",
+    "reason_name": "工具器具備品(10万円以上のみ)",
+    "dc": "c",
+    "account_code": "205",
+    "is_valid": 1,
+    "memo": "工具・器具・備品とは、工作用具、家具類、事務・通信機器などをいいます。 \r\n10万円未満（免税事業者及び簡易課税事業者は税込、本則課税事業者は税抜で考えます）の資産は消耗品として費用処理したほうが節税となります。",
+    "port_type": null,
+    "reimbursement_reason_taxes": [
+      {
+        "tax_master_id": 0,
+        "sales_tax_system": 4,
+        "port_type": 2,
+        "is_default": 0,
+        "sort_no": 2
+      },
+      {
+        "tax_master_id": 3,
+        "sales_tax_system": 4,
+        "port_type": 1,
+        "is_default": 1,
+        "sort_no": 1
+      },
+      {
+        "tax_master_id": 1003,
+        "sales_tax_system": 4,
+        "port_type": 1,
+        "is_default": 1,
+        "sort_no": 101
+      }
+    ]
+  }]

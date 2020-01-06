@@ -1,0 +1,60 @@
+[
+  {
+    "price_including_tax": 10800,
+    "realization_timestamp": "2016-08-01",
+    "customer_master_code": "101",
+    "dept_code": "SETSURITSU",
+    "reason_master_code": "SALES",
+    "dc": "d",
+    "memo": "",
+    "tax_code": 1007,
+    "sales_tax": null,
+    "scheduled_memo": "This is a scheduled memo.",
+    "scheduled_receive_timestamp": "2016-09-25",
+    "tag_list": null,
+    "data_partner": {
+      "link_url": "www.example.com/1",
+      "id_code": "1",
+      "partner_code": "Example"
+    },
+    "format": "json"
+  },
+  {
+    "price_including_tax": 10800,
+    "realization_timestamp": "2017-02-28",
+    "customer_master_code": "105",
+    "dept_code": null,
+    "reason_master_code": "SALES",
+    "dc": "d",
+    "memo": "",
+    "tax_code": 18,
+    "sales_tax": null,
+    "scheduled_memo": "This is a scheduled memo.",
+    "scheduled_receive_timestamp": "2017-03-25",
+    "tag_list": null,
+    "data_partner": {
+      "link_url": "www.example.com/8",
+      "id_code": "8"
+    },
+    "format": "json"
+  },
+  {
+    "price_including_tax": 10800,
+    "realization_timestamp": "2016-09-01",
+    "customer_master_code": "101",
+    "dept_code": "SETSURITSU",
+    "reason_master_code": "SALES",
+    "dc": "d",
+    "memo": "",
+    "tax_code": 1007,
+    "sales_tax": null,
+    "scheduled_memo": "This is a scheduled memo.",
+    "scheduled_receive_timestamp": "2016-09-25",
+    "tag_list": null,
+    "data_partner": {
+      "link_url": "www.example.com/2",
+      "id_code": "2"
+    },
+    "format": "json"
+    }
+]

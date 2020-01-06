@@ -1,0 +1,37 @@
+{
+  "serial_no": 296,
+  "scheduled_memo": null,
+  "buying_journal_dc_id": 25226,
+  "code": null,
+  "scheduled_pay_timestamp": null,
+  "ap_payment_attachments_count": 0,
+  "need_tax_deduction": null,
+  "withholding_tax_segment": null,
+  "withholding_tax_base": null,
+  "preset_withholding_tax_amount": null,
+  "regist_user_code": "yamakawa",
+  "update_user_code": null,
+  "tag_list": [
+  ],
+  "account_code": "604",
+  "price_excluding_tax": 5000,
+  "buying_tax": 400,
+  "data_partner": {
+    "id": 908007099,
+    "ccode": 3,
+    "data_partnerable_type": "ApPayment",
+    "data_partnerable_id": 924,
+    "access_key": "6stryskt2i2fmm7j8qyv429zf",
+    "resource_url": null,
+    "ipaddr": "59.106.220.238",
+    "editable": 0,
+    "partner_editable": 1,
+    "deletable": 0,
+    "partner_deletable": 1,
+    "package": null,
+    "regist_user_code": "yamakawa",
+    "update_user_code": null,
+    "created_at": "2019/11/26 15:46:31 +0900",
+    "updated_at": "2019/11/26 15:46:31 +0900"
+  }
+}

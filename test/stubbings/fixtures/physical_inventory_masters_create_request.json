@@ -1,0 +1,22 @@
+[
+  {
+    "name": "sendai",
+    "memo": "this inventory is registered from SDK test",
+    "start_ymd": "2019/01/01",
+    "finish_ymd": null,
+    "tag_list": "GROUP2_1,GROUP3_2",
+    "dept_code": "NEVER_ENDING"
+  },
+  {
+    "name" : "osaka",
+    "memo" : "this inventory is registered from SDK test #2",
+    "start_ymd" : "2019/02/01",
+    "finish_ymd" : "2020/12/02"
+  },
+  {
+    "name": "nagoya",
+    "memo": "this inventory is registered from SDK test #3",
+    "start_ymd": "2019/03/01",
+    "finish_ymd": "2020/12/03"
+  }
+]

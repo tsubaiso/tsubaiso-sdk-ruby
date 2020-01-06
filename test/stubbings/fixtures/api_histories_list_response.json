@@ -1,0 +1,101 @@
+[
+  {
+  "id": 9363,
+  "access_timestamp": "2019/12/02 15:35:11 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/reimbursements/create/",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "reimbursements",
+  "method": "create",
+  "created_at": "2019/12/02 15:35:11 +0900",
+  "updated_at": "2019/12/02 15:35:11 +0900"
+},
+{
+  "id": 9362,
+  "access_timestamp": "2019/12/02 15:28:34 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/reimbursements/destroy/459",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "reimbursements",
+  "method": "destroy",
+  "created_at": "2019/12/02 15:28:34 +0900",
+  "updated_at": "2019/12/02 15:28:34 +0900"
+},
+{
+  "id": 9361,
+  "access_timestamp": "2019/12/02 15:28:34 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/reimbursements/destroy/458",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "reimbursements",
+  "method": "destroy",
+  "created_at": "2019/12/02 15:28:34 +0900",
+  "updated_at": "2019/12/02 15:28:34 +0900"
+},
+{
+  "id": 9360,
+  "access_timestamp": "2019/12/02 15:28:34 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/reimbursements/list",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "reimbursements",
+  "method": "index",
+  "created_at": "2019/12/02 15:28:34 +0900",
+  "updated_at": "2019/12/02 15:28:34 +0900"
+},
+{
+  "id": 9359,
+  "access_timestamp": "2019/12/02 15:28:34 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/reimbursements/create/",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "reimbursements",
+  "method": "create",
+  "created_at": "2019/12/02 15:28:34 +0900",
+  "updated_at": "2019/12/02 15:28:34 +0900"
+},
+{
+  "id": 9358,
+  "access_timestamp": "2019/12/02 15:28:33 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/reimbursements/create/",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "reimbursements",
+  "method": "create",
+  "created_at": "2019/12/02 15:28:33 +0900",
+  "updated_at": "2019/12/02 15:28:33 +0900"
+},
+{
+  "id": 9357,
+  "access_timestamp": "2019/12/02 15:28:18 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/staff_data/destroy/1071568122",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "staff_data",
+  "method": "destroy",
+  "created_at": "2019/12/02 15:28:18 +0900",
+  "updated_at": "2019/12/02 15:28:18 +0900"
+},
+{
+  "id": 9356,
+  "access_timestamp": "2019/12/02 15:28:18 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/staff_data/create",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "staff_data",
+  "method": "create",
+  "created_at": "2019/12/02 15:28:18 +0900",
+  "updated_at": "2019/12/02 15:28:18 +0900"
+},
+{
+  "id": 9355,
+  "access_timestamp": "2019/12/02 15:28:17 +0900",
+  "url": "http://lemon.burikama.tech/tsubaiso.sueda/eap/staffs/list",
+  "access_token": "6strys*****",
+  "ccode": 3,
+  "controller": "staffs",
+  "method": "list",
+  "created_at": "2019/12/02 15:28:17 +0900",
+  "updated_at": "2019/12/02 15:28:17 +0900"
+}
+]

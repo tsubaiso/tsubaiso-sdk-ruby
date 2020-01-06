@@ -1,0 +1,22 @@
+  {
+    "price_including_tax": 10800,
+    "realization_timestamp": "2016-08-01",
+    "customer_master_code": "101",
+    "dept_code": "SETSURITSU",
+    "reason_master_code": "SALES",
+    "dc": "d",
+    "memo": "",
+    "tax_code": 1007,
+    "scheduled_memo": "This is a scheduled memo.",
+    "scheduled_receive_timestamp": "2016-09-25",
+    "data_partner": {
+      "link_url": "www.example.com/1",
+      "id_code": "1",
+      "partner_code": "Example"
+    },
+    "key": {
+      "id_code": "1",
+      "partner_code": "Example"
+    },
+    "format": "json"
+  }

@@ -1,0 +1,59 @@
+  [
+    {
+      "id": 1044389494,
+      "ccode": 3,
+      "allowed_domains": null,
+      "sort_number": 5,
+      "reason_code": "ABCD",
+      "reason_name": "test test test",
+      "dc": "d",
+      "account_code": "111",
+      "expense_mode": 0,
+      "is_valid": 1,
+      "memo": "test test test",
+      "regist_user_code": "yamakawa",
+      "update_user_code": null,
+      "created_at": "2019/03/12 16:08:03 +0900",
+      "updated_at": "2019/03/12 16:08:03 +0900",
+      "sales_tax_system": 7,
+      "port_type": 1,
+      "release_version": 0,
+      "ap_reason_taxes": [
+
+      ]
+    },
+    {
+      "id": 1044389493,
+      "ccode": 3,
+      "allowed_domains": null,
+      "sort_number": 10,
+      "reason_code": "BUYING_IN",
+      "reason_name": "仕入高",
+      "dc": "c",
+      "account_code": "604",
+      "expense_mode": 1,
+      "is_valid": 1,
+      "memo": "",
+      "regist_user_code": null,
+      "update_user_code": "yamakawa",
+      "created_at": "2019/02/25 11:47:43 +0900",
+      "updated_at": "2019/06/21 14:48:39 +0900",
+      "sales_tax_system": 7,
+      "port_type": 1,
+      "release_version": 0,
+      "ap_reason_taxes": [
+        {
+          "id": 1072937754,
+          "personal_id": null,
+          "ap_reason_master_id": 1044389493,
+          "tax_master_id": 2,
+          "description": null,
+          "sales_tax_system": 4,
+          "port_type": 3,
+          "is_default": 1,
+          "sort_no": 1,
+          "created_at": "2019/06/21 14:48:37 +0900",
+          "updated_at": "2019/06/21 14:48:37 +0900"
+        }
+      ]
+    }]
