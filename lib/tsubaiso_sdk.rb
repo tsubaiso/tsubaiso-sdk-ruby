@@ -738,7 +738,10 @@ class TsubaisoSDK
       'application_term' => options[:application_term],
       'staff_code' => options[:staff_code],
       'dept_code' => options[:dept_code],
-      'memo' => options[:memo]
+      'memo' => options[:memo],
+      'applicant_staff_code' => options[:applicant_staff_code],
+      'transactions' => options[:transactions],
+      'pay_date' => options[:pay_date]
     }
     uri = URI.parse(@base_url + '/reimbursements/create')
     api_request(uri, 'POST', params)
