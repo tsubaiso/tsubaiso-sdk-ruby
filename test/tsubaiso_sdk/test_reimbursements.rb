@@ -60,4 +60,31 @@ class ReimbursementsTest < Minitest::Test
     assert_equal @reimbursement_1[:applicant], reimbursement[:json][:applicant]
   end
 
+  def test_create_reimbursement_and_transactions
+    request_body = {
+      applicant: 'Matsuno',
+      application_term: '2016-03-01',
+      staff_code: 'EP2000',
+      memo: 'aaaaaaaa',
+      pay_date: '2020-1-13',
+      applicant_staff_code: 'test_applicant_code',
+      transactions: [
+        {
+          transaction_timestamp: '2020-1-1',
+          price_value: 1000,
+          reason_code: 'SUPPLIES'
+        }
+      ]
+    }
+
+    reimbursement = @api.create_reimbursement(request)
+    assert_equal 200, reimbursement[:status].to_i, reimbursement.inspect
+    assert_equal request_body[:applicant], reimbursement[:json][:applicant]
+    assert_equal request_body[:pay_date], reimbursement[:json][:pay_date]
+    assert_equal request_body[:applicant_staff_code], reimbursement[:json][:applicant_staff_code]
+
+    reimbursement_transactions = @api.list_reimbursement_transactions(reimbursement[:json][:id])
+    assert_equal 200, reimbursement_transactions[:status].to_i, reimbursement_transactions.inspect
+    assert_equal 1, reimbursement_transactions[:json].size
+  end
 end
