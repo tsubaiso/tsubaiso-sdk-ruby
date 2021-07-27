@@ -159,7 +159,7 @@ class TsubaisoSDK
       'zengin_branch_code' => options[:zengin_branch_code],
       'zengin_client_code_sogo' => options[:zengin_client_code_sogo],
       'currency_code' => options[:currency_code],
-      'currency_rate_master_code' => options[:currency_rate_master_code]
+      'currency_rate_master_id' => options[:currency_rate_master_id]
     }
 
     uri = URI.parse(@base_url + '/bank_account_masters/create')
@@ -590,7 +590,9 @@ class TsubaisoSDK
       'zip',
       'pay_date_if_holiday',
       'receive_date_if_holiday',
-      'data_partner'
+      'data_partner',
+      'corporate_mynumber',
+      'pay_method',
     ]
     params = {}
     params = create_parameters(available_keys.map{|x| x.to_sym},options)
@@ -728,6 +730,67 @@ class TsubaisoSDK
     }
 
     uri = URI.parse(@base_url + '/manual_journals/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_corp(options)
+    params = {
+      'format' => 'json',
+      'stage' => options[:stage],
+      'corporate_master_type' => options[:corporate_master_type],
+      'email_to' => options[:email_to],
+      'name' => options[:name],
+      'freeze_login' => options[:freeze_login]
+    }
+    uri = URI.parse(@base_url + '/corporate_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_user(options)
+    params = {
+      'format' => 'json'
+    }
+    uri = URI.parse(@base_url + '/users/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def update_user(options)
+    params = {
+      'format' => 'json',
+      'id' => options[:id],
+      'email' => options[:email],
+      'firstname' => options[:firstname],
+      'lastname' => options[:lastname],
+      'permitted_address' => options[:permitted_address],
+      'dept_codes' => options[:dept_codes],
+      'lang' => options[:lang],
+      'inuse' => options[:inuse],
+    }
+    uri = URI.parse(@base_url + '/users/update')
+    api_request(uri, 'POST', params)
+  end
+
+  def add_domains(options)
+    params = {
+      'format' => 'json',
+      'id' => options[:id],
+      'domains' => options[:domains]
+    }
+    uri = URI.parse(@base_url + '/users/add_domains')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_fiscal_master(options)
+    params = {
+      'format' => 'json',
+      'term' => options[:term],
+      'start_timestamp' => options[:start_timestamp],
+      'finish_timestamp' => options[:finish_timestamp],
+      'launch_timestamp' => options[:launch_timestamp],
+      'status' => options[:status],
+      'sales_tax_system' => options[:sales_tax_system]
+    }
+    uri = URI.parse(@base_url + '/fiscal_masters/create')
     api_request(uri, 'POST', params)
   end
 
@@ -948,8 +1011,9 @@ class TsubaisoSDK
     api_request(uri, "POST",params)
   end
 
-  def update_staff_data(options)
+  def update_staff_data(staff_data_id, options)
     params = {
+      'code' => options[:code],
       'memo' => options[:memo],
       'value' => options[:value],
       'start_timestamp' => options[:start_timestamp],
@@ -962,7 +1026,7 @@ class TsubaisoSDK
       params[:no_finish_timestamp] = options[:no_finish_timestamp]
     end
 
-    uri = URI.parse(@base_url + "/staff_data/update/#{options[:staff_id]}")
+    uri = URI.parse(@base_url + "/staff_data/update/#{staff_data_id}")
     api_request(uri, 'POST', params)
   end
 
@@ -1177,6 +1241,511 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def create_account_masters(options)
+    candidate_keys = [
+      :account_code,
+      :account_name,
+      :descid,
+      :account_kana,
+      :dc,
+      :bspl,
+      :sum_no,
+      :brief,
+      :inputtable,
+      :use_in_balance,
+      :status,
+    ]
+    params = create_parameters(candidate_keys,options)
+    uri = URI.parse(@base_url + '/account_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def update_account_masters(options)
+    candidate_keys = [
+      :id,
+      :account_code,
+      :account_name,
+      :account_kana,
+      :descid,
+      :brief,
+      :sum_no,
+      :dc,
+      :bspl,
+      :inputtable,
+      :use_in_balance,
+      :status,
+    ]
+    params = create_parameters(candidate_keys,options)
+    uri = URI.parse(@base_url + '/account_masters/update')
+    api_request(uri, 'POST', params)
+  end
+
+  def list_account_masters
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + "/account_masters/list")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_corporate_data(options)
+    params = {
+      'format' => 'json',
+      'code' => options[:code],
+      'start_timestamp' => options[:start_timestamp],
+      'finish_timestamp' => options[:finish_timestamp],
+      'value' => options[:value],
+      'memo' => options[:memo]
+    }
+    uri = URI.parse(@base_url + '/corporate_data/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_petty_cash_masters(options)
+    params = {
+      'format' => 'json',
+      'name' => options[:name],
+      'start_ymd' => options[:start_ymd],
+      'finish_ymd' => options[:finish_ymd],
+      'memo' => options[:memo],
+    }
+    uri = URI.parse(@base_url + '/petty_cash_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_ar_reason_masters(options)
+    params = {
+      'format' => 'json',
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'account_code' => options[:account_code],
+      'sort_number' => options[:sort_number],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'ar_reason_taxes' => options[:ar_reason_taxes],
+    }
+    uri = URI.parse(@base_url + '/ar_reason_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def update_ar_reason_masters(id, options)
+    params = {
+      'format' => 'json',
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'sort_number' => options[:sort_number],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'ar_reason_taxes' => options[:ar_reason_taxes],
+    }
+    uri = URI.parse(@base_url + "/ar_reason_masters/update/#{id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def create_ap_reason_masters(options)
+    params = {
+      'format' => 'json',
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'account_code' => options[:account_code],
+      'sort_number' => options[:sort_number],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'port_type' => options[:port_type],
+      'ap_reason_taxes' => options[:ap_reason_taxes],
+    }
+    uri = URI.parse(@base_url + '/ap_reason_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def update_ap_reason_masters(id, options)
+    params = {
+      'format' => 'json',
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'port_type' => options[:port_type],
+      'sort_number' => options[:sort_number],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+    }
+    uri = URI.parse(@base_url + "/ap_reason_masters/update/#{id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def list_users
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/users/list')
+    api_request(uri, 'GET', params)
+  end
+
+  def list_depts
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/depts/list/')
+    api_request(uri, 'GET', params)
+  end
+
+  def update_system_managements(options)
+    params = {
+      'format' => 'json',
+      'code' => options[:code],
+      'enable' => options[:enable],
+    }
+    uri = URI.parse(@base_url + '/system_managements/update')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_tags(options)
+    params = {
+      'format' => 'json',
+      'code' => options[:code],
+      'name' => options[:name],
+      'sort_no' => options[:sort_no],
+      'tag_group_code' => options[:tag_group_code],
+      'start_ymd' => options[:start_ymd],
+      'finish_ymd' => options[:finish_ymd],
+    }
+    uri = URI.parse(@base_url + '/tags/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_ar_segment_masters(options)
+    params = {
+      'format' => 'json',
+      'account_descid' => options[:account_descid],
+      'priority_order' => options[:priority_order],
+      'enable' => options[:enable],
+      'name' => options[:name],
+      'description' => options[:description],
+    }
+    uri = URI.parse(@base_url + '/ar_segment_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_ap_segment_masters(options)
+    params = {
+      'format' => 'json',
+      'account_descid' => options[:account_descid],
+      'priority_order' => options[:priority_order],
+      'enable' => options[:enable],
+      'name' => options[:name],
+      'description' => options[:description],
+    }
+    uri = URI.parse(@base_url + '/ap_segment_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def list_fiscal_masters
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + "/fiscal_masters/list")
+    api_request(uri, 'GET', params)
+  end
+
+  def list_balance_plan_masters
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + "/balance_plan_masters/list")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_balance_plan_masters(options)
+    params = {
+      'format' => 'json',
+      'code' => options[:code],
+      'name' => options[:name],
+      'memo' => options[:memo],
+      'start_ymd' => options[:start_ymd],
+      'finish_ymd' => options[:finish_ymd],
+      'in_use' => options[:in_use],
+      'is_default' => options[:is_default],
+    }
+    uri = URI.parse(@base_url + '/balance_plan_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def update_staffs(id, options)
+    candidate_keys = [
+      :code,
+      :status,
+      :dept_codes,
+    ]
+    params = create_parameters(candidate_keys,options)
+    uri = URI.parse(@base_url + "/staffs/update/#{id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def create_personalized_asset_type_masters(options)
+    candidate_keys = [
+      :code,
+      :name,
+      :asset_account_code,
+      :contra_account_code,
+      :contra_mc_account_code,
+      :impairment_account_code,
+      :impairment_mc_account_code,
+      :accumulated_depreciation_account_code,
+      :local_tax_segment_code,
+      :corporate_tax_segment_name,
+      :sort_no
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + '/personalized_asset_type_masters/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def bulk_create_or_update_balance_plans(options)
+    candidate_keys = [
+      :balance_plans
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + '/balance_plans/bulk_create_or_update')
+    api_request(uri, 'POST', params)
+  end
+
+  def list_petty_cash_masters
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/petty_cash_masters/list')
+    api_request(uri, 'GET', params)
+  end
+
+  def create_petty_cashes(options)
+    candidate_keys = [
+      :petty_cash_master_id,
+      :start_ymd,
+      :finish_ymd,
+      :start_balance_fixed,
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + '/petty_cashes/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def create_petty_cash_transactions(options)
+    candidate_keys = [
+      :petty_cash_id,
+      :journal_timestamp,
+      :price_value,
+      :reason_code,
+      :dc,
+      :tax_type,
+      :brief,
+      :memo,
+      :tag_list,
+      :dept_code,
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + '/petty_cash_transactions/create')
+    api_request(uri, 'POST', params)
+  end
+
+  def list_ar_reconciliations(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/ar_reconciliations/list/#{year}/#{month}")
+    api_request(uri, 'GET', params)
+  end
+
+  def reconcile_ar_reconciliations(options)
+    candidate_keys = [
+      :reconciliation_id,   # (BankAccount Transaction / PettyCash Transaction / Reimbursement Transaction) JournalDc ID.
+      :reconcile_transactions
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/ar_reconciliations/reconcile")
+    api_request(uri, 'POST', params)
+  end
+
+  def reconcile_ap_reconciliations(options)
+    candidate_keys = [
+      :reconciliation_id,   # (BankAccount Transaction / PettyCash Transaction / Reimbursement Transaction) JournalDc ID.
+      :reconcile_transactions
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/ap_reconciliations/reconcile")
+    api_request(uri, 'POST', params)
+  end
+
+  # @param [String] arap 'ar' または 'ap'
+  def search_customer_masters_by_reconcile_keyword(keyword, arap)
+    params = {
+      'format' => 'json',
+      'keyword' => keyword,
+      'arap' => arap,
+    }
+    uri = URI.parse(@base_url + "/customer_masters/search_by_reconcile_keyword")
+    api_request(uri, 'GET', params)
+  end
+
+  def list_ar_cashflow_schedule(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/ar_reports/list_cashflow_schedule/#{year}/#{month}")
+    api_request(uri, 'GET', params)
+  end
+
+  def list_ap_cashflow_schedule(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/ap_reports/list_cashflow_schedule/#{year}/#{month}")
+    api_request(uri, 'GET', params)
+  end
+
+  def standardize_payroll_column_masters(year, month)
+    params = {
+      'format' => 'json',
+      'year' => year,
+      'month' => month,
+    }
+    uri = URI.parse(@base_url + "/payroll_column_masters/standardize")
+    api_request(uri, 'POST', params)
+  end
+
+  def show_payroll_column_masters(year, month)
+    params = {
+      'format' => 'json',
+      'year' => year,
+      'month' => month,
+    }
+    uri = URI.parse(@base_url + "/payroll_column_masters/show")
+    api_request(uri, 'GET', params)
+  end
+
+  def update_payrolls(options)
+    candidate_keys = [
+      :year,
+      :month,
+      :only_save,
+      :update_journal,
+      :staffs
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/payrolls/update")
+    api_request(uri, 'POST', params)
+  end
+
+  def list_ap_reconciliations(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/ap_reconciliations/list/#{year}/#{month}")
+    api_request(uri, 'GET', params)
+  end
+
+  def update_boy_adjusts(options)
+    candidate_keys = [
+      :term,
+      :dept_code,
+      :fixed_balances
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/adjusts/update_boy")
+    api_request(uri, 'POST', params)
+  end
+
+  def brought_forward_adjusts(options)
+    candidate_keys = [
+      :term,
+      :dept_code,
+      :calc_common
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/adjusts/brought_forward")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_bank_adjusts(options)
+    candidate_keys = [
+      :bank_term_balances
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/adjusts/update_bank")
+    api_request(uri, 'POST', params)
+  end
+
+  def create_fixed_assets(options)
+    candidate_keys = [
+      :acquire_method,
+      :acquire_source_journal_dc_id,
+      :acquire_ymd,
+      :asset_type_master_id,
+      :brief,
+      :code,
+      :depreciation_entry_method,
+      :depreciation_method,
+      :dept_code,
+      :durable_years,
+      :ignore_immediate_depreciation_limit,
+      :initial_depreciated_amount,
+      :installed_place,
+      :is_product_cost,
+      :name,
+      :quantity,
+      :start_ymd,
+      :tag_list,
+      :target_ym,
+      :amount_inclusive,
+      :tax_code
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/fixed_assets/create")
+    api_request(uri, 'POST', params)
+  end
+
+  def list_personalized_asset_type_masters
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/personalized_asset_type_masters/list')
+    api_request(uri, 'GET', params)
+  end
+
+  def update_journals_payrolls(options)
+    candidate_keys = [
+      :year,
+      :month
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/payrolls/update_journals")
+    api_request(uri, 'POST', params)
+  end
+
+  def calc_balances_queues(options)
+    candidate_keys = [
+      :dept_code,
+      :account_code,
+      :ym_from,
+      :ym_until
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/balances/calc_queues")
+    api_request(uri, 'POST', params)
+  end
+
+  def default_fixed_assets_revaluations(id)
+    uri = URI.parse(@base_url + "/fixed_assets/default_revaluations/#{id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_fixed_assets_revaluations(options)
+    candidate_keys = [
+      :id,
+      :asset_revaluations
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/fixed_assets/create_revaluations")
+    api_request(uri, 'POST', params)
+  end
+
+  def create_fixed_assets_journal(options)
+    candidate_keys = [
+      :id,
+      :year,
+      :month
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/fixed_assets/create_journal")
+    api_request(uri, 'POST', params)
+  end
+
   private
 
 
@@ -1200,14 +1769,17 @@ class TsubaisoSDK
     request['Access-Token'] = @access_token
     request.body = params.to_json
     response = http.request(request)
-    if response.body
+    if response.body && !response.body.empty?
       begin
         { :status => response.code, :json => recursive_symbolize_keys(JSON.parse(response.body)) }
       rescue
+        puts "rescue"
+        puts "response.code:#{response.code}"
+        puts "response.body:#{response.body}"
         response.body
       end
     else
-      response.code
+      { :status => response.code }
     end
   end
 
