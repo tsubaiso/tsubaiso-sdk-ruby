@@ -1721,6 +1721,7 @@ class TsubaisoSDK
   end
 
   def default_fixed_assets_revaluations(id)
+    params = { 'format' => 'json' }
     uri = URI.parse(@base_url + "/fixed_assets/default_revaluations/#{id}")
     api_request(uri, 'GET', params)
   end
