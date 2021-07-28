@@ -159,7 +159,7 @@ class TsubaisoSDK
       'zengin_branch_code' => options[:zengin_branch_code],
       'zengin_client_code_sogo' => options[:zengin_client_code_sogo],
       'currency_code' => options[:currency_code],
-      'currency_rate_master_id' => options[:currency_rate_master_id]
+      'currency_rate_master_code' => options[:currency_rate_master_code]
     }
 
     uri = URI.parse(@base_url + '/bank_account_masters/create')
