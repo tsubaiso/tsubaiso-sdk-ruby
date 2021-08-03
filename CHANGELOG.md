@@ -1,5 +1,5 @@
 # Tsubaiso SDK (Ruby) 変更点
-## 1.2.7
+## 1.2.8
 
 ### update_staff_data(options)
 引数を変更しました。
