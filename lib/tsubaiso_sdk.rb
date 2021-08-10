@@ -317,6 +317,12 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  def list_tag_groups
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/tag_groups/index')
+    api_request(uri, 'GET', params)
+  end
+
   def list_bonuses(bonus_no, target_year)
     params = {
       'format' => 'json',
@@ -1109,6 +1115,18 @@ class TsubaisoSDK
     params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
     uri = URI.parse(@base_url + "/tags/update/#{tag_id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_tag_group(tag_group_id, options)
+    params = {}
+    candidate_keys = [
+      :code,
+      :name
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
+    uri = URI.parse(@base_url + "/tag_groups/update/#{tag_group_id}")
     api_request(uri, 'POST', params)
   end
 
