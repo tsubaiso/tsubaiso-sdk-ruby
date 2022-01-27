@@ -1650,6 +1650,19 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
+  # find_or_create Adjusts
+  def index_adjusts(options)
+    candidate_keys = [
+      :term,
+      :dept_code,
+      :year,
+      :month
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/adjusts")
+    api_request(uri, 'GET', params)
+  end
+
   def update_boy_adjusts(options)
     candidate_keys = [
       :term,
