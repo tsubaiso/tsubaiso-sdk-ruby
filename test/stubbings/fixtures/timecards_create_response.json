@@ -1,0 +1,23 @@
+{
+  "format" : "json",
+  "staff_id" : 2010,
+  "staff_code" : "EP2010",
+  "staff_name" : "山川7 太郎7",
+  "target_ymd" : "2020/01/15",
+  "punch_time_0" : "09:00",
+  "punch_time_1" : "12:30",
+  "punch_time_2" : "13:45",
+  "punch_time_3" : "17:20",
+  "adjusted_punch_time_0" : null,
+  "adjusted_punch_time_1" : null,
+  "adjusted_punch_time_2" : null,
+  "adjusted_punch_time_3" : null,
+  "work_minutes" : null,
+  "break_minutes" : null,
+  "manual_overwork_minutes" : null,
+  "manual_tardy_minutes" : null,
+  "manual_early_leave_minutes" : null,
+  "manual_basicwork_minutes" : null,
+  "punch_locations" : null,
+  "memo" : "タイムカード１[22-01-21 13:30:46 (山川 太郎)"
+}

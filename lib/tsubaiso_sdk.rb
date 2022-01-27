@@ -1765,6 +1765,46 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def list_payroll_attendances(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/payroll_attendances/list/#{year.to_i}/#{month.to_i}")
+    api_request(uri, 'GET', params)
+  end
+
+  def list_timecards(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/timecards/list/#{year.to_i}/#{month.to_i}")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_timecard(options)
+    candidate_keys = [
+      :staff_id,
+      :target_ymd,
+      :punch_time_0,
+      :punch_time_1,
+      :punch_time_2,
+      :punch_time_3,
+      :additional_memo,
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/timecards/create")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_timecard(options)
+    candidate_keys = [
+      :punch_time_0,
+      :punch_time_1,
+      :punch_time_2,
+      :punch_time_3,
+      :additional_memo,
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/timecards/update/#{options[:id]}")
+    api_request(uri, 'POST', params)
+  end
+
   private
 
 
