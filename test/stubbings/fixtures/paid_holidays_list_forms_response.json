@@ -1,0 +1,34 @@
+{
+  "staff_id": 2011,
+  "staff_code": "EP2000",
+  "staff_name": "山川 太郎",
+  "remains_count": -3.5,
+  "forms": [
+    {
+      "id": 299982811,
+      "application_type": 2,
+      "days_count": 13.5,
+      "start_timestamp": "2021/01/01 00:00:00 +0900",
+      "finish_timestamp": "2021/01/14 23:59:59 +0900",
+      "memo": "私用のため",
+      "status": "承認済",
+      "created_at": "2022/02/02 16:14:57 +0900",
+      "regist_user_code": "admin",
+      "updated_at": "2022/02/02 16:16:17 +0900",
+      "update_user_code": "admin"
+    },
+    {
+      "id": 1071568100,
+      "application_type": 1,
+      "days_count": 10,
+      "start_timestamp": "2022/01/28 00:00:00 +0900",
+      "finish_timestamp": "2022/01/28 23:59:59 +0900",
+      "memo": "付与または取消",
+      "status": "完了",
+      "created_at": "2022/01/28 05:52:29 +0900",
+      "regist_user_code": "admin",
+      "updated_at": "2022/01/28 05:52:29 +0900",
+      "update_user_code": null
+    }
+  ]
+}

@@ -168,6 +168,8 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, 'list', 2020, 1), @created_records)
     when 'timecards'
       stub_requests(:get, url(@root_url, resource, 'list', 2020, 1), @created_records)
+    when 'paid_holidays'
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records)
     else
       stub_requests(:get, url(@root_url, resource, 'list'), @created_records)
     end

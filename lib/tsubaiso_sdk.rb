@@ -1818,6 +1818,45 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def list_paid_holidays
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/paid_holidays/list')
+    api_request(uri, 'GET', params)
+  end
+
+  def list_forms_paid_holidays(staff_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/paid_holidays/list_forms/#{staff_id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_paid_holiday(options)
+    candidate_keys = [
+      :staff_id,
+      :holiday,
+      :full_or_half
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/paid_holidays/create")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_paid_holiday(holiday_id, options)
+    candidate_keys = [
+      :holiday,
+      :full_or_half
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/paid_holidays/update/#{holiday_id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def destroy_paid_holiday(holiday_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/paid_holidays/destroy/#{holiday_id}")
+    api_request(uri, 'POST', params)
+  end
+
   private
 
 
