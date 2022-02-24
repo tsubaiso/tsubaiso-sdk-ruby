@@ -164,6 +164,12 @@ class StubRegister
       stub_requests(:get, url(@root_url, resource, 'list'), {'records': @created_records}, { 'start_date': '2019-12-01', 'finish_date': '2019-12-31'} )
       stub_requests(:get, url(@root_url, resource, 'list'), {'records': @created_records}, { 'price_min': 10800, 'price_max': 10800} )
       stub_requests(:get, url(@root_url, resource, 'list'), {'records': @created_records}, { 'dept_code': 'SETSURITSU' } )
+    when 'payroll_attendances'
+      stub_requests(:get, url(@root_url, resource, 'list', 2020, 1), @created_records)
+    when 'timecards'
+      stub_requests(:get, url(@root_url, resource, 'list', 2020, 1), @created_records)
+    when 'paid_holidays'
+      stub_requests(:get, url(@root_url, resource, 'list'), @created_records)
     else
       stub_requests(:get, url(@root_url, resource, 'list'), @created_records)
     end

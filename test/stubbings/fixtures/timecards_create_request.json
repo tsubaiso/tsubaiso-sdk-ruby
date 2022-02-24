@@ -1,0 +1,20 @@
+[
+  {
+    "format" : "json",
+    "staff_id" : 2010,
+    "target_ymd" : "2020/01/15",
+    "punch_time_0" : "09:00",
+    "punch_time_1" : "12:30",
+    "punch_time_2" : "13:45",
+    "punch_time_3" : "17:20",
+    "additional_memo" : "タイムカード１"
+  },
+  {
+    "format" : "json",
+    "staff_id" : 2010,
+    "target_ymd" : "2020/01/16",
+    "punch_time_0" : "09:05",
+    "punch_time_3" : "17:25",
+    "additional_memo" : "タイムカード2"
+  }
+]

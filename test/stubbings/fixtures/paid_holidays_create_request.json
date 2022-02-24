@@ -1,0 +1,15 @@
+[
+  {
+    "format": "json",
+    "staff_id": 2011,
+    "holiday": {
+      "start_timestamp": "2020-08-05",
+      "finish_timestamp": "2020-08-07",
+      "memo": "夏期休暇"
+    },
+    "full_or_half": "half"
+  },
+  {
+    "staff_id" : 2011
+  }
+]

@@ -1778,6 +1778,85 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def list_payroll_attendances(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/payroll_attendances/list/#{year.to_i}/#{month.to_i}")
+    api_request(uri, 'GET', params)
+  end
+
+  def list_timecards(year, month)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/timecards/list/#{year.to_i}/#{month.to_i}")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_timecard(options)
+    candidate_keys = [
+      :staff_id,
+      :target_ymd,
+      :punch_time_0,
+      :punch_time_1,
+      :punch_time_2,
+      :punch_time_3,
+      :additional_memo,
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/timecards/create")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_timecard(options)
+    candidate_keys = [
+      :punch_time_0,
+      :punch_time_1,
+      :punch_time_2,
+      :punch_time_3,
+      :additional_memo,
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/timecards/update/#{options[:id]}")
+    api_request(uri, 'POST', params)
+  end
+
+  def list_paid_holidays
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + '/paid_holidays/list')
+    api_request(uri, 'GET', params)
+  end
+
+  def list_forms_paid_holidays(staff_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/paid_holidays/list_forms/#{staff_id}")
+    api_request(uri, 'GET', params)
+  end
+
+  def create_paid_holiday(options)
+    candidate_keys = [
+      :staff_id,
+      :holiday,
+      :full_or_half
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/paid_holidays/create")
+    api_request(uri, 'POST', params)
+  end
+
+  def update_paid_holiday(holiday_id, options)
+    candidate_keys = [
+      :holiday,
+      :full_or_half
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/paid_holidays/update/#{holiday_id}")
+    api_request(uri, 'POST', params)
+  end
+
+  def destroy_paid_holiday(holiday_id)
+    params = { 'format' => 'json' }
+    uri = URI.parse(@base_url + "/paid_holidays/destroy/#{holiday_id}")
+    api_request(uri, 'POST', params)
+  end
+
   private
 
 

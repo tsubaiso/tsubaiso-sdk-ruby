@@ -1,0 +1,9 @@
+{
+  "holiday": {
+    "is_ok": 1,
+    "start_timestamp": "2020-05-01",
+    "finish_timestamp": "2020-05-02",
+    "memo": "申請時のメモ"
+  },
+  "full_or_half": "half"
+}
