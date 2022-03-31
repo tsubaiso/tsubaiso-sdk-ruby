@@ -17,7 +17,9 @@ class PurchaseTest < Minitest::Test
       memo: '',
       tax_code: 1007,
       port_type: 1,
-      data_partner: { link_url: 'www.example.com/3', id_code: '3', partner_code: 'Example' }
+      data_partner: { link_url: 'www.example.com/3', id_code: '3', partner_code: 'Example' },
+      scheduled_pay_method: 'BANK_FB',
+      scheduled_pay_interface_id: 2
     }
 
     @purchase_201609 = {
@@ -83,7 +85,9 @@ class PurchaseTest < Minitest::Test
       id: purchase[:json][:id].to_i,
       price_including_tax: 50_000,
       memo: 'Updated memo',
-      data_partner: { id_code: '300' }
+      data_partner: { id_code: '300' },
+      scheduled_pay_method: 'BANK_AUTOMATIC',
+      scheduled_pay_interface_id: 1
     }
 
     updated_purchase = @api.update_purchase(options)

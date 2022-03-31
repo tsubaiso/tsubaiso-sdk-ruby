@@ -14,6 +14,8 @@
       "link_url": "www.example.com/9",
       "id_code": "9"
     },
+    "scheduled_pay_method": null,
+    "scheduled_pay_interface_id": null,
     "format": "json"
   },
   {
@@ -32,6 +34,8 @@
       "id_code": "3",
       "partner_code": "Example"
     },
+    "scheduled_pay_method": "BANK_FB",
+    "scheduled_pay_interface_id": 2,
     "format": "json"
   },
   {

@@ -18,5 +18,7 @@
     "id_code": "3",
     "partner_code": "Example"
   },
+  "scheduled_pay_method": "BANK_FB",
+  "scheduled_pay_interface_id": 2,
   "format": "json"
 }
