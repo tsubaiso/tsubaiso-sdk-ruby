@@ -1857,6 +1857,31 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def list_corporate_data(options)
+    candidate_keys = [
+      :code
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + "/corporate_data/list")
+    api_request(uri, 'GET', params)
+  end
+
+  # options: id: 会社基本情報Id, data: Base64エンコードデータ, filename: ファイル名, contenttype: Content-Type
+  # id で指定した corporate_datum が存在している必要があります。
+  # その corporate_datum の corporate_datum_master の input_type が 'image' である必要があります。
+  # 既存の添付ファイルは削除されて差し替えられます。
+  def update_attachment_to_corporate_data(options)
+    candidate_keys = [
+      :id,
+      :data,
+      :filename,
+      :contenttype
+    ]
+    params = create_parameters(candidate_keys, options)
+    uri = URI.parse(@base_url + '/corporate_data/update_attachment')
+    api_request(uri, 'POST', params)
+  end
+
   private
 
 
