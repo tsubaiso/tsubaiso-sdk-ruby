@@ -5,5 +5,7 @@
   "data_partner": {
     "id_code": "300"
   },
+  "scheduled_pay_method": "BANK_AUTOMATIC",
+  "scheduled_pay_interface_id": 1,
   "format": "json"
 }

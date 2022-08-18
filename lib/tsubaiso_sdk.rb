@@ -681,6 +681,8 @@ class TsubaisoSDK
       'port_type' => options[:port_type],
       'tag_list' => options[:tag_list],
       'data_partner' => options[:data_partner],
+      'scheduled_pay_method' => options[:scheduled_pay_method],
+      'scheduled_pay_interface_id' => options[:scheduled_pay_interface_id],
       'format' => 'json'
     }
     uri = URI.parse(@base_url + '/ap_payments/create')
@@ -701,6 +703,8 @@ class TsubaisoSDK
       'tag_list' => options[:tag_list],
       'data_partner' => options[:data_partner],
       'key' => options[:key],
+      'scheduled_pay_method' => options[:scheduled_pay_method],
+      'scheduled_pay_interface_id' => options[:scheduled_pay_interface_id],
       'format' => 'json'
     }
     uri = URI.parse(@base_url + '/ap_payments/find_or_create')
@@ -1605,8 +1609,9 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
-  def list_ap_cashflow_schedule(year, month)
+  def list_ap_cashflow_schedule(year, month, options = {})
     params = { 'format' => 'json' }
+    params['pay_method'] = options[:pay_method] if options
     uri = URI.parse(@base_url + "/ap_reports/list_cashflow_schedule/#{year}/#{month}")
     api_request(uri, 'GET', params)
   end
