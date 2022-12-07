@@ -12,7 +12,8 @@ class BankReasonMasterTest < Minitest::Test
       dc: "d",
       is_valid: 0,
       memo: "This reason has been created form API",
-      account_code: 1
+      account_code: 1,
+      bank_reason_taxes: "免税・簡易・本則/1/3001/210"
     }
 
     @bank_reason_master_2 = {
@@ -22,7 +23,8 @@ class BankReasonMasterTest < Minitest::Test
       dc: "c",
       is_valid: 0,
       memo: "This reason has been created form API2",
-      account_code: 1
+      account_code: 1,
+      bank_reason_taxes: "免税・簡易・本則/1/3001/210"
     }
 
     @bank_reason_master_3 = {
@@ -32,7 +34,8 @@ class BankReasonMasterTest < Minitest::Test
       dc: "d",
       is_valid: 0,
       memo: "This reason has been created form API3",
-      account_code: 1
+      account_code: 1,
+      bank_reason_taxes: "免税・簡易・本則/1/3001/210"
     }
 
     super("bank_reason_masters")

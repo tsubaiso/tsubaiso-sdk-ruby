@@ -15,6 +15,7 @@ class TsubaisoSDK
   def initialize(options = {})
     @base_url = options[:base_url] || 'https://tsubaiso.net'
     @access_token = options[:access_token] || "Fake_Token"
+    @http_option = options[:http_option] || {}
   end
 
   def list_bank_account_masters
@@ -166,6 +167,14 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def setup_account_assignments
+    params = {
+      'format' => 'json',
+    }
+    uri = URI.parse(@base_url + '/account_assignments/initial_setup')
+    api_request(uri, 'POST', params)
+  end
+  
   def index_api_history
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/api_histories/index')
@@ -617,6 +626,7 @@ class TsubaisoSDK
       'is_valid' => options[:is_valid],
       'memo' => options[:memo],
       'account_code' => options[:account_code],
+      'bank_reason_taxes' => options[:bank_reason_taxes],
       'format' => 'json'
     }
     uri = URI.parse(@base_url + '/bank_reason_masters/create')
@@ -750,7 +760,8 @@ class TsubaisoSDK
       'corporate_master_type' => options[:corporate_master_type],
       'email_to' => options[:email_to],
       'name' => options[:name],
-      'freeze_login' => options[:freeze_login]
+      'freeze_login' => options[:freeze_login],
+      'not_personalize_account' => options[:not_personalize_account]
     }
     uri = URI.parse(@base_url + '/corporate_masters/create')
     api_request(uri, 'POST', params)
@@ -899,7 +910,8 @@ class TsubaisoSDK
       'is_valid' => options[:is_valid],
       'memo' => options[:memo],
       'port_type' => options[:port_type],
-      'sort_number' => options[:sort_number]
+      'sort_number' => options[:sort_number],
+      'reason_taxes_onestr' => options[:reason_taxes_onestr],
     }
     uri = URI.parse(@base_url + '/petty_cash_reason_masters/create')
     api_request(uri, 'POST', params)
@@ -1012,7 +1024,8 @@ class TsubaisoSDK
       :dc,
       :is_valid,
       :memo,
-      :account_code
+      :account_code,
+      :bank_reason_taxes
     ]
 
     params = create_parameters(candidate_keys,options)
@@ -1144,7 +1157,8 @@ class TsubaisoSDK
       :is_valid,
       :memo,
       :port_type,
-      :sort_number
+      :sort_number,
+      :reason_taxes_onestr
     ]
     params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
@@ -1398,17 +1412,50 @@ class TsubaisoSDK
     api_request(uri, 'POST', params)
   end
 
+  def create_reimbursement_reason_masters(options)
+    params = {
+      'format' => 'json',
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      'account_code' => options[:account_code],
+      'sort_number' => options[:sort_number],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'port_type' => options[:port_type],
+      'reimbursement_reason_taxes' => options[:reimbursement_reason_taxes],
+    }
+    uri = URI.parse(@base_url + '/reimbursement_reason_masters/create')
+    api_request(uri, 'POST', params)    
+  end
+
+  def update_reimbursement_reason_masters(id, options)
+    params = {
+      'format' => 'json',
+      'sort_number' => options[:sort_number],
+      'reason_code' => options[:reason_code],
+      'reason_name' => options[:reason_name],
+      'dc' => options[:dc],
+      "account_code" => options[:account_code],
+      'is_valid' => options[:is_valid],
+      'memo' => options[:memo],
+      'port_type' => options[:port_type],
+    }
+    uri = URI.parse(@base_url + "/reimbursement_reason_masters/update/#{id}")
+    api_request(uri, 'POST', params)
+  end
+
   def list_users
     params = { 'format' => 'json' }
     uri = URI.parse(@base_url + '/users/list')
     api_request(uri, 'GET', params)
   end
 
-  def list_depts
-    params = { 'format' => 'json' }
-    uri = URI.parse(@base_url + '/depts/list/')
-    api_request(uri, 'GET', params)
-  end
+  # def list_depts
+  #   params = { 'format' => 'json' }
+  #   uri = URI.parse(@base_url + '/depts/list/')
+  #   api_request(uri, 'GET', params)
+  # end
 
   def update_system_managements(options)
     params = {
@@ -1442,6 +1489,7 @@ class TsubaisoSDK
       'enable' => options[:enable],
       'name' => options[:name],
       'description' => options[:description],
+      'no' => options[:no]
     }
     uri = URI.parse(@base_url + '/ar_segment_masters/create')
     api_request(uri, 'POST', params)
@@ -1455,6 +1503,7 @@ class TsubaisoSDK
       'enable' => options[:enable],
       'name' => options[:name],
       'description' => options[:description],
+      'no' => options[:no],
     }
     uri = URI.parse(@base_url + '/ap_segment_masters/create')
     api_request(uri, 'POST', params)
@@ -1900,6 +1949,9 @@ class TsubaisoSDK
 
   def api_request(uri, http_verb, params)
     http = Net::HTTP.new(uri.host, uri.port)
+    http.open_timeout = @http_option[:open_timeout] if  @http_option[:open_timeout]
+    http.read_timeout = @http_option[:read_timeout] if  @http_option[:read_timeout]
+
     initheader = { 'Content-Type' => 'application/json' }
     http.use_ssl = true if @base_url =~ /^https/
     if http_verb == 'GET'

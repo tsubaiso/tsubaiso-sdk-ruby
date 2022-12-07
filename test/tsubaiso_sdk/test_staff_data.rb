@@ -58,14 +58,14 @@ class StaffDataTest < Minitest::Test
   end
 
   def test_update_staff_data
+    staff_id = 0
     options = {
-      staff_id: 0,
       value: 'Programmer'
     }
 
-    updated_staff_data = @api.update_staff_data(options)
+    updated_staff_data = @api.update_staff_data(staff_id,options)
     assert_equal 200, updated_staff_data[:status].to_i, updated_staff_data.inspect
-    assert_equal options[:staff_id], updated_staff_data[:json][:id].to_i
+    assert_equal staff_id, updated_staff_data[:json][:id].to_i
     assert_equal 'Programmer', updated_staff_data[:json][:value]
   end
 end
