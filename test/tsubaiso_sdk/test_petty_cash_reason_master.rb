@@ -13,7 +13,8 @@ class PettyCashReasonMaster < Minitest::Test
       is_valid: '0',
       memo: 'this is test before update',
       port_type: '0',
-      sort_number: '0'
+      sort_number: '0',
+      reason_taxes_onestr: '免税・簡易・本則/国内/1/3001/210'
     }
 
     @petty_cash_reason_master_2 = {
@@ -24,7 +25,8 @@ class PettyCashReasonMaster < Minitest::Test
       is_valid: "0",
       memo: "This is Test reason.",
       port_type: "0",
-      sort_number: "0"
+      sort_number: "0",
+      reason_taxes_onestr: "免税・簡易・本則/国内/1/3001/210"
     }
     super("petty_cash_reason_masters")
   end

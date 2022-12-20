@@ -4,15 +4,40 @@
     "applicant": "Irfan",
     "application_term": "2016-03-01",
     "staff_code": "EP2000",
-    "dept_code": null,
-    "memo": "aaaaaaaa"
+    "dept_code": "SETSURITSU",
+    "memo": "aaaaaaaa",
+    "applicant_staff_code": "EP2001",
+    "pay_date": "2016-02-01",
+    "transactions": null
   },
   {
     "format": "json",
     "applicant": "Matsuno",
     "application_term": "2016-03-01",
     "staff_code": "EP2000",
-    "dept_code": null,
-    "memo": "aaaaaaaa"
+    "dept_code": "SETSURITSU",
+    "memo": "aaaaaaaa",
+    "applicant_staff_code": "EP2001",
+    "pay_date": "2016-02-01",
+    "transactions": null
+  },
+  {
+    "format": "json",
+    "applicant": "Matsuno",
+    "application_term": "2016-03-01",
+    "staff_code": "EP2000",
+    "dept_code": "SETSURITSU",
+    "memo": "aaaaaaaa",
+    "applicant_staff_code": "EP2001",
+    "pay_date": "2016-02-01",
+    "transactions": {
+      "transaction_timestamp": "2016-03-01",
+      "price_value": 20000,
+      "reason_code": "CONFERENCE_EXPENSES_SGA",
+      "dc": "d",
+      "brief": "会議費",
+      "memo": "memo",
+      "tax_type": "租税公課"
+    }
   }
 ]

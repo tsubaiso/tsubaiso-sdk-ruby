@@ -75,14 +75,14 @@ class SaleTest < Minitest::Test
     assert(sales_list[:json].none? { |x| x[:id] == september_sale_id })
   end
 
-   def test_update_sale
-     sale = @api.create_sale(@sale_201608)
-     options = {
-       id: sale[:json][:id].to_i,
-       price_including_tax: 25_000,
-       memo: 'Updated memo',
-       data_partner: { id_code: "100" }
-     }
+  def test_update_sale
+    sale = @api.create_sale(@sale_201608)
+    options = {
+      id: sale[:json][:id].to_i,
+      price_including_tax: 25_000,
+      memo: 'Updated memo',
+      data_partner: { id_code: "100" }
+    }
 
     updated_sale = @api.update_sale(options)
     assert_equal 200, updated_sale[:status].to_i, updated_sale[:json]

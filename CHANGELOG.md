@@ -1,5 +1,25 @@
 # Tsubaiso SDK (Ruby) 変更点
 
+## 1.2.14
+### create_bank_reason_masters(options)
+引数 options に、項目 `bank_reason_taxes` を追加しました。
+
+### create_petty_cash_reason_master(options)
+引数 options に、項目 `reason_taxes_onestr`を追加しました。
+
+### update_bank_reason_masters(options)
+引数 options に、項目 `bank_reason_taxes`を追加しました。
+
+### update_petty_cash_reason_master(petty_cash_reason_master_id, options)
+引数 options に、項目 `reason_taxes_onestr`を追加しました。
+
+### create_ar_segment_masters(options)
+引数 options に、項目 `no`を追加しました。
+
+### create_ap_segment_masters(options)
+引数 options に、項目 `no`を追加しました。
+
+
 ## 1.2.13
 ### create_purchase(options)
 引数 options に、項目 `scheduled_pay_method`、`scheduled_pay_interface_id` を追加しました。
