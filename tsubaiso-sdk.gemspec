@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name           = 'tsubaiso-sdk'
-  s.version        = '1.2.14'
-  s.date           = '2022-12-07'
+  s.version        = '1.2.15'
+  s.date           = '2023-08-28'
   s.summary        = 'SDK for the Tsubaiso API'
   s.description    = 'A library of methods that directly uses Tsubaiso API web endpoints.'
   s.authors        = ['Tsubaiso, Inc.']

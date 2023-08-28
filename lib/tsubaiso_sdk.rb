@@ -911,7 +911,7 @@ class TsubaisoSDK
       'memo' => options[:memo],
       'port_type' => options[:port_type],
       'sort_number' => options[:sort_number],
-      'reason_taxes_onestr' => options[:reason_taxes_onestr],
+      'petty_cash_reason_taxes' => options[:petty_cash_reason_taxes],
     }
     uri = URI.parse(@base_url + '/petty_cash_reason_masters/create')
     api_request(uri, 'POST', params)
@@ -1158,7 +1158,7 @@ class TsubaisoSDK
       :memo,
       :port_type,
       :sort_number,
-      :reason_taxes_onestr
+      :petty_cash_reason_taxes
     ]
     params = create_parameters(candidate_keys,options)
     params['format'] = 'json'

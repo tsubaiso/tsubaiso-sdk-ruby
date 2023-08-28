@@ -14,7 +14,7 @@ class PettyCashReasonMaster < Minitest::Test
       memo: 'this is test before update',
       port_type: '0',
       sort_number: '0',
-      reason_taxes_onestr: '免税・簡易・本則/国内/1/3001/210'
+      petty_cash_reason_taxes: '免税・簡易・本則/国内/1/3001/210'
     }
 
     @petty_cash_reason_master_2 = {
@@ -26,7 +26,7 @@ class PettyCashReasonMaster < Minitest::Test
       memo: "This is Test reason.",
       port_type: "0",
       sort_number: "0",
-      reason_taxes_onestr: "免税・簡易・本則/国内/1/3001/210"
+      petty_cash_reason_taxes: "免税・簡易・本則/国内/1/3001/210"
     }
     super("petty_cash_reason_masters")
   end
@@ -35,6 +35,7 @@ class PettyCashReasonMaster < Minitest::Test
     created_pcrm = @api.create_petty_cash_reason_master(@petty_cash_reason_master_1)
     assert_equal 200, created_pcrm[:status].to_i, created_pcrm.inspect
     assert_equal @petty_cash_reason_master_1[:reason_code], created_pcrm[:json][:reason_code]
+    assert_equal @petty_cash_reason_master_1[:petty_cash_reason_taxes], created_pcrm[:json][:petty_cash_reason_taxes]
 
     shown_prcm = @api.show_petty_cash_reason_master(created_pcrm[:json][:id].to_i)
     assert_equal 200, created_pcrm[:status].to_i, created_pcrm.inspect
@@ -47,13 +48,15 @@ class PettyCashReasonMaster < Minitest::Test
     old_petty_cash_reason_master = @api.create_petty_cash_reason_master(@petty_cash_reason_master_1)
     options = {
       reason_name: 'updating from API',
-      memo: 'updating memo from API'
+      memo: 'updating memo from API',
+      petty_cash_reason_taxes: '免税・簡易・本則/国内/0/0/30'
     }
     updated_petty_cash_reason_master = @api.update_petty_cash_reason_master(old_petty_cash_reason_master[:json][:id], options)
 
     assert_equal 200, updated_petty_cash_reason_master[:status].to_i, updated_petty_cash_reason_master.inspect
     assert_equal options[:reason_name], updated_petty_cash_reason_master[:json][:reason_name]
     assert_equal options[:memo], updated_petty_cash_reason_master[:json][:memo]
+    assert_equal options[:petty_cash_reason_taxes], updated_petty_cash_reason_master[:json][:petty_cash_reason_taxes]
     assert_equal old_petty_cash_reason_master[:json][:reason_code], updated_petty_cash_reason_master[:json][:reason_code]
   end
 
