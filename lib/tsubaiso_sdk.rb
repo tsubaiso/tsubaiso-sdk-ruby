@@ -1440,6 +1440,7 @@ class TsubaisoSDK
       'is_valid' => options[:is_valid],
       'memo' => options[:memo],
       'port_type' => options[:port_type],
+      'reimbursement_reason_taxes' => options[:reimbursement_reason_taxes],
     }
     uri = URI.parse(@base_url + "/reimbursement_reason_masters/update/#{id}")
     api_request(uri, 'POST', params)
