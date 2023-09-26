@@ -66,12 +66,14 @@ class ReimbursementReasonMasterTest < Minitest::Test
     options = {
       reason_name: "updating from API",
       memo: "updating memo from API",
+      reimbursement_reason_taxes: "免税・簡易・本則/国内/1/3001/210"
     }
     updated_reimbursement_reason_master = @api.update_reimbursement_reason_masters(old_reimbursement_reason_master[:json][:id], options)
 
     assert_equal 200, updated_reimbursement_reason_master[:status].to_i, updated_reimbursement_reason_master.inspect
     assert_equal options[:reason_name], updated_reimbursement_reason_master[:json][:reason_name]
     assert_equal options[:memo], updated_reimbursement_reason_master[:json][:memo]
+    assert_equal options[:reimbursement_reason_taxes], updated_reimbursement_reason_master[:json][:reimbursement_reason_taxes]
     assert_equal old_reimbursement_reason_master[:json][:reason_code], updated_reimbursement_reason_master[:json][:reason_code]
   end
 end

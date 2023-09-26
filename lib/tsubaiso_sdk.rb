@@ -911,7 +911,7 @@ class TsubaisoSDK
       'memo' => options[:memo],
       'port_type' => options[:port_type],
       'sort_number' => options[:sort_number],
-      'petty_cash_reason_taxes' => options[:petty_cash_reason_taxes],
+      'reason_taxes_onestr' => options[:reason_taxes_onestr],
     }
     uri = URI.parse(@base_url + '/petty_cash_reason_masters/create')
     api_request(uri, 'POST', params)
@@ -1158,7 +1158,7 @@ class TsubaisoSDK
       :memo,
       :port_type,
       :sort_number,
-      :petty_cash_reason_taxes
+      :reason_taxes_onestr
     ]
     params = create_parameters(candidate_keys,options)
     params['format'] = 'json'
@@ -1366,16 +1366,18 @@ class TsubaisoSDK
   end
 
   def update_ar_reason_masters(id, options)
-    params = {
-      'format' => 'json',
-      'reason_code' => options[:reason_code],
-      'reason_name' => options[:reason_name],
-      'dc' => options[:dc],
-      'sort_number' => options[:sort_number],
-      'is_valid' => options[:is_valid],
-      'memo' => options[:memo],
-      'ar_reason_taxes' => options[:ar_reason_taxes],
-    }
+    params = {}
+    candidate_keys = [
+      :reason_code,
+      :reason_name,
+      :dc,
+      :sort_number,
+      :is_valid,
+      :memo,
+      :ar_reason_taxes
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/ar_reason_masters/update/#{id}")
     api_request(uri, 'POST', params)
   end
@@ -1398,16 +1400,19 @@ class TsubaisoSDK
   end
 
   def update_ap_reason_masters(id, options)
-    params = {
-      'format' => 'json',
-      'reason_code' => options[:reason_code],
-      'reason_name' => options[:reason_name],
-      'dc' => options[:dc],
-      'port_type' => options[:port_type],
-      'sort_number' => options[:sort_number],
-      'is_valid' => options[:is_valid],
-      'memo' => options[:memo],
-    }
+    params = {}
+    candidate_keys = [
+      :reason_code,
+      :reason_name,
+      :dc,
+      :port_type,
+      :sort_number,
+      :is_valid,
+      :memo,
+      :ap_reason_taxes
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/ap_reason_masters/update/#{id}")
     api_request(uri, 'POST', params)
   end
@@ -1430,18 +1435,20 @@ class TsubaisoSDK
   end
 
   def update_reimbursement_reason_masters(id, options)
-    params = {
-      'format' => 'json',
-      'sort_number' => options[:sort_number],
-      'reason_code' => options[:reason_code],
-      'reason_name' => options[:reason_name],
-      'dc' => options[:dc],
-      "account_code" => options[:account_code],
-      'is_valid' => options[:is_valid],
-      'memo' => options[:memo],
-      'port_type' => options[:port_type],
-      'reimbursement_reason_taxes' => options[:reimbursement_reason_taxes],
-    }
+    params = {}
+    candidate_keys = [
+      :sort_number,
+      :reason_code,
+      :reason_name,
+      :dc,
+      :account_code,
+      :is_valid,
+      :memo,
+      :port_type,
+      :reimbursement_reason_taxes
+    ]
+    params = create_parameters(candidate_keys,options)
+    params['format'] = 'json'
     uri = URI.parse(@base_url + "/reimbursement_reason_masters/update/#{id}")
     api_request(uri, 'POST', params)
   end
