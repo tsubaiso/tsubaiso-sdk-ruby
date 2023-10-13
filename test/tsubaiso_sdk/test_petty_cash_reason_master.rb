@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require_relative 'common_setup_and_teardown'
+require_relative './common_setup_and_teardown.rb'
 
 class PettyCashReasonMaster < Minitest::Test
   include CommonSetupAndTeardown
@@ -74,4 +74,3 @@ class PettyCashReasonMaster < Minitest::Test
     end
   end
 end
-
