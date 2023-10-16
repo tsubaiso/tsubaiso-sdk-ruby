@@ -1,0 +1,14 @@
+[
+  {
+    "format": "json",
+    "reason_code": "sdk_test_create",
+    "reason_name": "SDK before update",
+    "dc": "d",
+    "account_code": "100",
+    "is_valid": "0",
+    "memo": "this is test before update",
+    "port_type": "0",
+    "sort_number": "0",
+    "ap_reason_taxes": "免税・簡易・本則/国内/1/3001/210"
+  }
+]
