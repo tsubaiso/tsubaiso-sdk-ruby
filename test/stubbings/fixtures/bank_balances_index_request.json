@@ -1,0 +1,9 @@
+{
+  "format" : "json",
+  "form" : {
+    "start_ym(1i)" : 2023,
+    "start_ym(2i)" : 5,
+    "finish_ym(1i)" : 2023, 
+    "finish_ym(2i)" : 6
+  }
+}

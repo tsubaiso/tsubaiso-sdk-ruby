@@ -22,7 +22,7 @@ class StubRegister
     stub_create(resource)
     stub_destroy(resource)
     stub_list(resource)
-    resource == 'api_histories' ? stub_index(resource) : stub_show(resource)
+    ['api_histories', 'bank_balances'].include?(resource) ? stub_index(resource) : stub_show(resource)
     stub_balance(resource)
     stub_update(resource)
     stub_find_or_create(resource)
@@ -124,7 +124,8 @@ class StubRegister
 
   def stub_index(resource)
     # NOTE: for api_history
-    stub_requests(:get, url(@root_url, resource, 'index'), load_json(resource, 'index', 'response'))
+    expected_body = resource == 'bank_balances' ? load_json(resource, 'index') : {}
+    stub_requests(:get, url(@root_url, resource, 'index'), load_json(resource, 'index', 'response'), expected_body)
   end
 
   def stub_list(resource)
