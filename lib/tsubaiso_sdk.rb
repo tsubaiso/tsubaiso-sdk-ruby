@@ -24,7 +24,6 @@ class TsubaisoSDK
     api_request(uri, 'GET', params)
   end
 
-
   def update_bank_account_master(options)
     params = {}
     candidate_keys = [
@@ -129,7 +128,6 @@ class TsubaisoSDK
       'finish_timestamp' => options[:finish_timestamp],
       'format' => 'json'
     }
-
     uri = URI.parse(@base_url + '/bank_accounts/create')
     api_request(uri, 'POST', params)
   end
@@ -165,6 +163,21 @@ class TsubaisoSDK
 
     uri = URI.parse(@base_url + '/bank_account_masters/create')
     api_request(uri, 'POST', params)
+  end
+
+  def index_bank_balances(options)
+    params = {
+      'format' => 'json',
+      'form' => {
+        'start_ym(1i)' => options[:start_y],
+        'start_ym(2i)' => options[:start_m],
+        'finish_ym(1i)' => options[:finish_y],
+        'finish_ym(2i)' => options[:finish_m]
+      }
+    }
+
+    uri = URI.parse(@base_url + '/bank_balances/index')
+    api_request(uri, 'GET', params)
   end
 
   def setup_account_assignments
