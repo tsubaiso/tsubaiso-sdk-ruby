@@ -16,6 +16,7 @@
     },
     "scheduled_pay_method": null,
     "scheduled_pay_interface_id": null,
+    "scheduled_pay_timestamp": "2017-03-31",
     "format": "json"
   },
   {
@@ -36,6 +37,7 @@
     },
     "scheduled_pay_method": "BANK_FB",
     "scheduled_pay_interface_id": 2,
+    "scheduled_pay_timestamp": "2016-09-30",
     "format": "json"
   },
   {

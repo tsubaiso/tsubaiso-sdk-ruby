@@ -19,7 +19,8 @@ class PurchaseTest < Minitest::Test
       port_type: 1,
       data_partner: { link_url: 'www.example.com/3', id_code: '3', partner_code: 'Example' },
       scheduled_pay_method: 'BANK_FB',
-      scheduled_pay_interface_id: 2
+      scheduled_pay_interface_id: 2,
+      scheduled_pay_timestamp: '2016-09-30'
     }
 
     @purchase_201609 = {
@@ -48,6 +49,7 @@ class PurchaseTest < Minitest::Test
       memo: '',
       tax_code: 18,
       port_type: 1,
+      scheduled_pay_timestamp: '2017-03-31',
       data_partner: { link_url: 'www.example.com/9', id_code: '9' }
     }
     super("ap_payments")
