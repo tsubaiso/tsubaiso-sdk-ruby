@@ -706,6 +706,7 @@ class TsubaisoSDK
       'data_partner' => options[:data_partner],
       'scheduled_pay_method' => options[:scheduled_pay_method],
       'scheduled_pay_interface_id' => options[:scheduled_pay_interface_id],
+      'scheduled_pay_timestamp' => options[:scheduled_pay_timestamp],
       'format' => 'json'
     }
     uri = URI.parse(@base_url + '/ap_payments/create')

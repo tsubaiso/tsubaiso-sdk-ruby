@@ -1,5 +1,9 @@
 # Tsubaiso SDK (Ruby) 変更点
 
+## 1.2.17
+### create_purchase(options)
+引数 options に、項目 `scheduled_pay_timestamp` を追加しました。
+
 ## 1.2.16
 ### index_bank_balances(options)
 index_bank_balances(options)を追加しました。
