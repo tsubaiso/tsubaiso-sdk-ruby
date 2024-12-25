@@ -1,5 +1,12 @@
 # Tsubaiso SDK (Ruby) 変更点
 
+## 1.2.18
+### create_account_masters(options)
+引数 options に、項目 `use_in_statement` を追加しました。
+
+### update_account_masters(options)
+引数 options に、項目 `use_in_statement` を追加しました。
+
 ## 1.2.17
 ### create_purchase(options)
 引数 options に、項目 `scheduled_pay_timestamp` を追加しました。
