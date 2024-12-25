@@ -1304,6 +1304,7 @@ class TsubaisoSDK
       :inputtable,
       :use_in_balance,
       :status,
+      :use_in_statement,
     ]
     params = create_parameters(candidate_keys,options)
     uri = URI.parse(@base_url + '/account_masters/create')
@@ -1324,6 +1325,7 @@ class TsubaisoSDK
       :inputtable,
       :use_in_balance,
       :status,
+      :use_in_statement,
     ]
     params = create_parameters(candidate_keys,options)
     uri = URI.parse(@base_url + '/account_masters/update')
