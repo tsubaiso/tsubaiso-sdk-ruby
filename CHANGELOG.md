@@ -1,5 +1,9 @@
 # Tsubaiso SDK (Ruby) 変更点
 
+## 1.2.19
+### api_request(uri, http_verb, params)
+APIリクエスト時にsetupERPのUser-Agentを入れる
+
 ## 1.2.18
 ### create_account_masters(options)
 引数 options に、項目 `use_in_statement` を追加しました。
