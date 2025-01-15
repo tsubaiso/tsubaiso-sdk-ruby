@@ -1984,6 +1984,7 @@ class TsubaisoSDK
       request = Net::HTTP::Post.new(uri.path, initheader)
     end
     request['Access-Token'] = @access_token
+    request['User-Agent'] = @http_option[:user_agent] if @http_option[:user_agent]
     request.body = params.to_json
     response = http.request(request)
     if response.body && !response.body.empty?
