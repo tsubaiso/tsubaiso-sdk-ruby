@@ -775,7 +775,8 @@ class TsubaisoSDK
       'email_to' => options[:email_to],
       'name' => options[:name],
       'freeze_login' => options[:freeze_login],
-      'not_personalize_account' => options[:not_personalize_account]
+      'not_personalize_account' => options[:not_personalize_account],
+      'expiration_date' => options[:expiration_date]
     }
     uri = URI.parse(@base_url + '/corporate_masters/create')
     api_request(uri, 'POST', params)
