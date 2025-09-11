@@ -1,5 +1,9 @@
 # Tsubaiso SDK (Ruby) 変更点
 
+## 1.2.20
+### create_corp(options)
+引数 options に、項目 `expiration_date` を追加しました。
+
 ## 1.2.19
 ### api_request(uri, http_verb, params)
 APIリクエスト時にsetupERPのUser-Agentを入れる
