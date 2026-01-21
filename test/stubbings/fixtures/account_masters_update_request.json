@@ -1,0 +1,17 @@
+{
+  "id": 42,
+  "account_code": "888",
+  "descid": "API_TEST_UPDATED",
+  "account_name": "外部から作った[UPDATED]",
+  "account_kana": "API テスト[UPDATED]",
+  "dc": "c",
+  "bspl": "pl",
+  "brief": "Lorem Ipsum Dolor Sit Amet[UPDATED]",
+  "sum_no": "2",
+  "use_in_balance": "1",
+  "use_in_statement": "1",
+  "status": "100",
+  "inputtable": "1",
+  "fc_revaluation_target": 0,
+  "format": "json"
+}
