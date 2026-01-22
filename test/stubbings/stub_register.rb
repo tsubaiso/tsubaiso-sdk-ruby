@@ -19,6 +19,12 @@ class StubRegister
     @common_request_headers.merge!( {"Access-Token" => token} )
     @created_records = []
 
+    # Special handling for account_masters
+    if resource == 'account_masters'
+      stub_account_masters
+      return
+    end
+
     stub_create(resource)
     stub_destroy(resource)
     stub_list(resource)
@@ -197,6 +203,44 @@ class StubRegister
       end
       stub_requests(:post, url(@root_url, resource, 'create'), return_body, record)
       @created_records << return_body
+    end
+  end
+
+  def stub_account_masters
+    # Special handling for account_masters resource
+    create_request = load_json('account_masters', 'create', 'request')
+    create_response = load_json('account_masters', 'create', 'response')
+    create_without_fc_request = load_json('account_masters', 'create_without_fc', 'request')
+    create_without_fc_response = load_json('account_masters', 'create_without_fc', 'response')
+    update_request = load_json('account_masters', 'update', 'request')
+    update_response = load_json('account_masters', 'update', 'response')
+    update_partial_request = load_json('account_masters', 'update_partial', 'request')
+    update_partial_response = load_json('account_masters', 'update_partial', 'response')
+    list_response = load_json('account_masters', 'list', 'response')
+
+    # Stub create with fc_revaluation_target
+    if create_request && create_response
+      stub_requests(:post, url(@root_url, 'account_masters', 'create'), create_response, create_request)
+    end
+
+    # Stub create without fc_revaluation_target
+    if create_without_fc_request && create_without_fc_response
+      stub_requests(:post, url(@root_url, 'account_masters', 'create'), create_without_fc_response, create_without_fc_request)
+    end
+
+    # Stub update with all fields
+    if update_request && update_response
+      stub_requests(:post, url(@root_url, 'account_masters', 'update'), update_response, update_request)
+    end
+
+    # Stub update with partial fields
+    if update_partial_request && update_partial_response
+      stub_requests(:post, url(@root_url, 'account_masters', 'update'), update_partial_response, update_partial_request)
+    end
+
+    # Stub list
+    if list_response
+      stub_requests(:get, url(@root_url, 'account_masters', 'list'), list_response)
     end
   end
 end

@@ -1,0 +1,15 @@
+{
+  "account_code": "888",
+  "descid": "API_TEST_2",
+  "account_name": "外部から作った2",
+  "account_kana": "API テスト2",
+  "dc": "d",
+  "bspl": "bs",
+  "brief": "Lorem Ipsum",
+  "sum_no": "1",
+  "use_in_balance": "1",
+  "use_in_statement": "1",
+  "status": "100",
+  "inputtable": "1",
+  "format": "json"
+}

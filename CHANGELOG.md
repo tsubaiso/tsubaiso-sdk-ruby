@@ -1,5 +1,12 @@
 # Tsubaiso SDK (Ruby) 変更点
 
+## 1.2.21
+### create_account_masters(options)
+引数 options に、項目 `fc_revaluation_target` を追加しました。
+
+### update_account_masters(options)
+引数 options に、項目 `fc_revaluation_target` を追加しました。
+
 ## 1.2.20
 ### create_corp(options)
 引数 options に、項目 `expiration_date` を追加しました。
