@@ -15,7 +15,7 @@
     "status": 100,
     "inputtable": 1,
     "fc_revaluation_target": 0,
-    "regist_user_code": "admin",
+    "regist_user_code": "testuser",
     "created_at": "2025-01-01T00:00:00+09:00",
     "updated_at": "2025-01-01T00:00:00+09:00"
   },
@@ -35,7 +35,7 @@
     "status": 100,
     "inputtable": 1,
     "fc_revaluation_target": 1,
-    "regist_user_code": "admin",
+    "regist_user_code": "testuser",
     "created_at": "2025-01-01T00:00:00+09:00",
     "updated_at": "2025-06-01T12:00:00+09:00"
   },
@@ -55,7 +55,7 @@
     "status": 100,
     "inputtable": 1,
     "fc_revaluation_target": 0,
-    "regist_user_code": "admin",
+    "regist_user_code": "testuser",
     "created_at": "2025-01-01T00:00:00+09:00",
     "updated_at": "2025-01-01T00:00:00+09:00"
   }
